@@ -67,6 +67,14 @@ export const routes: Routes = [
         loadComponent: () => import('./features/history/history-page').then((m) => m.HistoryPage),
         title: 'Historial mensual · Campiña Gastos',
       },
+      {
+        path: 'configuracion',
+        canDeactivate: [unsavedChanges],
+        runGuardsAndResolvers: 'paramsOrQueryParamsChange',
+        loadComponent: () =>
+          import('./features/settings/settings-page').then((m) => m.SettingsPage),
+        title: 'Reglas y configuración · Campiña Gastos',
+      },
       { path: '', pathMatch: 'full', redirectTo: 'resumen' },
       { path: '**', redirectTo: 'resumen' },
     ],

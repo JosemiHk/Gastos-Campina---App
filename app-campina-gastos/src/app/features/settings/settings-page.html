@@ -1,0 +1,229 @@
+<div class="page-heading">
+  <div>
+    <span class="eyebrow">Parámetros del hogar</span>
+    <h1>Reglas y configuración</h1>
+    <p>Cómo se dividen los servicios y dónde recibir los aportes.</p>
+  </div>
+  <span class="badge"><app-icon name="people" />3 grupos + aporte especial</span>
+</div>
+<form [formGroup]="form" (ngSubmit)="save()">
+  <fieldset [disabled]="busy() || store.closed() || !store.isAdmin()">
+    <div class="settings-layout">
+      <section>
+        <div class="section-heading"><h2>Grupos familiares</h2></div>
+        <div class="stack">
+          @for (group of store.data()?.groups; track group.id) {
+            <article class="card group-settings">
+              <div class="row">
+                <span class="avatar">{{
+                  group.code === 'twins'
+                    ? 'G'
+                    : group.code === 'miguel'
+                      ? 'M'
+                      : group.code === 'jm'
+                        ? 'JM'
+                        : 'R'
+                }}</span>
+                <div class="grow">
+                  <h3>{{ group.name }}</h3>
+                  <p>{{ group.members.join(' y ') }}</p>
+                </div>
+                <span class="badge">{{
+                  group.kind === 'special'
+                    ? 'Aporte fijo'
+                    : group.members.length === 2
+                      ? '1 grupo · 2 personas'
+                      : '1 grupo'
+                }}</span>
+              </div>
+              <div class="group-services">
+                @if (group.kind === 'regular') {
+                  <span class="badge"><app-icon name="water" />Agua · 1/3</span
+                  ><span class="badge"><app-icon name="bolt" />Luz común · 1/3</span>
+                  @if (group.code !== 'twins') {
+                    <span class="badge"><app-icon name="wifi" />Internet · 1/2</span>
+                  } @else {
+                    <span class="excluded">Sin internet WIN</span>
+                  }
+                } @else {
+                  <span class="badge"><app-icon name="snow" />Congeladora</span>
+                }
+              </div>
+            </article>
+          }
+        </div>
+        <div class="rule-note groups-note">
+          <app-icon name="info" /><span
+            >Las cuotas se calculan por grupo de pago. Amy y Annie comparten una sola cuota.</span
+          >
+        </div>
+      </section>
+      <section>
+        <div class="section-heading"><h2>Reglas de reparto</h2></div>
+        <div class="stack">
+          <article class="card rule-card">
+            <div class="row">
+              <span class="icon-tile"><app-icon name="water" /></span>
+              <div>
+                <h3>Agua potable</h3>
+                <p>Distribución en tres partes</p>
+              </div>
+            </div>
+            <div class="formula">Total del recibo ÷ 3 grupos</div>
+            <p>Gemelas, Miguel y JM participan a partes iguales.</p>
+          </article>
+          <article class="card rule-card">
+            <div class="row">
+              <span class="icon-tile"><app-icon name="bolt" /></span>
+              <div>
+                <h3>Luz eléctrica</h3>
+                <p>Aporte fijo y saldo compartido</p>
+              </div>
+            </div>
+            <div class="fixed-setting">
+              <div><strong>Aporte de Rossana</strong><span>Consumo de la congeladora</span></div>
+              <div class="field">
+                <label for="fixed-contribution" class="sr-only"
+                  >Aporte fijo de Rossana en soles</label
+                >
+                <div class="fixed-input">
+                  <span>S/</span
+                  ><input
+                    id="fixed-contribution"
+                    formControlName="fixed"
+                    inputmode="decimal"
+                    type="text"
+                    maxlength="9"
+                    [attr.aria-invalid]="form.controls.fixed.touched && form.controls.fixed.invalid"
+                  />
+                </div>
+              </div>
+            </div>
+            @if (form.controls.fixed.touched && form.controls.fixed.invalid) {
+              <p class="field-error">Escribe un importe válido con hasta dos decimales.</p>
+            }
+            <div class="formula">(Total de luz − aporte fijo) ÷ 3 grupos</div>
+            <p>El aporte se separa antes de dividir el recibo.</p>
+          </article>
+          <article class="card rule-card">
+            <div class="row">
+              <span class="icon-tile"><app-icon name="wifi" /></span>
+              <div>
+                <h3>Internet WIN</h3>
+                <p>Distribución en dos partes</p>
+              </div>
+            </div>
+            <div class="formula">Total del recibo ÷ 2</div>
+            <p>Miguel y JM pagan la mitad cada uno. Gemelas está excluida.</p>
+          </article>
+        </div>
+      </section>
+    </div>
+    <section class="card transfer-settings">
+      <div class="section-heading">
+        <div>
+          <h2>Datos para transferencias</h2>
+          <p>Se incluirán en el resumen para compartir.</p>
+        </div>
+        <span class="badge">PEN · Soles</span>
+      </div>
+      <div formArrayName="accounts" class="stack">
+        @for (account of accounts.controls; track account; let index = $index) {
+          <article class="account-form" [formGroupName]="index">
+            <div class="account-heading">
+              <h3>Cuenta {{ index + 1 }}</h3>
+              <button mat-button type="button" (click)="removeAccount(index)">
+                <app-icon name="close" />Quitar
+              </button>
+            </div>
+            <div class="form-grid">
+              <div class="field">
+                <label [for]="'account-kind-' + index">Tipo</label
+                ><select [id]="'account-kind-' + index" formControlName="kind">
+                  <option value="yape">Yape</option>
+                  <option value="plin">Plin</option>
+                  <option value="bank">Cuenta bancaria</option>
+                </select>
+              </div>
+              <div class="field">
+                <label [for]="'account-label-' + index">Nombre para mostrar</label
+                ><input
+                  [id]="'account-label-' + index"
+                  formControlName="label"
+                  maxlength="60"
+                  placeholder="Nombre del banco o billetera"
+                />
+              </div>
+              <div class="field">
+                <label [for]="'account-holder-' + index">Titular</label
+                ><input
+                  [id]="'account-holder-' + index"
+                  formControlName="holder"
+                  maxlength="100"
+                  autocomplete="off"
+                />
+              </div>
+              <div class="field">
+                <label [for]="'account-number-' + index">{{
+                  account.controls.kind.value === 'bank' ? 'Número de cuenta' : 'Número de celular'
+                }}</label
+                ><input
+                  [id]="'account-number-' + index"
+                  formControlName="number"
+                  maxlength="60"
+                  autocomplete="off"
+                />
+              </div>
+              @if (account.controls.kind.value === 'bank') {
+                <div class="field">
+                  <label [for]="'account-cci-' + index"
+                    >CCI <span class="muted">(opcional)</span></label
+                  ><input
+                    [id]="'account-cci-' + index"
+                    formControlName="cci"
+                    maxlength="30"
+                    autocomplete="off"
+                  />
+                </div>
+              }
+            </div>
+            @if (account.touched && account.invalid) {
+              <p class="field-error">Completa el nombre, titular y número de esta cuenta.</p>
+            }
+          </article>
+        } @empty {
+          <div class="rule-note">
+            <app-icon name="wallet" /><span
+              >No hay cuentas configuradas. Agrega únicamente los datos reales donde recibirán los
+              aportes.</span
+            >
+          </div>
+        }
+      </div>
+      @if (store.isAdmin() && !store.closed()) {
+        <button
+          mat-stroked-button
+          type="button"
+          class="add-account"
+          [disabled]="accounts.length >= 5"
+          (click)="addAccount()"
+        >
+          <app-icon name="plus" />Agregar cuenta o billetera
+        </button>
+      }
+    </section>
+  </fieldset>
+  @if (error()) {
+    <div class="error-message settings-error" role="alert">{{ error() }}</div>
+  }
+  @if (store.isAdmin() && !store.closed()) {
+    <div class="settings-footer">
+      <p>
+        Se aplicará a {{ monthLabel(store.selectedMonth()) }} y a los nuevos meses que registres.
+      </p>
+      <button mat-flat-button type="submit" [disabled]="busy() || store.saving()">
+        <app-icon name="check" />{{ busy() ? 'Guardando…' : 'Guardar cambios' }}
+      </button>
+    </div>
+  }
+</form>

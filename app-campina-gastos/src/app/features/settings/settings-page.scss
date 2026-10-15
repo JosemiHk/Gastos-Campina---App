@@ -1,0 +1,258 @@
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+fieldset:disabled input,
+fieldset:disabled select {
+  background: var(--background);
+  color: var(--text-secondary);
+}
+.settings-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 28px;
+}
+.settings-layout .section-heading {
+  margin-top: 0;
+}
+.group-settings {
+  padding: 20px;
+  box-shadow: none;
+}
+.group-settings h3 {
+  font-size: 15px;
+  margin: 0;
+}
+.group-settings p {
+  font-size: 11px;
+}
+.group-settings .row > .badge {
+  font-size: 9px;
+  white-space: nowrap;
+}
+.group-services {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+.group-services .badge {
+  font-size: 10px;
+  font-weight: 500;
+}
+.group-services app-icon {
+  width: 13px;
+  height: 13px;
+}
+.excluded {
+  font-size: 10px;
+  color: var(--text-secondary);
+  padding: 4px 0;
+}
+.groups-note {
+  margin-top: 20px;
+  font-size: 12px;
+}
+.rule-card {
+  box-shadow: none;
+}
+.rule-card h3 {
+  margin: 0;
+  font-size: 15px;
+}
+.rule-card .row p {
+  font-size: 11px;
+}
+.rule-card > p {
+  font-size: 12px;
+  margin: 14px 0 0;
+}
+.formula {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--background);
+  font-size: 12px;
+  color: var(--secondary);
+  margin-top: 18px;
+}
+.fixed-setting {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--surface-variant);
+  border-radius: 12px;
+  margin-top: 18px;
+}
+.fixed-setting > div:first-child {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+}
+.fixed-setting > div:first-child > span {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+.fixed-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding-left: 12px;
+  color: var(--text-secondary);
+}
+.fixed-input input {
+  border: 0;
+  background: transparent;
+  min-height: 42px;
+  width: 100px;
+  padding: 8px;
+  text-align: right;
+  font-weight: 600;
+  color: var(--primary);
+}
+.fixed-input input:focus {
+  outline: 0;
+}
+.fixed-input:focus-within {
+  outline: 2px solid var(--secondary);
+}
+.transfer-settings {
+  margin-top: 28px;
+}
+.transfer-settings > .section-heading {
+  margin-top: 0;
+}
+.transfer-settings .section-heading p {
+  font-size: 12px;
+  margin: 6px 0 0;
+}
+.account-form {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  background: var(--background);
+}
+.account-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.account-heading h3 {
+  font-size: 14px;
+  margin: 0;
+}
+.account-heading > button {
+  font-size: 11px;
+}
+.account-form .field label {
+  font-size: 12px;
+}
+.account-form .field input,
+.account-form .field select {
+  background: #fff;
+}
+.add-account {
+  margin-top: 20px;
+}
+.settings-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-top: 24px;
+}
+.settings-footer p {
+  font-size: 12px;
+  margin: 0;
+  max-width: 460px;
+}
+.settings-error {
+  margin-top: 24px;
+}
+.field-error {
+  color: var(--error) !important;
+  font-size: 12px;
+}
+@media (max-width: 1100px) {
+  .settings-layout {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .fixed-setting > div:first-child {
+    font-size: 13px;
+  }
+}
+@media (max-width: 767px) {
+  .group-settings {
+    padding: 18px;
+  }
+  .group-settings .row {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .group-settings .row > .badge {
+    margin-left: 52px;
+  }
+  .group-settings h3 {
+    font-size: 14px;
+  }
+  .rule-card {
+    padding: 20px;
+  }
+  .rule-card > p {
+    font-size: 11px;
+  }
+  .fixed-setting {
+    padding: 14px;
+    gap: 8px;
+  }
+  .fixed-setting > div:first-child {
+    font-size: 11px;
+  }
+  .fixed-input {
+    font-size: 12px;
+    padding-left: 10px;
+  }
+  .fixed-input input {
+    width: 80px;
+    font-size: 13px;
+  }
+  .formula {
+    font-size: 11px;
+  }
+  .transfer-settings {
+    padding: 20px;
+  }
+  .transfer-settings .section-heading {
+    align-items: flex-start;
+  }
+  .transfer-settings .section-heading > .badge {
+    font-size: 9px;
+    white-space: nowrap;
+  }
+  .account-form {
+    padding: 16px;
+  }
+  .settings-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 16px;
+  }
+  .settings-footer p {
+    font-size: 11px;
+    text-align: center;
+  }
+  .add-account {
+    width: 100%;
+    font-size: 12px;
+  }
+}
