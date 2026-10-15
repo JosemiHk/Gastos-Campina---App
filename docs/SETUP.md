@@ -35,6 +35,10 @@ supabase db push
 
 Alternativamente, ejecuta una sola vez y en orden los tres archivos de `supabase/migrations` mediante SQL Editor. No apliques ambas alternativas sobre una base ya migrada.
 
+Para preparar un solo archivo con las tres migraciones, desde `app-campina-gastos` ejecuta `npm run prepare:supabase`. Copia todo el contenido de `supabase/.temp/setup-campina.sql` en SQL Editor y pulsa Run. El archivo está excluido de Git y envuelve la instalación en una transacción. Úsalo únicamente para la instalación inicial en un proyecto vacío; los archivos de `migrations` siguen siendo la fuente de verdad.
+
+Si instalas mediante SQL Editor y más adelante adoptas la CLI, tras verificar que las tres migraciones se ejecutaron correctamente y enlazar el proyecto, registra su estado con `supabase migration repair --status applied 202610150001 202610150002 202610150003`. Luego comprueba `supabase migration list` antes de usar `supabase db push`. Este paso solo sincroniza el historial de migraciones ya aplicadas; no ejecuta su SQL. [Documentación de Supabase](https://supabase.com/docs/guides/deployment/database-migrations).
+
 Las migraciones crean tablas, restricciones, funciones protegidas, RLS y el bucket privado `receipts`. No insertan recibos ni cuentas de prueba.
 
 ## Configurar correo y acceso

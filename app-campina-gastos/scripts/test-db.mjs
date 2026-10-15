@@ -24,10 +24,16 @@ try {
     grant usage on schema storage to authenticated; grant select,insert,delete on storage.objects to authenticated;
     insert into auth.users values('${admin}','admin@example.test'),('${viewer}','viewer@example.test'),('${outsider}','outside@example.test');`);
   const migrations = new URL('../../supabase/migrations/', import.meta.url);
-  for (const file of readdirSync(migrations)
-    .filter((f) => f.endsWith('.sql'))
-    .sort())
-    await db.exec(readFileSync(new URL(file, migrations), 'utf8'));
+  if (process.argv.includes('--setup')) {
+    await db.exec(
+      readFileSync(new URL('../../supabase/.temp/setup-campina.sql', import.meta.url), 'utf8'),
+    );
+  } else {
+    for (const file of readdirSync(migrations)
+      .filter((f) => f.endsWith('.sql'))
+      .sort())
+      await db.exec(readFileSync(new URL(file, migrations), 'utf8'));
+  }
   const household = (
     await db.query(`select private.provision_household('admin@example.test') as id`)
   ).rows[0].id;

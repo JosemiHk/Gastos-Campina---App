@@ -16,7 +16,9 @@
 
 ## Pendiente de entorno y validación real
 
-El usuario aún no tiene proyecto Supabase. No se han aplicado migraciones externas ni verificado correo, sesiones o Storage contra una instancia real. Tampoco se ha desplegado en Vercel ni subido a GitHub.
+El proyecto Supabase está creado y la URL y clave pública quedaron configuradas exclusivamente en archivos locales excluidos de Git. La consulta pública de Auth respondió HTTP 200; la función `get_household` todavía no está instalada (PGRST202). Falta aplicar las migraciones, desactivar el registro público, configurar el correo y crear el administrador. No se han verificado sesiones ni Storage contra la instancia real. El repositorio ya tiene un remoto de GitHub; Vercel sigue pendiente.
+
+El usuario indicó el nombre y correo del primer administrador. La solicitud se conserva exclusivamente en `supabase/.temp/admin-request.json`, excluido de Git; no significa que la cuenta ya exista. Se sugirió la integración Supabase para obtener acceso administrativo sin compartir claves secretas. Está pendiente de que el usuario complete la autorización.
 
 La exportación PNG está implementada y requiere inspección del archivo generado en un navegador real, junto con las pruebas de compartición en dispositivos. Los tests de componentes verifican contenido y comportamiento, no píxeles.
 
