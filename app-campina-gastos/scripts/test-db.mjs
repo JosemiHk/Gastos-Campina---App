@@ -22,6 +22,7 @@ try {
     create table storage.objects(id uuid default gen_random_uuid() primary key,bucket_id text,name text,metadata jsonb);
     alter table storage.objects enable row level security;
     grant usage on schema storage to authenticated; grant select,insert,delete on storage.objects to authenticated;
+    create function public.rls_auto_enable() returns event_trigger language plpgsql security definer as $$ begin end $$;
     insert into auth.users values('${admin}','admin@example.test'),('${viewer}','viewer@example.test'),('${outsider}','outside@example.test');`);
   const migrations = new URL('../../supabase/migrations/', import.meta.url);
   if (process.argv.includes('--setup')) {
@@ -34,6 +35,15 @@ try {
       .sort())
       await db.exec(readFileSync(new URL(file, migrations), 'utf8'));
   }
+  await check('La función interna de RLS no puede invocarse desde clientes', async () => {
+    const permissions = (
+      await db.query(`select
+      has_function_privilege('anon','public.rls_auto_enable()','EXECUTE') as anon,
+      has_function_privilege('authenticated','public.rls_auto_enable()','EXECUTE') as authenticated`)
+    ).rows[0];
+    assert.equal(permissions.anon, false);
+    assert.equal(permissions.authenticated, false);
+  })();
   const household = (
     await db.query(`select private.provision_household('admin@example.test') as id`)
   ).rows[0].id;

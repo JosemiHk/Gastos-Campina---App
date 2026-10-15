@@ -28,7 +28,17 @@ git config --local core.hooksPath .githooks
 
 El control de GitHub Actions también ejecuta la auditoría, pero ocurre después de la subida; no sustituye la comprobación local.
 
-## Alcance
+## Revisión de Supabase alojado
+
+Se comprobaron RLS en las 14 tablas, ausencia de permisos anónimos para las operaciones de la aplicación, rechazo de escrituras directas y almacenamiento privado. Se retiró `EXECUTE` de `public.rls_auto_enable()` para `PUBLIC`, `anon` y `authenticated`; su event trigger conserva el funcionamiento administrativo.
+
+Los asesores conservan seis avisos de [RPC con SECURITY DEFINER para usuarios autenticados](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable). Son los seis puntos de entrada intencionales de la aplicación: lectura exige pertenencia activa y cada escritura comprueba administrador, hogar y revisión; `search_path` está vacío, los permisos anónimos revocados y los auxiliares internos restringidos. Las pruebas locales cubren consulta y escrituras cruzadas; la instancia alojada se verificó también con roles reales. No se cambia a SECURITY INVOKER porque los clientes no tienen permisos directos de escritura sobre las tablas.
+
+Queda pendiente deshabilitar el registro público en el panel Auth y configurar el correo. El asesor también informa que está desactivada la [protección de contraseñas filtradas](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection); el flujo de la aplicación usa OTP, pero la cuenta creada administrativamente conserva la contraseña elegida por su propietario.
+
+Los avisos informativos de [claves foráneas sin índice](https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys) quedan registrados para revisar con volumen real y planes de consulta; existen índices para usuario, recibos, cálculos, pagos y actividad. No se eliminaron índices por el aviso de falta de uso en una base recién creada. Esto no constituye una validación de rendimiento a escala.
+
+## Límites de la auditoría
 
 La búsqueda automática reconoce patrones habituales y archivos sensibles. No puede garantizar detectar todas las credenciales posibles ni interpretar texto dentro de imágenes. Antes de agregar nuevos comprobantes o capturas, revisa que no contengan información personal real.
 

@@ -16,9 +16,11 @@
 
 ## Pendiente de entorno y validación real
 
-El proyecto Supabase está creado y la URL y clave pública quedaron configuradas exclusivamente en archivos locales excluidos de Git. La consulta pública de Auth respondió HTTP 200; la función `get_household` todavía no está instalada (PGRST202). Falta aplicar las migraciones, desactivar el registro público, configurar el correo y crear el administrador. No se han verificado sesiones ni Storage contra la instancia real. El repositorio ya tiene un remoto de GitHub; Vercel sigue pendiente.
+Las cuatro migraciones están aplicadas en Supabase y sus versiones locales coinciden con el historial remoto. Las 14 tablas tienen RLS; el bucket `receipts` es privado y limita archivos a JPG/PNG/PDF de 10 MiB. La URL y clave pública están exclusivamente en archivos locales excluidos de Git. El repositorio tiene remoto de GitHub; Vercel sigue pendiente.
 
-El usuario indicó el nombre y correo del primer administrador. La solicitud se conserva exclusivamente en `supabase/.temp/admin-request.json`, excluido de Git; no significa que la cuenta ya exista. Se sugirió la integración Supabase para obtener acceso administrativo sin compartir claves secretas. Está pendiente de que el usuario complete la autorización.
+El propietario creó y confirmó la cuenta en Auth. Se configuraron su nombre y pertenencia activa como administrador, y se aprovisionó el hogar con sus reglas iniciales. Sus datos de alta se conservan en `supabase/.temp/admin-request.json`, excluido de Git. La verificación remota mediante el rol `authenticated` comprobó lectura como administrador, tres recibos, cálculo y cierre dentro de una transacción revertida; no quedaron periodos ni recibos de prueba. También se verificaron las denegaciones para acceso anónimo y ausencia de identidad. Estas comprobaciones SQL no sustituyen una sesión real del navegador.
+
+Pendiente en el panel de Auth: desactivar el registro público (la consulta de settings aún lo muestra habilitado), configurar Site URL/redirecciones, SMTP y plantilla Magic Link con código de seis dígitos. El MCP conectado no ofrece administración de usuarios ni de configuración de Auth. No se han probado entrega de correo, sesión real ni transferencia de archivos mediante la API de Storage. Ver `SETUP.md` y `SECURITY.md`.
 
 La exportación PNG está implementada y requiere inspección del archivo generado en un navegador real, junto con las pruebas de compartición en dispositivos. Los tests de componentes verifican contenido y comportamiento, no píxeles.
 

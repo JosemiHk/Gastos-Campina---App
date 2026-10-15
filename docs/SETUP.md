@@ -33,11 +33,11 @@ supabase link --project-ref TU_PROJECT_REF
 supabase db push
 ```
 
-Alternativamente, ejecuta una sola vez y en orden los tres archivos de `supabase/migrations` mediante SQL Editor. No apliques ambas alternativas sobre una base ya migrada.
+Alternativamente, ejecuta una sola vez y en orden los archivos de `supabase/migrations` mediante SQL Editor. No apliques ambas alternativas sobre una base ya migrada. El proyecto conectado ya tiene las migraciones aplicadas mediante MCP; no vuelvas a instalarlo.
 
-Para preparar un solo archivo con las tres migraciones, desde `app-campina-gastos` ejecuta `npm run prepare:supabase`. Copia todo el contenido de `supabase/.temp/setup-campina.sql` en SQL Editor y pulsa Run. El archivo está excluido de Git y envuelve la instalación en una transacción. Úsalo únicamente para la instalación inicial en un proyecto vacío; los archivos de `migrations` siguen siendo la fuente de verdad.
+Para preparar un solo archivo con todas las migraciones, desde `app-campina-gastos` ejecuta `npm run prepare:supabase`. Copia todo el contenido de `supabase/.temp/setup-campina.sql` en SQL Editor y pulsa Run. El archivo está excluido de Git y envuelve la instalación en una transacción. Úsalo únicamente para la instalación inicial en un proyecto vacío; los archivos de `migrations` siguen siendo la fuente de verdad.
 
-Si instalas mediante SQL Editor y más adelante adoptas la CLI, tras verificar que las tres migraciones se ejecutaron correctamente y enlazar el proyecto, registra su estado con `supabase migration repair --status applied 202610150001 202610150002 202610150003`. Luego comprueba `supabase migration list` antes de usar `supabase db push`. Este paso solo sincroniza el historial de migraciones ya aplicadas; no ejecuta su SQL. [Documentación de Supabase](https://supabase.com/docs/guides/deployment/database-migrations).
+Si instalas un proyecto nuevo mediante SQL Editor y más adelante adoptas la CLI, tras verificar que todas las migraciones se ejecutaron correctamente y enlazar el proyecto, registra su estado con `supabase migration repair --status applied` seguido de las versiones de los archivos realmente aplicados. Luego comprueba `supabase migration list` antes de usar `supabase db push`. No repares el historial del proyecto ya conectado: MCP lo registró y los nombres locales coinciden. [Documentación de Supabase](https://supabase.com/docs/guides/deployment/database-migrations).
 
 Las migraciones crean tablas, restricciones, funciones protegidas, RLS y el bucket privado `receipts`. No insertan recibos ni cuentas de prueba.
 
@@ -49,10 +49,14 @@ En Supabase Auth:
 - Configura SMTP para envío real de correos.
 - Establece OTP de seis dígitos, vigencia de 600 segundos y espera de 60 segundos entre envíos.
 - Site URL: `http://127.0.0.1:4200` en desarrollo; el dominio definitivo en producción.
-- Autoriza `/acceso/confirmar` en las URL de redirección del dominio correspondiente.
+- Autoriza `http://127.0.0.1:4200/acceso/confirmar` y `http://localhost:4200/acceso/confirmar` durante el desarrollo. En producción autoriza la URL completa equivalente del dominio definitivo.
 - Copia `supabase/templates/magic-link.html` en la plantilla **Magic Link**. Incluye `{{ .Token }}` y el enlace de `{{ .TokenHash }}`.
 
 Ingreso y recuperación usan la misma autenticación sin contraseña. La confirmación requiere pulsar Continuar antes de consumir el enlace para evitar que un escáner de correo lo use automáticamente. No utiliza la plantilla de restablecimiento de contraseña.
+
+En proyectos Free nuevos, el SMTP predeterminado no permite modificar las plantillas: configura SMTP propio antes de copiar la plantilla con OTP. Además, el servicio predeterminado solo envía a miembros autorizados del equipo del proyecto; crear una cuenta en Auth no agrega su correo a ese equipo. [Restricción de plantillas](https://supabase.com/changelog/46599-changes-to-email-template-customisation-on-free-tier), [configuración SMTP](https://supabase.com/docs/guides/auth/auth-smtp).
+
+`supabase/config.toml` configura la instancia local, no aplica estos ajustes automáticamente al proyecto alojado. El MCP conectado permite SQL y migraciones, pero no modifica la configuración de Auth.
 
 ## Crear el primer administrador
 
