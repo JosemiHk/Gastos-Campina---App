@@ -25,6 +25,9 @@ try {
     create function public.rls_auto_enable() returns event_trigger language plpgsql security definer as $$ begin end $$;
     insert into auth.users values('${admin}','admin@example.test'),('${viewer}','viewer@example.test'),('${outsider}','outside@example.test');`);
   const migrations = new URL('../../supabase/migrations/', import.meta.url);
+  const upgradeFile = readdirSync(migrations).find((name) =>
+    name.endsWith('_editable_household_settings.sql'),
+  );
   if (process.argv.includes('--setup')) {
     await db.exec(
       readFileSync(new URL('../../supabase/.temp/setup-campina.sql', import.meta.url), 'utf8'),
@@ -32,6 +35,7 @@ try {
   } else {
     for (const file of readdirSync(migrations)
       .filter((f) => f.endsWith('.sql'))
+      .filter((f) => !process.argv.includes('--upgrade') || f !== upgradeFile)
       .sort())
       await db.exec(readFileSync(new URL(file, migrations), 'utf8'));
   }
@@ -268,10 +272,189 @@ try {
       assert.equal(deleted.rows.length, 0);
     },
   )();
+  await asUser(admin);
+  if (process.argv.includes('--upgrade')) {
+    const before = (await bundle()).periods.find((p) => p.month === '2026-10-01').calculation;
+    await db.exec('reset role');
+    await db.exec(readFileSync(new URL(upgradeFile, migrations), 'utf8'));
+    await asUser(admin);
+    await check(
+      'La migración actualiza un hogar existente sin modificar importes ni nombres cerrados',
+      async () => {
+        const { groupMembers, ...after } = (await bundle()).periods.find(
+          (p) => p.month === '2026-10-01',
+        ).calculation;
+        assert.deepEqual(after, before);
+        assert.deepEqual(groupMembers.twins, ['Amy', 'Annie']);
+      },
+    )();
+  }
+  const closedBeforeSettings = JSON.stringify(
+    (await bundle()).periods.find((p) => p.month === '2026-10-01'),
+  );
+  const editableGroups = (await bundle()).groups.map(({ code, name, members }) => ({
+    code,
+    name,
+    members,
+  }));
+  editableGroups[0].name = 'Familia norte';
+  editableGroups[0].members = ['Ana', 'Bea'];
+  const participants = {
+    water: ['twins', 'miguel', 'jm'],
+    electricity: ['twins', 'miguel', 'jm'],
+    internet: ['jm', 'twins', 'miguel'],
+  };
+  async function saveHouseholdSettings(
+    month,
+    groups = editableGroups,
+    rules = participants,
+    configurationRevision,
+    periodRevision,
+  ) {
+    const data = await bundle();
+    const revision = periodRevision ?? data.periods.find((p) => p.month === month)?.revision ?? 0;
+    return db.query(
+      'select public.save_household_settings($1,$2,$3,$4,2000,$5::jsonb,$6::jsonb,$7::jsonb)',
+      [
+        household,
+        month,
+        revision,
+        configurationRevision ?? data.household.configurationRevision,
+        '[]',
+        JSON.stringify(groups),
+        JSON.stringify(rules),
+      ],
+    );
+  }
+  await check(
+    'Se editan nombres e integrantes y los servicios conservan orden canónico',
+    async () => {
+      await saveHouseholdSettings('2027-01-01');
+      const data = await bundle();
+      assert.equal(data.groups[0].name, 'Familia norte');
+      assert.deepEqual(data.groups[0].members, ['Ana', 'Bea']);
+      assert.deepEqual(data.household.participants.internet, ['twins', 'miguel', 'jm']);
+      assert.equal(
+        JSON.stringify(data.periods.find((p) => p.month === '2026-10-01')),
+        closedBeforeSettings,
+      );
+      assert.equal(
+        data.periods
+          .find((p) => p.month === '2026-10-01')
+          .calculation.groupMembers.twins.join(', '),
+        'Amy, Annie',
+      );
+    },
+  )();
+  await check('El nuevo reparto coincide al céntimo y congela nombres e integrantes', async () => {
+    await save('water', 9000, 1, '2027-01-01');
+    await save('electricity', 18000, 2, '2027-01-01');
+    await save('internet', 12000, 3, '2027-01-01');
+    const p = (await bundle()).periods.find((p) => p.month === '2027-01-01');
+    const totals = { twins: 0, miguel: 0, jm: 0, rossana: 0 };
+    p.calculation.allocations.forEach((a) => {
+      totals[a.groupCode] += a.amountCents;
+    });
+    assert.deepEqual(totals, { twins: 12334, miguel: 12333, jm: 12333, rossana: 2000 });
+    assert.equal(p.calculation.groupNames.twins, 'Familia norte');
+    assert.deepEqual(p.calculation.groupMembers.twins, ['Ana', 'Bea']);
+  })();
+  await check(
+    'Configuraciones inválidas revierten nombres, reglas, cálculos y revisiones',
+    async () => {
+      const before = JSON.stringify(await bundle());
+      const invalidRules = [
+        { ...participants, internet: [] },
+        { ...participants, internet: ['rossana'] },
+        { ...participants, internet: ['jm', 'jm'] },
+        { ...participants, internet: ['unknown'] },
+        { ...participants, internet: ['jm'], unknown: ['jm'] },
+      ];
+      for (const rules of invalidRules)
+        await assert.rejects(saveHouseholdSettings('2027-01-01', editableGroups, rules));
+      for (const groups of [
+        editableGroups.slice(0, 3),
+        editableGroups.map((g, i) => (i === 0 ? { ...g, name: '   ' } : g)),
+        editableGroups.map((g, i) => (i === 0 ? { ...g, members: ['Ana', 'ana'] } : g)),
+        editableGroups.map((g, i) => (i === 0 ? { ...g, code: 'unknown' } : g)),
+      ])
+        await assert.rejects(saveHouseholdSettings('2027-01-01', groups));
+      assert.equal(JSON.stringify(await bundle()), before);
+    },
+  )();
+  await check(
+    'Se permite un solo grupo por servicio sin asignar cuotas a los excluidos',
+    async () => {
+      const rules = { ...participants, water: ['jm'], internet: ['twins'] };
+      await saveHouseholdSettings('2027-01-01', editableGroups, rules);
+      const allocations = (await bundle()).periods.find((p) => p.month === '2027-01-01').calculation
+        .allocations;
+      assert.deepEqual(
+        allocations.filter((a) => a.service === 'water').map((a) => [a.groupCode, a.amountCents]),
+        [['jm', 9000]],
+      );
+      assert.deepEqual(
+        allocations
+          .filter((a) => a.service === 'internet')
+          .map((a) => [a.groupCode, a.amountCents]),
+        [['twins', 12000]],
+      );
+    },
+  )();
+  await check(
+    'La revisión compartida evita sobrescrituras desde otros meses y clientes anteriores',
+    async () => {
+      const old = (await bundle()).household.configurationRevision;
+      await saveHouseholdSettings('2027-02-01');
+      await assert.rejects(saveHouseholdSettings('2027-01-01', editableGroups, participants, old));
+      const next = (await bundle()).household.configurationRevision;
+      await db.query('select public.save_settings($1,$2,1,2000,$3::jsonb)', [
+        household,
+        '2027-02-01',
+        '[]',
+      ]);
+      assert.equal((await bundle()).household.configurationRevision, next + 1);
+      await assert.rejects(saveHouseholdSettings('2027-03-01', editableGroups, participants, next));
+      assert.equal(
+        (await bundle()).periods.some((p) => p.month === '2027-03-01'),
+        false,
+      );
+    },
+  )();
+  await check('El editor rechaza meses cerrados, consulta y escrituras entre hogares', async () => {
+    await assert.rejects(saveHouseholdSettings('2026-10-01'));
+    const data = await bundle();
+    const args = [
+      household,
+      '2027-04-01',
+      0,
+      data.household.configurationRevision,
+      '[]',
+      JSON.stringify(editableGroups),
+      JSON.stringify(participants),
+    ];
+    for (const user of [viewer, outsider]) {
+      await asUser(user);
+      await assert.rejects(
+        db.query(
+          'select public.save_household_settings($1,$2,$3,$4,2000,$5::jsonb,$6::jsonb,$7::jsonb)',
+          args,
+        ),
+      );
+    }
+    await asUser(admin);
+    assert.equal(
+      JSON.stringify((await bundle()).periods.find((p) => p.month === '2026-10-01')),
+      closedBeforeSettings,
+    );
+  })();
   await db.exec('reset role; set role anon');
   await check('El acceso anónimo no puede leer ni invocar operaciones privadas', async () => {
     await assert.rejects(db.query('select public.get_household()'));
     await assert.rejects(db.query('select * from public.receipts'));
+    await assert.rejects(
+      db.query(`select public.save_household_settings(null,null,0,0,0,'[]','[]','{}')`),
+    );
   })();
   process.stdout.write(`\n${checks} comprobaciones PostgreSQL correctas.\n`);
 } finally {

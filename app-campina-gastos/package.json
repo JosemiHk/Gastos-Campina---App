@@ -8,6 +8,7 @@
     "watch": "node scripts/config.mjs && ng build --watch --configuration development",
     "test": "ng test --watch=false",
     "test:db": "node scripts/test-db.mjs",
+    "test:upgrade": "node scripts/test-db.mjs --upgrade",
     "format": "prettier --write src scripts",
     "format:check": "prettier --check src scripts",
     "security:check": "node scripts/audit-secrets.mjs --history",
