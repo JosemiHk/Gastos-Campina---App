@@ -35,6 +35,8 @@ supabase db push
 
 Alternativamente, ejecuta una sola vez y en orden los archivos de `supabase/migrations` mediante SQL Editor. No apliques ambas alternativas sobre una base ya migrada. El proyecto conectado ya tiene las migraciones aplicadas mediante MCP; no vuelvas a instalarlo.
 
+La rama `codex/editable-household-settings` añade una migración pendiente para la edición de grupos y participantes. Aún no está aplicada al proyecto conectado. Para revisarla utiliza una instancia de pruebas siguiendo `REVIEW_SETTINGS.md`; no ejecutes `db push` contra producción antes de aprobarla.
+
 Para preparar un solo archivo con todas las migraciones, desde `app-campina-gastos` ejecuta `npm run prepare:supabase`. Copia todo el contenido de `supabase/.temp/setup-campina.sql` en SQL Editor y pulsa Run. El archivo está excluido de Git y envuelve la instalación en una transacción. Úsalo únicamente para la instalación inicial en un proyecto vacío; los archivos de `migrations` siguen siendo la fuente de verdad.
 
 Si instalas un proyecto nuevo mediante SQL Editor y más adelante adoptas la CLI, tras verificar que todas las migraciones se ejecutaron correctamente y enlazar el proyecto, registra su estado con `supabase migration repair --status applied` seguido de las versiones de los archivos realmente aplicados. Luego comprueba `supabase migration list` antes de usar `supabase db push`. No repares el historial del proyecto ya conectado: MCP lo registró y los nombres locales coinciden. [Documentación de Supabase](https://supabase.com/docs/guides/deployment/database-migrations).
@@ -113,6 +115,7 @@ Desde `app-campina-gastos`:
 npm run format:check
 npm test
 npm run test:db
+npm run test:upgrade
 npm run build
 ```
 
