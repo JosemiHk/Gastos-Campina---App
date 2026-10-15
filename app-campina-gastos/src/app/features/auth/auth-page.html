@@ -1,0 +1,69 @@
+<header class="auth-header"><a routerLink="/acceso" aria-label="Campiña Gastos, inicio"><app-brand /></a><span class="header-hint"><app-icon name="lock" /> Acceso privado del hogar</span></header>
+<main class="auth-main" [class.login-main]="mode === 'login'">
+  @if (mode === 'login') {
+    <section class="login-card card">
+      <div class="welcome">
+        <span class="badge"><app-icon name="leaf" /> Hogar armonioso</span>
+        <div class="welcome-mobile-icon"><app-icon name="home" /></div>
+        <h1>Bienvenido a Campiña</h1><p>Los servicios del hogar, en orden.<br class="desktop-only"> Cuentas claras para toda la familia.</p>
+        <div class="welcome-detail card"><span class="muted">Cada mes, más simple</span><hr class="separator"><div class="row"><app-icon name="water" /><span class="grow">Agua, luz e internet</span><strong>Reparto justo</strong></div></div>
+        <span class="welcome-foot"><app-icon name="shield" /> Transparencia y tranquilidad en casa</span>
+      </div>
+      <div class="login-form">
+        <div class="form-title"><h2>Iniciar sesión</h2><span class="badge"><app-icon name="key" /> Sin contraseña</span></div>
+        <p>Ingresa con tu correo autorizado del hogar.</p>
+        <form (ngSubmit)="submitEmail()" class="stack">
+          <div class="field"><label for="login-email">Correo electrónico</label><div class="input-icon"><app-icon name="mail" /><input id="login-email" type="email" autocomplete="email" placeholder="tu@correo.com" [formControl]="email" [attr.aria-invalid]="email.touched && email.invalid" aria-describedby="email-hint"></div><small id="email-hint">Te enviaremos un código de seguridad de 6 dígitos.</small>@if(email.touched && email.invalid){<small class="field-error">Escribe un correo electrónico válido.</small>}</div>
+          @if(error()){<div class="error-message" role="alert">{{ error() }}</div>}
+          <button mat-flat-button type="submit" [disabled]="busy()">{{ busy() ? 'Enviando código…' : 'Continuar con código' }} <app-icon name="arrow" /></button>
+        </form>
+        <hr class="separator"><span class="eyebrow">Permisos según tu perfil</span>
+        <div class="roles"><div><app-icon name="shield" /><strong>Administrador</strong><p>Recibos, reparto y cierre del mes.</p></div><div><app-icon name="eye" /><strong>Consulta</strong><p>Comprobantes, cálculos y resúmenes.</p></div></div>
+        <div class="recovery-link"><span>¿Problemas para entrar?</span><a routerLink="/acceso/recuperar">Recuperar acceso <app-icon name="arrow" /></a></div>
+      </div>
+    </section>
+    <div class="security-foot"><span><app-icon name="lock" /> Código de un solo uso</span><span><app-icon name="shield" /> Acceso protegido</span><span><app-icon name="home" /> Tu hogar, en privado</span></div>
+  } @else {
+    <section class="card access-card" [class.sent-card]="mode === 'sent'">
+      <div class="auth-emblem"><app-icon [name]="mode === 'recover' ? 'key' : 'mail'" /></div>
+      @if(mode === 'verify'){
+        <h1>Introduce tu código<br class="desktop-only"> de verificación</h1><p class="intro">Enviamos un código de 6 dígitos a tu correo para acceder al hogar.</p>
+        <a class="email-chip" routerLink="/acceso"><app-icon name="lock" /><strong>{{ auth.maskedEmail() }}</strong><span>Cambiar correo</span></a>
+        <form (ngSubmit)="verify()" class="stack otp-form">
+          <label id="otp-label" class="eyebrow">Código de seguridad de un solo uso</label>
+          <div class="otp-inputs" role="group" aria-labelledby="otp-label">@for(digit of digits(); track $index){<input [id]="'otp-' + $index" [attr.aria-label]="'Dígito ' + ($index + 1)" type="text" inputmode="numeric" pattern="[0-9]*" [attr.autocomplete]="$index === 0 ? 'one-time-code' : 'off'" maxlength="6" [value]="digit" (input)="digitInput($event, $index)" (paste)="paste($event, $index)" (keydown)="key($event, $index)" (focus)="$any($event.target).select()">}</div>
+          <span class="sr-only" aria-live="polite">{{ code().length }} de 6 dígitos</span>
+          @if(error()){<div class="error-message" role="alert">{{ error() }}</div>}
+          <button mat-flat-button [disabled]="busy() || code().length !== 6">{{ busy() ? 'Verificando…' : 'Verificar y entrar' }} <app-icon name="arrow" /></button>
+        </form>
+        <div class="resend"><span>¿No recibiste el código?</span><button class="text-button" (click)="resend()" [disabled]="countdown() > 0 || busy()">{{ countdown() ? 'Reenviar en ' + countdown() + ' s' : 'Reenviar código' }}<app-icon name="refresh" /></button></div>
+        <div class="rule-note"><app-icon name="info" /><span>Revisa también spam o promociones. El código vence en 10 minutos.</span></div>
+      } @else if(mode === 'recover') {
+        <h1>¿Problemas para entrar?</h1><p class="intro">No necesitas recordar contraseñas. Escribe tu correo registrado y te enviaremos un enlace de acceso directo.</p>
+        <form (ngSubmit)="submitEmail()" class="stack recovery-form">
+          <div class="field"><label for="recover-email">Correo electrónico registrado</label><div class="input-icon"><app-icon name="mail" /><input id="recover-email" type="email" autocomplete="email" placeholder="tu@correo.com" [formControl]="email" [attr.aria-invalid]="email.touched && email.invalid"></div>@if(email.touched && email.invalid){<small class="field-error">Escribe un correo electrónico válido.</small>}</div>
+          <div class="rule-note"><app-icon name="people" /><span>Si el correo está autorizado en el hogar, recibirás las instrucciones para ingresar.</span></div>
+          @if(error()){<div class="error-message" role="alert">{{ error() }}</div>}
+          <button mat-flat-button [disabled]="busy()">{{ busy() ? 'Enviando enlace…' : 'Enviar enlace de recuperación' }} <app-icon name="arrow" /></button>
+        </form>
+        <a mat-button routerLink="/acceso">Volver al inicio de sesión</a>
+        <div class="support-note"><app-icon name="info" /><span>¿Cambiaste de correo? Contacta al administrador del hogar para actualizar tus datos.</span></div>
+      } @else if(mode === 'sent') {
+        <h1>¡Enlace de acceso en camino!</h1><p class="intro">Si tu correo está autorizado, recibirás las instrucciones para volver a Campiña.</p>
+        <div class="recipient rule-note"><app-icon name="mail" /><div><span class="muted">Correo indicado</span><strong>{{ auth.pendingEmail() }}</strong></div><span class="badge">Solicitud recibida</span></div>
+        <div class="steps">@for(step of ['Abre tu correo y revisa tu bandeja de entrada o spam.', 'Haz clic en el enlace de acceso o introduce el código temporal.', 'Continúa con los servicios y las cuentas de tu hogar.']; track $index){<div><span class="step-number">{{ $index + 1 }}</span><h3>{{ ['Abre tu correo', 'Sigue el enlace', 'Vuelve a Campiña'][$index] }}</h3><p>{{ step }}</p></div>}</div>
+        @if(error()){<div class="error-message" role="alert">{{ error() }}</div>}
+        <div class="actions"><a mat-flat-button href="mailto:"><app-icon name="mail" /> Abrir mi correo</a><a mat-stroked-button routerLink="/acceso"><app-icon name="back" /> Volver al inicio</a></div>
+        <div class="resend"><button class="text-button" [disabled]="countdown() > 0 || busy()" (click)="resend()">{{ countdown() ? 'Reenviar enlace en ' + countdown() + ' s' : 'Reenviar enlace' }}</button></div>
+        <div class="rule-note"><app-icon name="shield" /><span>Tus recibos y cuentas siguen protegidos. Solo necesitas acceso a tu correo.</span></div>
+      } @else {
+        <h1>Tu hogar te espera</h1><p class="intro">Continúa para verificar tu enlace de acceso seguro.</p>
+        @if(error()){<div class="error-message" role="alert">{{ error() }}</div>}
+        <button mat-flat-button (click)="callback()" [disabled]="busy()">{{ busy() ? 'Verificando enlace…' : 'Continuar a Campiña' }} <app-icon name="arrow" /></button>
+        <a mat-button routerLink="/acceso/recuperar">Solicitar un enlace nuevo</a>
+      }
+    </section>
+    @if(mode !== 'recover'){<div class="security-foot"><span><app-icon name="shield" /> Acceso protegido</span><span><app-icon name="people" /> Privacidad familiar</span></div>}
+  }
+</main>
+<footer class="auth-footer">© {{ year }} Campiña Gastos <span>·</span> Tranquilidad doméstica compartida</footer>
