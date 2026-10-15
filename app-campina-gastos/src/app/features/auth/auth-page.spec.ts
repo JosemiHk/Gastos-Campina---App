@@ -69,4 +69,24 @@ describe('pantallas de acceso', () => {
     expect(harness.routeNativeElement?.textContent).toContain('Enlace de acceso en camino');
     expect(harness.routeNativeElement?.querySelector('input[type="password"]')).toBeNull();
   });
+  it.each([
+    ['/acceso', 'send'],
+    ['/acceso/recuperar', 'send'],
+    ['/acceso/verificar', 'verify'],
+  ] as const)('enviar el formulario %s no recarga la página', async (path, operation) => {
+    auth.send.mockResolvedValue(undefined);
+    auth.verify.mockResolvedValue(undefined);
+    const harness = await RouterTestingHarness.create(path);
+    const page = await harness.navigateByUrl(path, AuthPage);
+    page.email.setValue('familia@example.test');
+    page.digits.set(['1', '2', '3', '4', '5', '6']);
+    harness.detectChanges();
+    const event = new Event('submit', { bubbles: true, cancelable: true });
+    harness.routeNativeElement!.querySelector('form')!.dispatchEvent(event);
+    expect(event.defaultPrevented).toBe(true);
+    expect(auth[operation]).toHaveBeenCalledWith(
+      operation === 'send' ? 'familia@example.test' : '123456',
+    );
+    await harness.fixture.whenStable();
+  });
 });

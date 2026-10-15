@@ -31,7 +31,7 @@
           <span class="badge"><app-icon name="key" /> Sin contraseña</span>
         </div>
         <p>Ingresa con tu correo autorizado del hogar.</p>
-        <form (ngSubmit)="submitEmail()" class="stack">
+        <form (submit)="$event.preventDefault(); submitEmail()" class="stack">
           <div class="field">
             <label for="login-email">Correo electrónico</label>
             <div class="input-icon">
@@ -93,7 +93,7 @@
           ><app-icon name="lock" /><strong>{{ auth.maskedEmail() }}</strong
           ><span>Cambiar correo</span></a
         >
-        <form (ngSubmit)="verify()" class="stack otp-form">
+        <form (submit)="$event.preventDefault(); verify()" class="stack otp-form">
           <label id="otp-label" class="eyebrow">Código de seguridad de un solo uso</label>
           <div class="otp-inputs" role="group" aria-labelledby="otp-label">
             @for (digit of digits(); track $index) {
@@ -139,7 +139,7 @@
           No necesitas recordar contraseñas. Escribe tu correo registrado y te enviaremos un enlace
           de acceso directo.
         </p>
-        <form (ngSubmit)="submitEmail()" class="stack recovery-form">
+        <form (submit)="$event.preventDefault(); submitEmail()" class="stack recovery-form">
           <div class="field">
             <label for="recover-email">Correo electrónico registrado</label>
             <div class="input-icon">
