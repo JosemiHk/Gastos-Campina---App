@@ -13,12 +13,16 @@ jobs:
         working-directory: app-campina-gastos
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '24.15.0'
           cache: npm
           cache-dependency-path: app-campina-gastos/package-lock.json
       - run: npm ci
+      - run: npm run test:security
+      - run: npm run security:check
       - run: npm run format:check
       - run: npm test
       - run: npm run test:db

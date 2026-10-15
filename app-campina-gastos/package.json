@@ -9,7 +9,9 @@
     "test": "ng test --watch=false",
     "test:db": "node scripts/test-db.mjs",
     "format": "prettier --write src scripts",
-    "format:check": "prettier --check src scripts"
+    "format:check": "prettier --check src scripts",
+    "security:check": "node scripts/audit-secrets.mjs --history",
+    "test:security": "node --test scripts/audit-secrets.test.mjs"
   },
   "private": true,
   "packageManager": "npm@11.12.1",

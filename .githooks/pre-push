@@ -1,0 +1,2 @@
+#!/bin/sh
+node app-campina-gastos/scripts/audit-secrets.mjs --staged --history
