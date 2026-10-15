@@ -1,0 +1,188 @@
+<div class="page-heading">
+  <div>
+    <span class="eyebrow">{{ monthLabel(store.selectedMonth()) }}</span>
+    <h1>Hola, familia Campiña</h1>
+    <p>Las cuentas compartidas del mes, en un solo lugar.</p>
+  </div>
+  <div class="actions">
+    <a mat-stroked-button routerLink="/compartir" queryParamsHandling="preserve"
+      ><app-icon name="share" />Resumen WhatsApp</a
+    >
+    @if (store.isAdmin() && !store.closed()) {
+      <a mat-flat-button routerLink="/registrar" queryParamsHandling="preserve"
+        ><app-icon name="plus" />Nuevo recibo</a
+      >
+    }
+  </div>
+</div>
+<div class="overview-grid">
+  <section class="hero month-total">
+    <div class="row">
+      <span class="eyebrow">Resumen del mes</span
+      ><span class="badge">{{ count() }} de 3 recibos</span>
+    </div>
+    <p>Gasto total del mes</p>
+    <strong class="money total-amount">{{ money(store.calculation()?.totalCents ?? 0) }}</strong>
+    <div
+      class="progress-track"
+      role="progressbar"
+      [attr.aria-valuenow]="count()"
+      aria-valuemin="0"
+      aria-valuemax="3"
+      aria-label="Recibos confirmados"
+    >
+      <span [style.width.%]="(count() / 3) * 100"></span>
+    </div>
+    <div class="hero-foot">
+      <span>{{
+        count() === 3
+          ? 'Recibos completos'
+          : count() === 0
+            ? 'Empecemos con el primer recibo'
+            : 'Resumen parcial'
+      }}</span
+      ><app-icon [name]="count() === 3 ? 'check' : 'receipt'" />
+    </div>
+  </section>
+  @for (service of services; track service.code) {
+    <section class="card service-tile">
+      <div class="row">
+        <span
+          class="icon-tile"
+          [class.electricity]="service.code === 'electricity'"
+          [class.internet]="service.code === 'internet'"
+          ><app-icon [name]="service.icon" /></span
+        ><span class="badge" [class.pending]="receipt(service.code)?.status !== 'confirmed'">{{
+          receipt(service.code)?.status === 'confirmed'
+            ? 'Registrado'
+            : receipt(service.code)
+              ? 'Borrador'
+              : 'Sin recibo'
+        }}</span>
+      </div>
+      <p>{{ service.provider }}</p>
+      <h2>{{ service.name }}</h2>
+      <strong class="money">{{
+        receipt(service.code)?.status === 'confirmed'
+          ? money(receipt(service.code)!.amountCents)
+          : '—'
+      }}</strong>
+      <div class="service-rule">{{ service.rule }}</div>
+    </section>
+  }
+</div>
+@if (store.receipts().length === 0) {
+  <section class="card empty-state first-receipt">
+    <span class="icon-tile"><app-icon name="receipt" /></span>
+    <h2>Un mes en orden empieza aquí</h2>
+    <p>Registra los recibos de agua, luz e internet. Campiña hará el reparto por ti.</p>
+    @if (store.isAdmin() && !store.closed()) {
+      <a mat-flat-button routerLink="/registrar" queryParamsHandling="preserve"
+        ><app-icon name="plus" />Registrar primer recibo</a
+      >
+    } @else {
+      <p>El administrador puede registrar los recibos de este mes.</p>
+    }
+  </section>
+} @else {
+  <div class="dashboard-columns">
+    <div>
+      <div class="section-heading">
+        <h2>Servicios del mes</h2>
+        <span class="badge">{{ count() }}/3 registrados</span>
+      </div>
+      <div class="stack">
+        @for (service of services; track service.code) {
+          @if (receipt(service.code); as bill) {
+            <article class="card bill-row">
+              <div class="row">
+                <span class="icon-tile"><app-icon [name]="service.icon" /></span>
+                <div class="grow">
+                  <h3>{{ service.name }}</h3>
+                  <p>
+                    {{ bill.status === 'draft' ? 'Borrador · fuera del reparto' : service.rule }}
+                  </p>
+                </div>
+                <strong class="money">{{ money(bill.amountCents) }}</strong>
+              </div>
+              @if (service.code === 'electricity' && bill.status === 'confirmed') {
+                <div class="bill-rule">
+                  <app-icon name="snow" />Aporte de Rossana:
+                  {{ money(store.fixedContributionCents()) }} · Saldo común:
+                  {{ money(bill.amountCents - store.fixedContributionCents()) }}
+                </div>
+              }
+              <div class="bill-actions">
+                @if (bill.filePath) {
+                  <button class="text-button" (click)="preview.open(bill)">
+                    <app-icon name="eye" />Ver comprobante
+                  </button>
+                } @else {
+                  <small class="muted">Sin comprobante adjunto</small>
+                }
+                @if (store.isAdmin() && !store.closed()) {
+                  <a
+                    routerLink="/registrar"
+                    [queryParams]="{ mes: store.selectedMonth().slice(0, 7), recibo: bill.id }"
+                    ><app-icon name="edit" />Editar</a
+                  >
+                }
+              </div>
+            </article>
+          }
+        }
+      </div>
+      @if (count() > 0) {
+        <div class="section-heading">
+          <h2>Reparto por grupo</h2>
+          <a routerLink="/calculo" queryParamsHandling="preserve">Ver detalle</a>
+        </div>
+        <app-group-cards />
+      }
+    </div>
+    <aside>
+      <div class="section-heading">
+        <h2>Para transferir</h2>
+        <app-icon name="wallet" />
+      </div>
+      <section class="card transfer-card">
+        @if (store.data()!.accounts.length) {
+          @for (account of store.data()!.accounts; track account.id) {
+            <div class="account">
+              <span class="badge">{{ account.label }}</span
+              ><strong>{{ account.number }}</strong
+              ><small>{{ account.holder }}</small>
+              @if (account.cci) {
+                <small>CCI: {{ account.cci }}</small>
+              }
+            </div>
+          }
+        } @else {
+          <p>Los datos de transferencia todavía no están configurados.</p>
+          @if (store.isAdmin()) {
+            <a routerLink="/configuracion" queryParamsHandling="preserve"
+              >Agregar datos de transferencia</a
+            >
+          }
+        }
+      </section>
+      <div class="section-heading">
+        <h2>Actividad reciente</h2>
+        <app-icon name="clock" />
+      </div>
+      <section class="card activity-card">
+        @for (event of store.period()?.activity?.slice(0, 5); track event.id) {
+          <div class="activity">
+            <span class="activity-dot"></span>
+            <div>
+              <p>{{ event.description }}</p>
+              <small>{{ event.createdAt | date: 'dd/MM/yyyy · HH:mm' : '-0500' }}</small>
+            </div>
+          </div>
+        } @empty {
+          <p>Los cambios de este mes aparecerán aquí.</p>
+        }
+      </section>
+    </aside>
+  </div>
+}

@@ -1,0 +1,110 @@
+<div class="group-grid" [class.detailed]="detailed()">
+  @for (group of store.data()?.groups; track group.id) {
+    @if (visible(group.code)) {
+      <article class="card group-card" [class.special]="group.kind === 'special'">
+        <div class="row group-heading">
+          <span class="avatar">{{
+            group.code === 'twins'
+              ? 'G'
+              : group.code === 'miguel'
+                ? 'M'
+                : group.code === 'jm'
+                  ? 'JM'
+                  : 'R'
+          }}</span>
+          <div class="grow">
+            <h3>{{ groupName(group.code) }}</h3>
+            <p>
+              {{
+                group.code === 'rossana' ? 'Aporte fijo · congeladora' : group.members.join(' y ')
+              }}
+            </p>
+          </div>
+          @if (detailed()) {
+            <span class="badge" [class.pending]="store.balance(group.code) > 0">{{
+              store.balance(group.code) > 0
+                ? 'Pendiente'
+                : store.paid(group.code) > 0
+                  ? 'Pagado'
+                  : 'Sin saldo'
+            }}</span>
+          }
+        </div>
+        <div class="group-total">
+          <span class="muted">{{ detailed() ? 'Cuota del mes' : '' }}</span
+          ><strong class="money">{{ money(store.totals()[group.code]) }}</strong>
+          @if (!detailed()) {
+            <span class="badge" [class.pending]="store.balance(group.code) > 0">{{
+              store.balance(group.code) > 0
+                ? 'Pendiente'
+                : store.paid(group.code) > 0
+                  ? 'Pagado'
+                  : 'Sin saldo'
+            }}</span>
+          }
+        </div>
+        @if (detailed()) {
+          <div class="breakdown">
+            @if (group.kind === 'special') {
+              <div class="row">
+                <app-icon name="snow" /><span class="grow">Consumo de congeladora</span
+                ><strong class="money">{{ money(store.totals()[group.code]) }}</strong>
+              </div>
+            } @else {
+              @for (service of services; track service.code) {
+                <div class="row">
+                  <app-icon [name]="service.icon" /><span class="grow">{{ service.name }}</span>
+                  @if (group.code === 'twins' && service.code === 'internet') {
+                    <span class="muted">Excluidas</span>
+                  } @else if (!hasService(service.code)) {
+                    <span class="muted">Sin recibo</span>
+                  } @else {
+                    <strong class="money">{{ money(amount(group.code, service.code)) }}</strong>
+                  }
+                </div>
+              }
+            }
+          </div>
+          @if (store.paid(group.code) > 0) {
+            <div class="received">
+              <span>Recibido</span
+              ><strong class="money">{{ money(store.paid(group.code)) }}</strong>
+            </div>
+          }
+          @if (store.balance(group.code) < 0) {
+            <div class="rule-note">
+              Saldo a favor tras el ajuste: {{ money(-store.balance(group.code)) }}. Revisa el
+              aporte con el grupo.
+            </div>
+          }
+          @if (store.isAdmin()) {
+            @if (store.balance(group.code) > 0) {
+              <button
+                class="pay-button"
+                mat-flat-button
+                [disabled]="store.saving()"
+                (click)="confirm(group.code)"
+              >
+                <app-icon name="check" />{{
+                  store.paid(group.code) > 0 ? 'Confirmar saldo recibido' : 'Marcar pagado'
+                }}
+              </button>
+            }
+            @for (payment of activePayments(group.code); track payment.id) {
+              <div class="payment-entry">
+                <span>{{ payment.method }} · {{ money(payment.amountCents) }}</span
+                ><button
+                  class="text-button"
+                  [disabled]="store.saving()"
+                  (click)="voidPayment(payment.id, group.code, payment.amountCents)"
+                >
+                  Anular
+                </button>
+              </div>
+            }
+          }
+        }
+      </article>
+    }
+  }
+</div>

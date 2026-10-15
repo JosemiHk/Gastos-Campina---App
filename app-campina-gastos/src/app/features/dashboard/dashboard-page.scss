@@ -1,0 +1,303 @@
+.overview-grid {
+  display: grid;
+  grid-template-columns: 1.65fr repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.month-total {
+  border-radius: 20px;
+  min-width: 0;
+}
+.month-total > .row {
+  justify-content: space-between;
+  gap: 8px;
+}
+.month-total .eyebrow {
+  color: #b0d3ca;
+  font-size: 10px;
+}
+.month-total .badge {
+  background: #ffffff18;
+  color: #bcece0;
+  font-size: 10px;
+  padding: 4px 8px;
+}
+.month-total > p {
+  margin: 22px 0 4px;
+  font-size: 13px;
+}
+.total-amount {
+  font-size: 42px;
+  line-height: 1.2;
+  letter-spacing: -1.7px;
+}
+.progress-track {
+  height: 7px;
+  border-radius: 99px;
+  background: #ffffff20;
+  margin-top: 24px;
+  overflow: hidden;
+}
+.progress-track span {
+  height: 100%;
+  background: #adefe7;
+  border-radius: 99px;
+  display: block;
+  transition: width 0.3s;
+}
+.hero-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #c7e5dc;
+  font-size: 10px;
+  margin-top: 14px;
+}
+.hero-foot app-icon {
+  width: 16px;
+  height: 16px;
+}
+.service-tile {
+  padding: 24px 20px;
+  min-width: 0;
+}
+.service-tile .row {
+  justify-content: space-between;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.service-tile .icon-tile {
+  width: 40px;
+  height: 40px;
+}
+.service-tile .badge {
+  font-size: 9px;
+}
+.service-tile > p {
+  font-size: 11px;
+  margin: 28px 0 2px;
+}
+.service-tile h2 {
+  font-size: 19px;
+}
+.service-tile > .money {
+  font-size: 23px;
+  color: var(--primary);
+}
+.service-rule {
+  margin-top: 22px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  color: var(--secondary);
+}
+.electricity {
+  background: #fff5e8;
+  color: #965108;
+}
+.internet {
+  background: #f0f0ff;
+  color: #5856a0;
+}
+.dashboard-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(240px, 1fr);
+  gap: 28px;
+}
+.section-heading a {
+  font-size: 12px;
+  text-decoration: none;
+}
+.section-heading > app-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--secondary);
+}
+.bill-row {
+  padding: 20px;
+}
+.bill-row h3 {
+  margin: 0;
+  font-size: 14px;
+}
+.bill-row .row > .money {
+  font-size: 18px;
+  color: var(--primary);
+}
+.bill-rule {
+  display: flex;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--secondary);
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  margin-top: 14px;
+}
+.bill-rule app-icon {
+  width: 16px;
+  height: 16px;
+}
+.bill-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+.bill-actions > small {
+  font-size: 10px;
+}
+.bill-actions > a {
+  font-size: 11px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.bill-actions app-icon {
+  width: 14px;
+  height: 14px;
+}
+.bill-actions .text-button {
+  font-size: 11px;
+  padding: 4px 0;
+}
+.account {
+  display: grid;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+.account:last-child {
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+.account .badge {
+  justify-self: start;
+}
+.account strong {
+  font-size: 16px;
+  overflow-wrap: anywhere;
+}
+.account small {
+  font-size: 11px;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+.transfer-card > p,
+.transfer-card > a {
+  font-size: 12px;
+}
+.activity {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.activity:last-child {
+  margin-bottom: 0;
+}
+.activity-dot {
+  width: 7px;
+  height: 7px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+.activity p {
+  font-size: 12px;
+  color: var(--text);
+  margin: 0 0 5px;
+}
+.activity small {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+.first-receipt {
+  margin-top: 28px;
+}
+@media (max-width: 1200px) {
+  .overview-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .month-total {
+    grid-column: 1/-1;
+  }
+  .total-amount {
+    font-size: 44px;
+  }
+  .month-total > p {
+    margin-top: 18px;
+  }
+  .dashboard-columns {
+    grid-template-columns: 1fr;
+  }
+  .dashboard-columns aside {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .dashboard-columns aside > .section-heading {
+    display: none;
+  }
+  .dashboard-columns aside > .card {
+    margin-top: 24px;
+  }
+  .service-tile > p {
+    margin-top: 20px;
+  }
+}
+@media (max-width: 767px) {
+  .overview-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .overview-grid .service-tile {
+    display: none;
+  }
+  .month-total {
+    padding: 24px;
+  }
+  .month-total > p {
+    margin-top: 20px;
+  }
+  .total-amount {
+    font-size: 38px;
+  }
+  .dashboard-columns {
+    gap: 24px;
+  }
+  .dashboard-columns aside {
+    display: block;
+  }
+  .dashboard-columns aside > .section-heading {
+    display: flex;
+  }
+  .dashboard-columns aside > .card {
+    margin-top: 0;
+  }
+  .bill-row {
+    padding: 16px;
+  }
+  .bill-row .row > .money {
+    font-size: 18px;
+  }
+  .bill-rule {
+    font-size: 10px;
+  }
+  .activity-card {
+    padding: 20px;
+  }
+  .section-heading h2 {
+    font-size: 18px;
+  }
+  .first-receipt {
+    padding: 36px 20px;
+  }
+  .page-heading .actions > a {
+    font-size: 11px;
+    padding: 0 12px;
+  }
+}

@@ -1,0 +1,119 @@
+<div class="page-heading">
+  <div>
+    <span class="eyebrow">{{ monthLabel(store.selectedMonth()) }}</span>
+    <h1>Cálculo de distribución</h1>
+    <p>Lo que corresponde a cada grupo, con las reglas a la vista.</p>
+  </div>
+  <div class="actions">
+    <a mat-flat-button routerLink="/compartir" queryParamsHandling="preserve"
+      ><app-icon name="share" />Compartir resumen</a
+    >
+  </div>
+</div>
+@if (!store.calculation()?.receiptCount) {
+  <section class="card empty-state">
+    <span class="icon-tile"><app-icon name="calculator" /></span>
+    <h2>El reparto empieza con un recibo</h2>
+    <p>Los borradores no participan en el cálculo. Confirma un recibo para ver las cuotas.</p>
+    @if (store.isAdmin() && !store.closed()) {
+      <a mat-flat-button routerLink="/registrar" queryParamsHandling="preserve">Registrar recibo</a>
+    }
+  </section>
+} @else {
+  <section class="hero distribution-overview">
+    <div>
+      <span class="eyebrow">Total de servicios del mes</span
+      ><strong class="money">{{ money(store.calculation()!.totalCents) }}</strong>
+      <p>{{ store.calculation()!.receiptCount }} de 3 recibos registrados</p>
+    </div>
+    <div class="service-summary">
+      @for (service of services; track service.code) {
+        <div>
+          <app-icon [name]="service.icon" /><span>{{ service.name }}</span
+          ><strong class="money">{{
+            receipt(service.code) ? money(receipt(service.code)!.amountCents) : 'Sin recibo'
+          }}</strong>
+        </div>
+      }
+    </div>
+    @if (receipt('electricity'); as light) {
+      <div class="fixed-rule">
+        <app-icon name="snow" /><span
+          >Aporte de Rossana: <strong>{{ money(store.fixedContributionCents()) }}</strong
+          >. Luz restante a repartir:
+          <strong>{{ money(light.amountCents - store.fixedContributionCents()) }}</strong
+          >.</span
+        >
+      </div>
+    }
+  </section>
+  @if (store.calculation()!.receiptCount < 3) {
+    <div class="rule-note partial">
+      <app-icon name="info" /><span
+        >Resumen parcial. Las cuotas incluyen únicamente los recibos confirmados hasta ahora.</span
+      >
+    </div>
+  }
+  <div class="section-heading">
+    <div>
+      <h2>Cuotas por grupo familiar</h2>
+      <p class="section-subtitle">Gemelas comparte una sola cuota. Rossana aporta solo a la luz.</p>
+    </div>
+    <span class="badge"><app-icon name="check" />Suma exacta</span>
+  </div>
+  <app-group-cards [detailed]="true" />
+  <details class="card explanation">
+    <summary>
+      <span class="row"><app-icon name="calculator" /><strong>¿Cómo se calculó?</strong></span
+      ><span class="muted">Ver reglas y redondeo</span>
+    </summary>
+    <div class="explanation-body">
+      @for (service of services; track service.code) {
+        @if (receipt(service.code); as bill) {
+          <div class="formula">
+            <span class="icon-tile"><app-icon [name]="service.icon" /></span>
+            <div>
+              <h3>{{ service.name }}</h3>
+              @if (service.code === 'water') {
+                <p>{{ money(bill.amountCents) }} ÷ 3 grupos, a partes iguales.</p>
+              } @else if (service.code === 'electricity') {
+                <p>
+                  ({{ money(bill.amountCents) }} − {{ money(store.fixedContributionCents()) }} de
+                  Rossana) ÷ 3 grupos.
+                </p>
+              } @else {
+                <p>{{ money(bill.amountCents) }} ÷ 2: Miguel y JM. Gemelas no participa.</p>
+              }
+            </div>
+          </div>
+        }
+      }
+      <div class="rule-note">
+        <app-icon name="info" /><span
+          >Calculamos en céntimos. Cuando la división no es exacta, los céntimos restantes se
+          asignan en el orden Gemelas, Miguel y JM. Es un ajuste de redondeo, no un cambio de
+          proporción.</span
+        >
+      </div>
+      <div class="verified-total">
+        <span>Total distribuido, incluido el aporte de Rossana</span
+        ><strong class="money">{{ money(store.calculation()!.totalCents) }}</strong>
+      </div>
+    </div>
+  </details>
+  @if (store.isAdmin() && !store.closed()) {
+    <div class="close-area">
+      <div>
+        <h3>¿Ya están los tres recibos?</h3>
+        <p>El cierre conserva los importes y las reglas de este mes.</p>
+      </div>
+      <button
+        mat-stroked-button
+        (click)="close()"
+        [disabled]="store.calculation()!.receiptCount !== 3 || store.saving() || closing()"
+      >
+        <app-icon name="lock" />{{ closing() ? 'Cerrando…' : 'Cerrar mes' }}
+      </button>
+    </div>
+  }
+}

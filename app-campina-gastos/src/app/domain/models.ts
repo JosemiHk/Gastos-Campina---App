@@ -46,7 +46,11 @@ export interface PaymentConfirmation {
   confirmedAt: string;
   voidedAt: string | null;
 }
-export interface ActivityEvent { id: string; description: string; createdAt: string; }
+export interface ActivityEvent {
+  id: string;
+  description: string;
+  createdAt: string;
+}
 export interface TransferAccount {
   id: string;
   kind: 'yape' | 'plin' | 'bank';
@@ -86,9 +90,27 @@ export interface ReceiptInput {
   fileSize: number | null;
   fileType: string | null;
 }
-export const SERVICES: ReadonlyArray<{ code: ServiceCode; name: string; provider: string; icon: string; rule: string }> = [
+export const SERVICES: ReadonlyArray<{
+  code: ServiceCode;
+  name: string;
+  provider: string;
+  icon: string;
+  rule: string;
+}> = [
   { code: 'water', name: 'Agua', provider: 'Agua potable', icon: 'water', rule: 'Entre 3 grupos' },
-  { code: 'electricity', name: 'Luz', provider: 'Energía eléctrica', icon: 'bolt', rule: 'Aporte fijo + reparto' },
-  { code: 'internet', name: 'Internet', provider: 'WIN', icon: 'wifi', rule: 'Miguel y JM, mitad cada uno' },
+  {
+    code: 'electricity',
+    name: 'Luz',
+    provider: 'Energía eléctrica',
+    icon: 'bolt',
+    rule: 'Aporte fijo + reparto',
+  },
+  {
+    code: 'internet',
+    name: 'Internet',
+    provider: 'WIN',
+    icon: 'wifi',
+    rule: 'Miguel y JM, mitad cada uno',
+  },
 ];
 export const GROUP_ORDER: readonly GroupCode[] = ['twins', 'miguel', 'jm', 'rossana'];

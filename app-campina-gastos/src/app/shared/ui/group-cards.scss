@@ -1,0 +1,217 @@
+.group-grid {
+  display: grid;
+  gap: 12px;
+}
+.group-card {
+  position: relative;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: none;
+}
+.group-heading {
+  flex: 1;
+}
+.group-heading h3 {
+  font-size: 14px;
+  margin: 0;
+}
+.group-heading p {
+  font-size: 11px;
+}
+.group-total {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+}
+.group-total > .money {
+  font-size: 20px;
+  color: var(--primary);
+}
+.group-total > .muted:empty {
+  display: none;
+}
+.detailed {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.detailed .group-card {
+  display: block;
+  padding: 24px;
+}
+.detailed .group-heading {
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.detailed .group-heading .avatar {
+  width: 36px;
+  height: 36px;
+  font-size: 12px;
+}
+.detailed .group-heading h3 {
+  font-size: 14px;
+}
+.detailed .group-heading p {
+  font-size: 10px;
+}
+.detailed .group-heading > .badge {
+  font-size: 9px;
+  padding: 3px 8px;
+  margin-left: auto;
+}
+.detailed .group-total {
+  display: grid;
+  justify-items: center;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 12px;
+  margin: 20px 0;
+}
+.detailed .group-total > .muted {
+  font-size: 11px;
+}
+.detailed .group-total > .money {
+  font-size: 32px;
+}
+.breakdown {
+  display: grid;
+  gap: 14px;
+  margin: 20px 0;
+  font-size: 12px;
+}
+.breakdown app-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--secondary);
+}
+.breakdown .row {
+  gap: 8px;
+}
+.breakdown .muted {
+  font-size: 10px;
+}
+.breakdown strong {
+  font-weight: 500;
+}
+.pay-button {
+  width: 100%;
+  margin-top: 8px;
+}
+.received {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--secondary);
+  margin: 16px 0;
+}
+.payment-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  margin-top: 12px;
+  padding-top: 6px;
+  color: var(--text-secondary);
+}
+.payment-entry .text-button {
+  font-size: 10px;
+}
+.detailed .special {
+  grid-column: 1/-1;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0 24px;
+}
+.detailed .special .group-total {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  min-width: 160px;
+}
+.detailed .special .breakdown {
+  margin: 8px 0;
+}
+.detailed .special .group-heading > .badge {
+  margin: 0;
+}
+.detailed .special .pay-button,
+.detailed .special .received,
+.detailed .special .payment-entry,
+.detailed .special .rule-note {
+  grid-column: 1 /-1;
+}
+.rule-note {
+  font-size: 11px;
+  margin-bottom: 12px;
+}
+@media (max-width: 1200px) {
+  .detailed {
+    grid-template-columns: 1fr;
+  }
+  .detailed .group-heading {
+    flex-wrap: nowrap;
+  }
+  .detailed .special {
+    display: block;
+  }
+  .detailed .group-heading > .badge {
+    font-size: 11px;
+  }
+  .detailed .group-heading h3 {
+    font-size: 16px;
+  }
+}
+@media (max-width: 767px) {
+  .group-card {
+    padding: 16px;
+    gap: 10px;
+  }
+  .group-heading {
+    gap: 10px;
+  }
+  .group-heading h3 {
+    font-size: 13px;
+  }
+  .group-heading p {
+    font-size: 10px;
+  }
+  .group-total > .money {
+    font-size: 18px;
+  }
+  .avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+  }
+  .detailed .group-card {
+    padding: 20px;
+  }
+  .detailed .group-heading {
+    gap: 12px;
+  }
+  .detailed .group-total {
+    justify-items: start;
+    padding: 14px 16px;
+  }
+  .detailed .group-total > .money {
+    font-size: 32px;
+  }
+  .detailed .group-heading h3 {
+    font-size: 15px;
+  }
+  .breakdown {
+    font-size: 13px;
+  }
+  .detailed .special .group-total {
+    margin-bottom: 16px;
+  }
+  .payment-entry {
+    font-size: 11px;
+  }
+}

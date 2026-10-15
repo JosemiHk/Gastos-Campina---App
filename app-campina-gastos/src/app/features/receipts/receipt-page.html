@@ -1,0 +1,241 @@
+<div class="page-heading">
+  <div>
+    <span class="eyebrow">Servicios del hogar</span>
+    <h1>{{ editing() ? 'Editar recibo' : 'Registrar recibo' }}</h1>
+    <p>Ingresa el importe y revisa cómo se reparte entre los grupos.</p>
+  </div>
+  <span class="badge"><app-icon name="calendar" />{{ monthLabel(store.selectedMonth()) }}</span>
+</div>
+@if (notFound()) {
+  <section class="card empty-state">
+    <h2>No encontramos este recibo</h2>
+    <p>Puede pertenecer a otro mes. Revisa el periodo seleccionado.</p>
+    <a mat-stroked-button routerLink="/resumen" queryParamsHandling="preserve">Volver al resumen</a>
+  </section>
+} @else {
+  @if (!store.isAdmin()) {
+    <div class="rule-note">
+      <app-icon name="eye" />Tu perfil permite consultar recibos. El administrador puede
+      registrarlos o editarlos.
+    </div>
+  }
+  <form (ngSubmit)="save('confirmed')" class="receipt-layout" [formGroup]="form">
+    <fieldset [disabled]="busy() || store.closed() || !store.isAdmin()">
+      <section class="card">
+        <h2><span class="step-label">1</span> Tipo de servicio</h2>
+        <div class="service-choices" role="group" aria-label="Tipo de servicio">
+          @for (service of services; track service.code) {
+            <button
+              type="button"
+              class="service-choice"
+              [class.selected]="form.controls.service.value === service.code"
+              [attr.aria-pressed]="form.controls.service.value === service.code"
+              [disabled]="!!editing() && editing()?.service !== service.code"
+              (click)="selectService(service.code)"
+            >
+              <span class="icon-tile"><app-icon [name]="service.icon" /></span
+              ><strong>{{ service.name }}</strong
+              ><small>{{ service.provider }}</small>
+              @if (form.controls.service.value === service.code) {
+                <span class="selected-check"><app-icon name="check" /></span>
+              }
+            </button>
+          }
+        </div>
+      </section>
+      <section class="card">
+        <h2><span class="step-label">2</span> Importe y fechas</h2>
+        <div class="field amount-field">
+          <label for="amount">Monto total del recibo <span class="badge">PEN · Soles</span></label>
+          <div class="amount-input">
+            <span>S/</span
+            ><input
+              id="amount"
+              formControlName="amount"
+              type="text"
+              inputmode="decimal"
+              placeholder="0.00"
+              maxlength="9"
+              autocomplete="off"
+              [attr.aria-invalid]="form.controls.amount.touched && form.controls.amount.invalid"
+              aria-describedby="amount-help"
+            />
+          </div>
+          <small id="amount-help">Incluye consumo, impuestos y cargos fijos.</small>
+          @if (form.controls.amount.touched && form.controls.amount.invalid) {
+            <small class="field-error"
+              >Ingresa un importe de S/0.01 a S/999,999.99, con hasta dos decimales.</small
+            >
+          }
+        </div>
+        <div class="form-grid dates">
+          <div class="field">
+            <label for="due-date">Fecha de vencimiento <span class="muted">(opcional)</span></label
+            ><input
+              id="due-date"
+              type="date"
+              formControlName="dueDate"
+              min="2020-01-01"
+              max="2100-12-31"
+            />
+          </div>
+          <div class="field">
+            <label for="issue-date">Fecha de emisión <span class="muted">(opcional)</span></label
+            ><input
+              id="issue-date"
+              type="date"
+              formControlName="issueDate"
+              min="2020-01-01"
+              max="2100-12-31"
+            />
+          </div>
+        </div>
+      </section>
+      <section class="card">
+        <h2><span class="step-label">3</span> Comprobante o foto</h2>
+        <p class="attachment-hint">PDF, JPG o PNG hasta 10 MB. Puedes adjuntarlo después.</p>
+        <div class="upload-area">
+          @if (existingFileName()) {
+            <div class="row">
+              <span class="icon-tile"><app-icon name="receipt" /></span>
+              <div class="grow">
+                <strong class="file-name">{{ existingFileName() }}</strong>
+                <p>{{ file() ? 'Listo para subir al guardar' : 'Comprobante guardado' }}</p>
+              </div>
+              <button
+                type="button"
+                mat-icon-button
+                aria-label="Quitar comprobante"
+                (click)="clearFile()"
+              >
+                <app-icon name="close" />
+              </button>
+            </div>
+          } @else {
+            <app-icon name="upload" />
+            <p>Guarda una copia del recibo para tener todo a mano.</p>
+          }
+          <input
+            #fileInput
+            type="file"
+            accept="application/pdf,image/jpeg,image/png"
+            class="sr-only"
+            (change)="selectFile($event)"
+          /><input
+            #cameraInput
+            type="file"
+            accept="image/jpeg,image/png"
+            capture="environment"
+            class="sr-only"
+            (change)="selectFile($event)"
+          />
+          <div class="actions">
+            <button mat-stroked-button type="button" (click)="fileInput.click()">
+              <app-icon name="upload" />{{
+                existingFileName() ? 'Reemplazar' : 'Seleccionar archivo'
+              }}</button
+            ><button mat-button type="button" (click)="cameraInput.click()">Tomar foto</button>
+          </div>
+        </div>
+      </section>
+    </fieldset>
+    <aside class="stack preview-column">
+      <section class="hero preview">
+        <div class="row">
+          <app-icon name="calculator" />
+          <h2>Previsualización del reparto</h2>
+        </div>
+        <p>Así se distribuirá este recibo.</p>
+        <div class="preview-rule">
+          <strong>{{ selectedService().name }}</strong
+          ><span>{{ selectedService().rule }}</span>
+        </div>
+        @if (simulation().error) {
+          <div class="preview-warning" role="status">{{ simulation().error }}</div>
+        } @else if (simulation().calculation; as calculation) {
+          <div class="preview-groups">
+            @for (code of groupOrder; track code) {
+              @if (hasGroup(code)) {
+                <div class="row">
+                  <span class="avatar">{{
+                    code === 'twins' ? 'G' : code === 'miguel' ? 'M' : code === 'jm' ? 'JM' : 'R'
+                  }}</span
+                  ><span class="grow">{{ groupName(code) }}</span
+                  ><strong class="money">{{ money(totals()[code]) }}</strong>
+                </div>
+              }
+            }
+          </div>
+          <div class="preview-total">
+            <span>Suma asignada</span
+            ><strong class="money">{{ money(calculation.totalCents) }}</strong>
+          </div>
+          @if (hasRemainders()) {
+            <small class="rounding-note"
+              >El céntimo restante se asigna según el orden de los grupos. La suma siempre coincide
+              con el recibo.</small
+            >
+          }
+        } @else {
+          <div class="preview-empty">
+            <app-icon name="receipt" />
+            <p>Ingresa un importe para ver las cuotas.</p>
+          </div>
+        }
+      </section>
+      <div class="rule-note">
+        <app-icon name="shield" /><span
+          >El cálculo definitivo se verifica al guardar. Los borradores no se suman al gasto del
+          mes.</span
+        >
+      </div>
+      @if (editing()?.filePath && !file() && !removeFile()) {
+        <button type="button" mat-stroked-button (click)="previewFile.open(editing()!)">
+          <app-icon name="eye" />Ver comprobante actual
+        </button>
+      }
+    </aside>
+    @if (duplicate(); as duplicateReceipt) {
+      <div class="rule-note">
+        <app-icon name="info" /><span
+          >Este servicio ya tiene un
+          {{ duplicateReceipt.status === 'draft' ? 'borrador' : 'recibo' }} en este mes.
+          <a
+            routerLink="/registrar"
+            [queryParams]="{
+              mes: store.selectedMonth().slice(0, 7),
+              recibo: duplicateReceipt.id,
+            }"
+            >Abrir para editar</a
+          ></span
+        >
+      </div>
+    }
+    @if (error()) {
+      <div class="error-message" role="alert">{{ error() }}</div>
+    }
+    @if (store.isAdmin() && !store.closed()) {
+      <div class="actions save-actions">
+        @if (editing()?.status !== 'confirmed') {
+          <button
+            mat-stroked-button
+            type="button"
+            [disabled]="busy() || !!duplicate()"
+            (click)="save('draft')"
+          >
+            Guardar borrador
+          </button>
+        }
+        <button mat-flat-button type="submit" [disabled]="busy() || !!duplicate()">
+          <app-icon name="calculator" />{{
+            busy()
+              ? store.uploading()
+                ? 'Subiendo comprobante…'
+                : 'Guardando recibo…'
+              : 'Guardar y calcular reparto'
+          }}
+        </button>
+      </div>
+    }
+  </form>
+}

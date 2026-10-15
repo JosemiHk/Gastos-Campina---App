@@ -14,20 +14,28 @@ export class Auth {
   });
   private ready: Promise<void> | null = null;
   ensureReady(): Promise<void> {
-    return this.ready ??= this.initialize();
+    return (this.ready ??= this.initialize());
   }
   private async initialize(): Promise<void> {
     if (this.backend.configured) {
-      this.backend.client.auth.onAuthStateChange((_event, session) => { this.user.set(session?.user ?? null); });
+      await this.backend.initialize();
+      this.backend.client.auth.onAuthStateChange((_event, session) => {
+        this.user.set(session?.user ?? null);
+      });
       const { data } = await this.backend.client.auth.getSession();
       this.user.set(data.session?.user ?? null);
     }
     this.initialized.set(true);
   }
   async send(email: string): Promise<void> {
-    if (Date.now() - this.requestedAt() < 60_000) throw new Error('Espera un minuto antes de reenviar.');
+    await this.backend.initialize();
+    if (Date.now() - this.requestedAt() < 60_000)
+      throw new Error('Espera un minuto antes de reenviar.');
     const normalized = email.trim().toLowerCase();
-    const { error } = await this.backend.client.auth.signInWithOtp({ email: normalized, options: { shouldCreateUser: false, emailRedirectTo: `${location.origin}/acceso/confirmar` } });
+    const { error } = await this.backend.client.auth.signInWithOtp({
+      email: normalized,
+      options: { shouldCreateUser: false, emailRedirectTo: `${location.origin}/acceso/confirmar` },
+    });
     // The public flow must not reveal whether an address belongs to this household.
     if (error && !/signups not allowed|user not found/i.test(error.message)) throw error;
     this.pendingEmail.set(normalized);
@@ -36,18 +44,28 @@ export class Auth {
     sessionStorage.setItem('campina.auth.sentAt', String(this.requestedAt()));
   }
   async verify(token: string): Promise<void> {
-    const { data, error } = await this.backend.client.auth.verifyOtp({ email: this.pendingEmail(), token, type: 'email' });
+    await this.backend.initialize();
+    const { data, error } = await this.backend.client.auth.verifyOtp({
+      email: this.pendingEmail(),
+      token,
+      type: 'email',
+    });
     if (error) throw error;
     this.user.set(data.user);
     this.clearPending();
   }
   async verifyLink(tokenHash: string): Promise<void> {
-    const { data, error } = await this.backend.client.auth.verifyOtp({ token_hash: tokenHash, type: 'email' });
+    await this.backend.initialize();
+    const { data, error } = await this.backend.client.auth.verifyOtp({
+      token_hash: tokenHash,
+      type: 'email',
+    });
     if (error) throw error;
     this.user.set(data.user);
     this.clearPending();
   }
   async logout(): Promise<void> {
+    await this.backend.initialize();
     const { error } = await this.backend.client.auth.signOut();
     if (error) throw error;
     this.user.set(null);

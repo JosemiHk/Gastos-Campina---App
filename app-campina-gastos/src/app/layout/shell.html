@@ -1,0 +1,103 @@
+<a class="skip-link" href="#main-content">Ir al contenido</a>
+<aside class="sidebar">
+  <a routerLink="/resumen" queryParamsHandling="preserve" class="brand-link"><app-brand /></a>
+  <div class="household-label">
+    <app-icon name="home" /><span>{{ store.data()?.household?.name || 'Tu hogar' }}</span>
+  </div>
+  <nav aria-label="Navegación principal">
+    @for (link of links; track link.path) {
+      <a
+        [routerLink]="link.path"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        queryParamsHandling="preserve"
+        ariaCurrentWhenActive="page"
+        ><app-icon [name]="link.icon" />{{ link.desktop }}</a
+      >
+    }
+  </nav>
+  <div class="sidebar-bottom">
+    <span class="badge"
+      ><app-icon [name]="store.isAdmin() ? 'shield' : 'eye'" />{{
+        store.isAdmin() ? 'Administrador' : 'Consulta'
+      }}</span
+    ><button mat-button (click)="logout()"><app-icon name="logout" />Cerrar sesión</button>
+  </div>
+</aside>
+<div class="workspace">
+  <header class="topbar">
+    <div class="mobile-brand"><app-brand /></div>
+    <div class="desktop-title"><app-icon name="leaf" /> Un hogar, cuentas claras</div>
+    <div class="period-controls">
+      <label for="active-month" class="sr-only">Mes seleccionado</label
+      ><app-icon name="calendar" /><input
+        id="active-month"
+        type="month"
+        min="2020-01"
+        max="2100-12"
+        [value]="store.selectedMonth().slice(0, 7)"
+        [disabled]="store.saving() || store.uploading()"
+        (change)="changeMonth($event)"
+      />
+      @if (store.closed()) {
+        <span class="badge closed">Cerrado</span>
+      }
+    </div>
+    <button mat-icon-button class="mobile-logout" aria-label="Cerrar sesión" (click)="logout()">
+      <app-icon name="logout" />
+    </button>
+  </header>
+  <main id="main-content" tabindex="-1">
+    @if (store.loading() && !store.data()) {
+      <div class="loading" role="status">
+        <mat-spinner diameter="36" />
+        <p>Preparando las cuentas del hogar…</p>
+      </div>
+    } @else if (store.error() && !store.data()) {
+      <section class="card empty-state">
+        <span class="icon-tile"><app-icon name="info" /></span>
+        <h1>No pudimos abrir el hogar</h1>
+        <p role="alert">{{ store.error() }}</p>
+        <button mat-flat-button (click)="store.load()">Volver a intentar</button>
+      </section>
+    } @else if (!store.data()) {
+      <section class="card empty-state">
+        <span class="icon-tile"><app-icon name="people" /></span>
+        <h1>Tu acceso está pendiente</h1>
+        <p>
+          Tu correo aún no tiene un hogar asignado. Contacta al administrador para que te dé acceso.
+        </p>
+        <button mat-stroked-button (click)="logout()">Volver al inicio</button>
+      </section>
+    } @else {
+      @if (store.error()) {
+        <div class="error-message refresh-error" role="alert">
+          {{ store.error() }} <button class="text-button" (click)="store.load()">Actualizar</button>
+        </div>
+      }
+      @if (store.closed()) {
+        <div class="closed-notice">
+          <app-icon name="lock" /> Los importes de {{ monthLabel(store.selectedMonth()) }} están
+          cerrados y protegidos.
+        </div>
+      }
+      <router-outlet />
+    }
+  </main>
+  <footer class="workspace-footer">
+    <app-icon name="leaf" /> Campiña Gastos · Hecho para compartir con tranquilidad
+  </footer>
+</div>
+<nav class="bottom-nav" aria-label="Navegación móvil">
+  @for (link of links; track link.path) {
+    @if (link.path !== '/compartir') {
+      <a
+        [routerLink]="link.path"
+        routerLinkActive="active"
+        queryParamsHandling="preserve"
+        ariaCurrentWhenActive="page"
+        ><span><app-icon [name]="link.icon" /></span>{{ link.label }}</a
+      >
+    }
+  }
+</nav>
