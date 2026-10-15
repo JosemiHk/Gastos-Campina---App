@@ -49,6 +49,9 @@
   gap: 8px;
 }
 .sidebar nav a {
+  transition:
+    background-color var(--motion-fast) var(--motion-ease),
+    color var(--motion-fast) var(--motion-ease);
   display: flex;
   gap: 14px;
   align-items: center;
@@ -277,6 +280,7 @@ main {
     min-width: 0;
   }
   .bottom-nav a > span {
+    transition: background-color var(--motion-fast) var(--motion-ease);
     display: grid;
     place-items: center;
     width: 58px;

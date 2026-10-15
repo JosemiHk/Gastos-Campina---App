@@ -129,7 +129,7 @@
       </div>
       <div formArrayName="accounts" class="stack">
         @for (account of accounts.controls; track account; let index = $index) {
-          <article class="account-form" [formGroupName]="index">
+          <article class="account-form" [formGroupName]="index" animate.enter="feedback-enter">
             <div class="account-heading">
               <h3>Cuenta {{ index + 1 }}</h3>
               <button mat-button type="button" (click)="removeAccount(index)">
@@ -214,7 +214,9 @@
     </section>
   </fieldset>
   @if (error()) {
-    <div class="error-message settings-error" role="alert">{{ error() }}</div>
+    <div class="error-message settings-error" role="alert" animate.enter="feedback-enter">
+      {{ error() }}
+    </div>
   }
   @if (store.isAdmin() && !store.closed()) {
     <div class="settings-footer">
