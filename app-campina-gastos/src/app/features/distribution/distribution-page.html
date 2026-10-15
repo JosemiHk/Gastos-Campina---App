@@ -39,7 +39,8 @@
     @if (receipt('electricity'); as light) {
       <div class="fixed-rule">
         <app-icon name="snow" /><span
-          >Aporte de Rossana: <strong>{{ money(store.fixedContributionCents()) }}</strong
+          >Aporte de {{ store.groupName('rossana') }}:
+          <strong>{{ money(store.fixedContributionCents()) }}</strong
           >. Luz restante a repartir:
           <strong>{{ money(light.amountCents - store.fixedContributionCents()) }}</strong
           >.</span
@@ -57,7 +58,9 @@
   <div class="section-heading">
     <div>
       <h2>Cuotas por grupo familiar</h2>
-      <p class="section-subtitle">Gemelas comparte una sola cuota. Rossana aporta solo a la luz.</p>
+      <p class="section-subtitle">
+        Cada grupo comparte una sola cuota. {{ store.groupName('rossana') }} aporta solo a la luz.
+      </p>
     </div>
     <span class="badge"><app-icon name="check" />Suma exacta</span>
   </div>
@@ -75,14 +78,21 @@
             <div>
               <h3>{{ service.name }}</h3>
               @if (service.code === 'water') {
-                <p>{{ money(bill.amountCents) }} ÷ 3 grupos, a partes iguales.</p>
+                <p>
+                  {{ money(bill.amountCents) }} ÷ {{ store.participants().water.length }}:
+                  {{ store.participantNames('water') }}, a partes iguales.
+                </p>
               } @else if (service.code === 'electricity') {
                 <p>
                   ({{ money(bill.amountCents) }} − {{ money(store.fixedContributionCents()) }} de
-                  Rossana) ÷ 3 grupos.
+                  {{ store.groupName('rossana') }}) ÷ {{ store.participants().electricity.length }}:
+                  {{ store.participantNames('electricity') }}.
                 </p>
               } @else {
-                <p>{{ money(bill.amountCents) }} ÷ 2: Miguel y JM. Gemelas no participa.</p>
+                <p>
+                  {{ money(bill.amountCents) }} ÷ {{ store.participants().internet.length }}:
+                  {{ store.participantNames('internet') }}.
+                </p>
               }
             </div>
           </div>
@@ -91,12 +101,12 @@
       <div class="rule-note">
         <app-icon name="info" /><span
           >Calculamos en céntimos. Cuando la división no es exacta, los céntimos restantes se
-          asignan en el orden Gemelas, Miguel y JM. Es un ajuste de redondeo, no un cambio de
-          proporción.</span
+          asignan entre los participantes en su orden estable de grupo. Es un ajuste de redondeo, no
+          un cambio de proporción.</span
         >
       </div>
       <div class="verified-total">
-        <span>Total distribuido, incluido el aporte de Rossana</span
+        <span>Total distribuido, incluido el aporte de {{ store.groupName('rossana') }}</span
         ><strong class="money">{{ money(store.calculation()!.totalCents) }}</strong>
       </div>
     </div>

@@ -1,5 +1,17 @@
 export type ServiceCode = 'water' | 'electricity' | 'internet';
 export type GroupCode = 'twins' | 'miguel' | 'jm' | 'rossana';
+export type RegularGroupCode = Exclude<GroupCode, 'rossana'>;
+export type RuleParticipants = Record<ServiceCode, readonly RegularGroupCode[]>;
+export const DEFAULT_PARTICIPANTS: RuleParticipants = {
+  water: ['twins', 'miguel', 'jm'],
+  electricity: ['twins', 'miguel', 'jm'],
+  internet: ['miguel', 'jm'],
+};
+export interface EditablePaymentGroup {
+  code: GroupCode;
+  name: string;
+  members: string[];
+}
 export type Role = 'admin' | 'viewer';
 export type ReceiptStatus = 'draft' | 'confirmed';
 export interface PaymentGroup {
@@ -36,6 +48,7 @@ export interface Calculation {
   fixedContributionCents: number;
   allocations: Allocation[];
   groupNames?: Partial<Record<GroupCode, string>>;
+  groupMembers?: Partial<Record<GroupCode, string[]>>;
   createdAt?: string;
 }
 export interface PaymentConfirmation {
@@ -60,6 +73,7 @@ export interface TransferAccount {
   cci: string;
 }
 export interface BillingPeriod {
+  participants?: RuleParticipants;
   id: string;
   month: string;
   status: 'open' | 'closed';
@@ -72,7 +86,13 @@ export interface BillingPeriod {
   closedAt: string | null;
 }
 export interface HouseholdData {
-  household: { id: string; name: string; fixedContributionCents: number };
+  household: {
+    id: string;
+    name: string;
+    fixedContributionCents: number;
+    configurationRevision?: number;
+    participants?: RuleParticipants;
+  };
   role: Role;
   groups: PaymentGroup[];
   periods: BillingPeriod[];
@@ -95,22 +115,19 @@ export const SERVICES: ReadonlyArray<{
   name: string;
   provider: string;
   icon: string;
-  rule: string;
 }> = [
-  { code: 'water', name: 'Agua', provider: 'Agua potable', icon: 'water', rule: 'Entre 3 grupos' },
+  { code: 'water', name: 'Agua', provider: 'Agua potable', icon: 'water' },
   {
     code: 'electricity',
     name: 'Luz',
     provider: 'Energía eléctrica',
     icon: 'bolt',
-    rule: 'Aporte fijo + reparto',
   },
   {
     code: 'internet',
     name: 'Internet',
     provider: 'WIN',
     icon: 'wifi',
-    rule: 'Miguel y JM, mitad cada uno',
   },
 ];
 export const GROUP_ORDER: readonly GroupCode[] = ['twins', 'miguel', 'jm', 'rossana'];

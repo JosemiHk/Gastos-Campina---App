@@ -20,6 +20,16 @@ export interface Database {
         Args: PeriodArgs & { p_fixed: number; p_accounts: Json };
         Returns: undefined;
       };
+      save_household_settings: {
+        Args: PeriodArgs & {
+          p_configuration_revision: number;
+          p_fixed: number;
+          p_accounts: Json;
+          p_groups: Json;
+          p_participants: Json;
+        };
+        Returns: undefined;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { calculateDistribution, groupTotals, splitEqual } from './distribution';
 import { parseMoney } from './money';
+import { DEFAULT_PARTICIPANTS, RuleParticipants } from './models';
 
 describe('reparto familiar exacto', () => {
   it('deduce Rossana, excluye Gemelas de internet y conserva el céntimo', () => {
@@ -65,4 +66,46 @@ describe('entrada monetaria', () => {
     for (const invalid of ['-2', '0', '1.123', '1e3', 'NaN', '1,000.00', '1000000'])
       expect(parseMoney(invalid)).toBeNull();
   });
+});
+describe('participantes configurables', () => {
+  it('coincide con el caso PostgreSQL cuando los tres grupos pagan internet', () => {
+    const result = calculateDistribution(
+      [
+        { service: 'water', amountCents: 9000, status: 'confirmed' },
+        { service: 'electricity', amountCents: 18000, status: 'confirmed' },
+        { service: 'internet', amountCents: 12000, status: 'confirmed' },
+      ],
+      2000,
+      { ...DEFAULT_PARTICIPANTS, internet: ['jm', 'twins', 'miguel'] },
+    );
+    expect(groupTotals(result)).toEqual({ twins: 12334, miguel: 12333, jm: 12333, rossana: 2000 });
+  });
+  it('un participante recibe el servicio completo y el redondeo no depende del orden de selección', () => {
+    const rules: RuleParticipants = {
+      ...DEFAULT_PARTICIPANTS,
+      water: ['jm'],
+      internet: ['jm', 'twins'],
+    };
+    const result = calculateDistribution(
+      [
+        { service: 'water', amountCents: 9001, status: 'confirmed' },
+        { service: 'internet', amountCents: 101, status: 'confirmed' },
+      ],
+      2000,
+      rules,
+    );
+    expect(groupTotals(result)).toEqual({ twins: 51, miguel: 0, jm: 9051, rossana: 0 });
+  });
+  it.each([[], ['jm', 'jm'], ['rossana'], ['unknown']].map((internet) => ({ internet })))(
+    'rechaza participantes inválidos: %j',
+    ({ internet }) => {
+      expect(() =>
+        calculateDistribution(
+          [{ service: 'internet', amountCents: 100, status: 'confirmed' }],
+          2000,
+          { ...DEFAULT_PARTICIPANTS, internet } as RuleParticipants,
+        ),
+      ).toThrow();
+    },
+  );
 });

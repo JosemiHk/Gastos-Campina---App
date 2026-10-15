@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { summaryText } from './summary';
 import { calculateDistribution } from './distribution';
 import { BillingPeriod, PaymentGroup } from './models';
+import { householdFixture } from '../../testing/household-fixture';
 describe('resumen compartible', () => {
   it('identifica meses parciales y no publica borradores ni datos bancarios inventados', () => {
     const receipts = [
@@ -39,5 +40,20 @@ describe('resumen compartible', () => {
     expect(text).toContain('30.01');
     expect(text).not.toContain('DATOS PARA TRANSFERIR');
     expect(text).not.toContain('Internet WIN:');
+  });
+  it('el resumen utiliza nombres históricos y el número real de participantes', () => {
+    const data = householdFixture();
+    const period = data.periods[0];
+    period.participants = {
+      water: ['jm'],
+      electricity: ['twins', 'jm'],
+      internet: ['miguel', 'jm'],
+    };
+    period.calculation!.groupNames = { twins: 'Familia anterior', rossana: 'Aporte anterior' };
+    data.groups[0].name = 'Familia actual';
+    const text = summaryText(period, data.groups, []);
+    expect(text).toContain('Familia anterior');
+    expect(text).not.toContain('Familia actual');
+    expect(text).toContain('de Aporte anterior; el saldo se divide entre 2 grupos.');
   });
 });

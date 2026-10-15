@@ -11,50 +11,122 @@
     <div class="settings-layout">
       <section>
         <div class="section-heading"><h2>Grupos familiares</h2></div>
-        <div class="stack">
-          @for (group of store.data()?.groups; track group.id) {
-            <article class="card group-settings">
+        <div class="stack" formArrayName="groups">
+          @for (group of groups.controls; track group; let index = $index) {
+            <article class="card group-settings" [formGroupName]="index">
               <div class="row">
                 <span class="avatar">{{
-                  group.code === 'twins'
-                    ? 'G'
-                    : group.code === 'miguel'
-                      ? 'M'
-                      : group.code === 'jm'
-                        ? 'JM'
-                        : 'R'
+                  group.controls.name.value.trim().slice(0, 2).toUpperCase()
                 }}</span>
                 <div class="grow">
-                  <h3>{{ group.name }}</h3>
-                  <p>{{ group.members.join(' y ') }}</p>
+                  <h3>{{ groupLabel(group.controls.code.value) }}</h3>
+                  <p>{{ group.controls.members.getRawValue().join(' y ') }}</p>
                 </div>
                 <span class="badge">{{
-                  group.kind === 'special'
+                  group.controls.code.value === 'rossana'
                     ? 'Aporte fijo'
-                    : group.members.length === 2
-                      ? '1 grupo · 2 personas'
-                      : '1 grupo'
+                    : '1 grupo · ' +
+                      group.controls.members.length +
+                      (group.controls.members.length === 1 ? ' integrante' : ' integrantes')
                 }}</span>
               </div>
-              <div class="group-services">
-                @if (group.kind === 'regular') {
-                  <span class="badge"><app-icon name="water" />Agua · 1/3</span
-                  ><span class="badge"><app-icon name="bolt" />Luz común · 1/3</span>
-                  @if (group.code !== 'twins') {
-                    <span class="badge"><app-icon name="wifi" />Internet · 1/2</span>
-                  } @else {
-                    <span class="excluded">Sin internet WIN</span>
+              @if (store.editableGroups() && store.isAdmin() && !store.closed()) {
+                <details class="group-editor">
+                  <summary>Editar nombre e integrantes</summary>
+                  <div class="stack">
+                    <div class="field">
+                      <label [for]="'group-name-' + index">Nombre del grupo</label>
+                      <input
+                        [id]="'group-name-' + index"
+                        formControlName="name"
+                        maxlength="80"
+                        [attr.aria-invalid]="
+                          group.controls.name.touched && group.controls.name.invalid
+                        "
+                      />
+                    </div>
+                    <div formArrayName="members" class="stack member-fields">
+                      @for (
+                        member of group.controls.members.controls;
+                        track member;
+                        let memberIndex = $index
+                      ) {
+                        <div class="member-row">
+                          <div class="field grow">
+                            <label [for]="'member-' + index + '-' + memberIndex"
+                              >Integrante {{ memberIndex + 1 }}</label
+                            >
+                            <input
+                              [id]="'member-' + index + '-' + memberIndex"
+                              [formControlName]="memberIndex"
+                              maxlength="80"
+                              [attr.aria-invalid]="member.touched && member.invalid"
+                            />
+                          </div>
+                          <button
+                            mat-button
+                            type="button"
+                            [disabled]="group.controls.members.length <= 1"
+                            (click)="removeMember(index, memberIndex)"
+                            [attr.aria-label]="
+                              'Quitar integrante ' +
+                              (memberIndex + 1) +
+                              ' de ' +
+                              groupLabel(group.controls.code.value)
+                            "
+                          >
+                            Quitar
+                          </button>
+                        </div>
+                      }
+                    </div>
+                    <button
+                      mat-button
+                      type="button"
+                      [disabled]="group.controls.members.length >= 10"
+                      (click)="addMember(index)"
+                    >
+                      <app-icon name="plus" />Agregar integrante
+                    </button>
+                    @if (group.touched && group.invalid) {
+                      <p class="field-error">
+                        Completa los nombres con un máximo de 80 caracteres.
+                      </p>
+                    }
+                  </div>
+                </details>
+              }
+              @if (group.controls.code.value !== 'rossana') {
+                <fieldset
+                  class="service-choices"
+                  formGroupName="services"
+                  [disabled]="!store.editableGroups()"
+                >
+                  <legend>Servicios que paga este grupo</legend>
+                  @for (service of services; track service.code) {
+                    <label
+                      ><input
+                        type="checkbox"
+                        [id]="'group-service-' + index + '-' + service.code"
+                        [formControlName]="service.code"
+                      /><app-icon [name]="service.icon" />{{ service.name }}</label
+                    >
                   }
-                } @else {
-                  <span class="badge"><app-icon name="snow" />Congeladora</span>
-                }
-              </div>
+                </fieldset>
+              } @else {
+                <div class="group-services">
+                  <span class="badge"
+                    ><app-icon name="snow" />Aporte fijo a la luz · congeladora</span
+                  >
+                </div>
+              }
             </article>
           }
         </div>
         <div class="rule-note groups-note">
           <app-icon name="info" /><span
-            >Las cuotas se calculan por grupo de pago. Amy y Annie comparten una sola cuota.</span
+            >Cada grupo comparte una sola cuota, aunque tenga varios integrantes. Editar estos
+            nombres no crea ni modifica cuentas de acceso.</span
           >
         </div>
       </section>
@@ -66,11 +138,11 @@
               <span class="icon-tile"><app-icon name="water" /></span>
               <div>
                 <h3>Agua potable</h3>
-                <p>Distribución en tres partes</p>
+                <p>Distribución en partes iguales</p>
               </div>
             </div>
-            <div class="formula">Total del recibo ÷ 3 grupos</div>
-            <p>Gemelas, Miguel y JM participan a partes iguales.</p>
+            <div class="formula">Total del recibo ÷ {{ selectedParticipants('water').length }}</div>
+            <p>{{ participantNames('water') || 'Selecciona al menos un grupo para agua.' }}</p>
           </article>
           <article class="card rule-card">
             <div class="row">
@@ -81,10 +153,13 @@
               </div>
             </div>
             <div class="fixed-setting">
-              <div><strong>Aporte de Rossana</strong><span>Consumo de la congeladora</span></div>
+              <div>
+                <strong>Aporte de {{ groupLabel('rossana') }}</strong
+                ><span>Consumo de la congeladora</span>
+              </div>
               <div class="field">
                 <label for="fixed-contribution" class="sr-only"
-                  >Aporte fijo de Rossana en soles</label
+                  >Aporte fijo especial en soles</label
                 >
                 <div class="fixed-input">
                   <span>S/</span
@@ -102,19 +177,29 @@
             @if (form.controls.fixed.touched && form.controls.fixed.invalid) {
               <p class="field-error">Escribe un importe válido con hasta dos decimales.</p>
             }
-            <div class="formula">(Total de luz − aporte fijo) ÷ 3 grupos</div>
-            <p>El aporte se separa antes de dividir el recibo.</p>
+            <div class="formula">
+              (Total de luz − aporte fijo) ÷
+              {{ selectedParticipants('electricity').length }}
+            </div>
+            <p>
+              El aporte se separa antes de dividir entre
+              {{ participantNames('electricity') || 'los grupos que selecciones' }}.
+            </p>
           </article>
           <article class="card rule-card">
             <div class="row">
               <span class="icon-tile"><app-icon name="wifi" /></span>
               <div>
                 <h3>Internet WIN</h3>
-                <p>Distribución en dos partes</p>
+                <p>Distribución en partes iguales</p>
               </div>
             </div>
-            <div class="formula">Total del recibo ÷ 2</div>
-            <p>Miguel y JM pagan la mitad cada uno. Gemelas está excluida.</p>
+            <div class="formula">
+              Total del recibo ÷ {{ selectedParticipants('internet').length }}
+            </div>
+            <p>
+              {{ participantNames('internet') || 'Selecciona al menos un grupo para internet.' }}
+            </p>
           </article>
         </div>
       </section>
@@ -221,7 +306,9 @@
   @if (store.isAdmin() && !store.closed()) {
     <div class="settings-footer">
       <p>
-        Se aplicará a {{ monthLabel(store.selectedMonth()) }} y a los nuevos meses que registres.
+        El reparto se aplicará a {{ monthLabel(store.selectedMonth()) }} y a los nuevos meses. Los
+        nombres identifican al hogar; los meses cerrados conservan los de su cálculo. Los demás
+        meses abiertos mantienen sus reglas hasta que los actualices.
       </p>
       <button mat-flat-button type="submit" [disabled]="busy() || store.saving()">
         <app-icon name="check" />{{ busy() ? 'Guardando…' : 'Guardar cambios' }}

@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { firstValueFrom } from 'rxjs';
 import { HouseholdStore } from '../../data-access/household-store';
-import { GroupCode, SERVICES } from '../../domain/models';
+import { GroupCode, ServiceCode, SERVICES } from '../../domain/models';
 import { formatMoney } from '../../domain/money';
 import { errorMessage } from '../../core/errors';
 import { Icon } from './icon';
@@ -24,11 +24,10 @@ export class GroupCards {
   private readonly dialog = inject(MatDialog);
   private readonly snack = inject(MatSnackBar);
   groupName(code: GroupCode): string {
-    return (
-      this.store.calculation()?.groupNames?.[code] ??
-      this.store.data()?.groups.find((g) => g.code === code)?.name ??
-      code
-    );
+    return this.store.groupName(code);
+  }
+  participates(code: GroupCode, service: ServiceCode): boolean {
+    return this.store.participants()[service].some((participant) => participant === code);
   }
   amount(code: GroupCode, service: string): number {
     return (

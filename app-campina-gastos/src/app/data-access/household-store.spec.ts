@@ -5,6 +5,7 @@ import { HouseholdStore } from './household-store';
 import { Supabase } from '../core/supabase';
 import { Auth } from '../core/auth';
 import { householdFixture } from '../../testing/household-fixture';
+import { DEFAULT_PARTICIPANTS } from '../domain/models';
 describe('estado y persistencia del hogar', () => {
   const rpc = vi.fn();
   beforeEach(() => {
@@ -41,5 +42,39 @@ describe('estado y persistencia del hogar', () => {
     expect(store.closed()).toBe(false);
     expect(store.saving()).toBe(false);
     expect(store.totals().twins).toBe(8334);
+  });
+  it('envía ambas revisiones al guardar la configuración ampliada', async () => {
+    const data = householdFixture();
+    data.household.configurationRevision = 7;
+    rpc.mockResolvedValue({ data, error: null });
+    const store = TestBed.inject(HouseholdStore);
+    store.selectedMonth.set('2026-10-01');
+    await store.load();
+    const groups = data.groups.map(({ code, name, members }) => ({ code, name, members }));
+    await store.saveHouseholdSettings(2000, [], groups, DEFAULT_PARTICIPANTS);
+    expect(rpc).toHaveBeenCalledWith(
+      'save_household_settings',
+      expect.objectContaining({
+        p_revision: 3,
+        p_configuration_revision: 7,
+        p_groups: groups,
+        p_participants: DEFAULT_PARTICIPANTS,
+      }),
+    );
+  });
+  it('mantiene nombres, integrantes y reglas históricos frente a la configuración actual', async () => {
+    const data = householdFixture();
+    data.groups[0].name = 'Nombre actual';
+    data.household.participants = { ...DEFAULT_PARTICIPANTS, internet: ['twins'] };
+    data.periods[0].participants = DEFAULT_PARTICIPANTS;
+    data.periods[0].calculation!.groupNames = { twins: 'Nombre histórico' };
+    data.periods[0].calculation!.groupMembers = { twins: ['Integrante histórico'] };
+    rpc.mockResolvedValue({ data, error: null });
+    const store = TestBed.inject(HouseholdStore);
+    store.selectedMonth.set('2026-10-01');
+    await store.load();
+    expect(store.groupName('twins')).toBe('Nombre histórico');
+    expect(store.groupMembers('twins')).toEqual(['Integrante histórico']);
+    expect(store.participants().internet).toEqual(['miguel', 'jm']);
   });
 });

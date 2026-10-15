@@ -3,7 +3,16 @@ import { Auth } from '../core/auth';
 import { errorMessage } from '../core/errors';
 import { Supabase } from '../core/supabase';
 import { groupTotals } from '../domain/distribution';
-import { GroupCode, HouseholdData, ReceiptInput, TransferAccount } from '../domain/models';
+import {
+  DEFAULT_PARTICIPANTS,
+  EditablePaymentGroup,
+  GroupCode,
+  HouseholdData,
+  ReceiptInput,
+  RuleParticipants,
+  ServiceCode,
+  TransferAccount,
+} from '../domain/models';
 import { monthNow } from '../domain/money';
 import { Json } from './database.types';
 
@@ -18,6 +27,13 @@ export class HouseholdStore {
   readonly error = signal('');
   readonly selectedMonth = signal(monthNow());
   readonly hasUnsavedChanges = signal(false);
+  readonly participants = computed(
+    () =>
+      this.period()?.participants ?? this.data()?.household.participants ?? DEFAULT_PARTICIPANTS,
+  );
+  readonly editableGroups = computed(
+    () => this.data()?.household.configurationRevision !== undefined,
+  );
   readonly period = computed(
     () => this.data()?.periods.find((p) => p.month === this.selectedMonth()) ?? null,
   );
@@ -79,6 +95,31 @@ export class HouseholdStore {
   balance(code: GroupCode): number {
     return this.totals()[code] - this.paid(code);
   }
+  groupName(code: GroupCode): string {
+    return (
+      this.calculation()?.groupNames?.[code] ??
+      this.data()?.groups.find((group) => group.code === code)?.name ??
+      code
+    );
+  }
+  groupMembers(code: GroupCode): string[] {
+    return (
+      this.calculation()?.groupMembers?.[code] ??
+      this.data()?.groups.find((group) => group.code === code)?.members ??
+      []
+    );
+  }
+  participantNames(service: ServiceCode): string {
+    return this.participants()
+      [service].map((code) => this.groupName(code))
+      .join(', ');
+  }
+  serviceRule(service: ServiceCode): string {
+    const count = this.participants()[service].length;
+    return service === 'electricity'
+      ? `Aporte fijo + reparto entre ${count}`
+      : `Entre ${count} ${count === 1 ? 'grupo' : 'grupos'}`;
+  }
   private args() {
     const household = this.data()?.household.id;
     if (!household || !this.isAdmin())
@@ -118,6 +159,26 @@ export class HouseholdStore {
         ...args,
         p_fixed: fixed,
         p_accounts: accounts as unknown as Json,
+      }),
+    );
+  }
+  async saveHouseholdSettings(
+    fixed: number,
+    accounts: TransferAccount[],
+    groups: EditablePaymentGroup[],
+    participants: RuleParticipants,
+  ): Promise<void> {
+    const args = this.args();
+    const revision = this.data()?.household.configurationRevision;
+    if (revision === undefined) throw new Error('La edición de grupos aún no está habilitada.');
+    await this.mutate(() =>
+      this.backend.client.rpc('save_household_settings', {
+        ...args,
+        p_configuration_revision: revision,
+        p_fixed: fixed,
+        p_accounts: accounts as unknown as Json,
+        p_groups: groups as unknown as Json,
+        p_participants: participants as unknown as Json,
       }),
     );
   }

@@ -148,7 +148,7 @@
         <p>Así se distribuirá este recibo.</p>
         <div class="preview-rule">
           <strong>{{ selectedService().name }}</strong
-          ><span>{{ selectedService().rule }}</span>
+          ><span>{{ store.serviceRule(selectedService().code) }}</span>
         </div>
         @if (simulation().error) {
           <div class="preview-warning" role="status">{{ simulation().error }}</div>
@@ -157,9 +157,7 @@
             @for (code of groupOrder; track code) {
               @if (hasGroup(code)) {
                 <div class="row">
-                  <span class="avatar">{{
-                    code === 'twins' ? 'G' : code === 'miguel' ? 'M' : code === 'jm' ? 'JM' : 'R'
-                  }}</span
+                  <span class="avatar">{{ groupName(code).slice(0, 2).toUpperCase() }}</span
                   ><span class="grow">{{ groupName(code) }}</span
                   ><strong class="money">{{ money(totals()[code]) }}</strong>
                 </div>

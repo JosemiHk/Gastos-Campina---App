@@ -1,6 +1,12 @@
 import { signal, computed } from '@angular/core';
 import { vi } from 'vitest';
-import { HouseholdData, Receipt } from '../app/domain/models';
+import {
+  DEFAULT_PARTICIPANTS,
+  GroupCode,
+  HouseholdData,
+  Receipt,
+  ServiceCode,
+} from '../app/domain/models';
 import { calculateDistribution, groupTotals } from '../app/domain/distribution';
 export function householdFixture() {
   const data: HouseholdData = {
@@ -78,11 +84,28 @@ export function storeFixture(empty = false) {
   const selectedMonth = signal('2026-10-01');
   const period = computed(() => data().periods.find((p) => p.month === selectedMonth()) ?? null);
   const calculation = computed(() => period()?.calculation ?? null);
+  const participants = computed(
+    () => period()?.participants ?? data().household.participants ?? DEFAULT_PARTICIPANTS,
+  );
+  const groupName = (code: GroupCode) =>
+    calculation()?.groupNames?.[code] ?? data().groups.find((g) => g.code === code)?.name ?? code;
   return {
     data,
     selectedMonth,
     period,
     calculation,
+    participants,
+    editableGroups: computed(() => data().household.configurationRevision !== undefined),
+    groupName,
+    groupMembers: (code: GroupCode) =>
+      calculation()?.groupMembers?.[code] ??
+      data().groups.find((g) => g.code === code)?.members ??
+      [],
+    participantNames: (service: ServiceCode) => participants()[service].map(groupName).join(', '),
+    serviceRule: (service: ServiceCode) =>
+      service === 'electricity'
+        ? `Aporte fijo + reparto entre ${participants()[service].length}`
+        : `Entre ${participants()[service].length} grupos`,
     receipts: computed(() => period()?.receipts ?? []),
     totals: computed(() => groupTotals(calculation())),
     isAdmin: computed(() => data().role === 'admin'),
@@ -99,6 +122,7 @@ export function storeFixture(empty = false) {
     balance: (code: keyof ReturnType<typeof groupTotals>) => groupTotals(calculation())[code],
     saveReceipt: vi.fn().mockResolvedValue(undefined),
     saveSettings: vi.fn().mockResolvedValue(undefined),
+    saveHouseholdSettings: vi.fn().mockResolvedValue(undefined),
     confirmPayment: vi.fn().mockResolvedValue(undefined),
     voidPayment: vi.fn().mockResolvedValue(undefined),
     closePeriod: vi.fn().mockResolvedValue(undefined),

@@ -1,4 +1,4 @@
-import { BillingPeriod, PaymentGroup, TransferAccount } from './models';
+import { BillingPeriod, DEFAULT_PARTICIPANTS, PaymentGroup, TransferAccount } from './models';
 import { groupTotals } from './distribution';
 import { formatMoney, monthLabel } from './money';
 export function summaryText(
@@ -39,11 +39,17 @@ export function summaryText(
         `  Recibido: ${formatMoney(paid)}${paid < totals[group.code] ? ` · Pendiente: ${formatMoney(totals[group.code] - paid)}` : paid > totals[group.code] ? ` · Saldo a favor: ${formatMoney(paid - totals[group.code])}` : ' · Pagado'}`,
       );
   }
-  if (period.receipts.some((r) => r.service === 'electricity' && r.status === 'confirmed'))
+  if (period.receipts.some((r) => r.service === 'electricity' && r.status === 'confirmed')) {
+    const specialName =
+      calculation.groupNames?.rossana ??
+      groups.find((g) => g.code === 'rossana')?.name ??
+      'aporte especial';
+    const count = (period.participants ?? DEFAULT_PARTICIPANTS).electricity.length;
     lines.push(
       '',
-      `La luz incluye ${formatMoney(calculation.fixedContributionCents)} de Rossana; el saldo se divide entre 3 grupos.`,
+      `La luz incluye ${formatMoney(calculation.fixedContributionCents)} de ${specialName}; el saldo se divide entre ${count} ${count === 1 ? 'grupo' : 'grupos'}.`,
     );
+  }
   if (accounts.length) {
     lines.push('', '*DATOS PARA TRANSFERIR*');
     for (const account of accounts) {

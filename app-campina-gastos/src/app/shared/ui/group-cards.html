@@ -3,20 +3,14 @@
     @if (visible(group.code)) {
       <article class="card group-card" [class.special]="group.kind === 'special'">
         <div class="row group-heading">
-          <span class="avatar">{{
-            group.code === 'twins'
-              ? 'G'
-              : group.code === 'miguel'
-                ? 'M'
-                : group.code === 'jm'
-                  ? 'JM'
-                  : 'R'
-          }}</span>
+          <span class="avatar">{{ groupName(group.code).slice(0, 2).toUpperCase() }}</span>
           <div class="grow">
             <h3>{{ groupName(group.code) }}</h3>
             <p>
               {{
-                group.code === 'rossana' ? 'Aporte fijo · congeladora' : group.members.join(' y ')
+                group.code === 'rossana'
+                  ? 'Aporte fijo · congeladora'
+                  : store.groupMembers(group.code).join(' y ')
               }}
             </p>
           </div>
@@ -54,8 +48,8 @@
               @for (service of services; track service.code) {
                 <div class="row">
                   <app-icon [name]="service.icon" /><span class="grow">{{ service.name }}</span>
-                  @if (group.code === 'twins' && service.code === 'internet') {
-                    <span class="muted">Excluidas</span>
+                  @if (!participates(group.code, service.code)) {
+                    <span class="muted">No participa</span>
                   } @else if (!hasService(service.code)) {
                     <span class="muted">Sin recibo</span>
                   } @else {

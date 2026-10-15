@@ -89,6 +89,7 @@ export class ReceiptPage {
         calculation: calculateDistribution(
           [{ service: this.form.controls.service.value, amountCents: cents, status: 'confirmed' }],
           this.store.fixedContributionCents(),
+          this.store.participants(),
         ),
         error: '',
       };
@@ -220,7 +221,9 @@ export class ReceiptPage {
     return this.simulation().calculation?.allocations.some((a) => a.remainderCents > 0) ?? false;
   }
   groupName(code: GroupCode): string {
-    return this.store.data()?.groups.find((g) => g.code === code)?.name ?? code;
+    return this.store.closed()
+      ? this.store.groupName(code)
+      : (this.store.data()?.groups.find((group) => group.code === code)?.name ?? code);
   }
   historicalReceipt(): Receipt | undefined {
     return this.store

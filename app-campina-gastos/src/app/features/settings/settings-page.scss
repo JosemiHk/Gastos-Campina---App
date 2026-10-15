@@ -38,6 +38,57 @@ fieldset:disabled select {
   gap: 8px;
   margin-top: 18px;
 }
+.group-editor {
+  margin-top: 20px;
+}
+.group-editor summary {
+  color: var(--secondary);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 10px 0;
+}
+.group-editor[open] summary {
+  margin-bottom: 12px;
+}
+.member-fields {
+  gap: 12px;
+}
+.member-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+.member-row .grow {
+  flex: 1;
+  min-width: 0;
+}
+.service-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-top: 20px;
+}
+.service-choices legend {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+.service-choices label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  font-size: 12px;
+}
+.service-choices input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+}
+.service-choices app-icon {
+  width: 16px;
+  height: 16px;
+}
 .group-services .badge {
   font-size: 10px;
   font-weight: 500;

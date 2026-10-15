@@ -67,7 +67,7 @@
           ? money(receipt(service.code)!.amountCents)
           : '—'
       }}</strong>
-      <div class="service-rule">{{ service.rule }}</div>
+      <div class="service-rule">{{ store.serviceRule(service.code) }}</div>
     </section>
   }
 </div>
@@ -100,14 +100,18 @@
                 <div class="grow">
                   <h3>{{ service.name }}</h3>
                   <p>
-                    {{ bill.status === 'draft' ? 'Borrador · fuera del reparto' : service.rule }}
+                    {{
+                      bill.status === 'draft'
+                        ? 'Borrador · fuera del reparto'
+                        : store.serviceRule(service.code)
+                    }}
                   </p>
                 </div>
                 <strong class="money">{{ money(bill.amountCents) }}</strong>
               </div>
               @if (service.code === 'electricity' && bill.status === 'confirmed') {
                 <div class="bill-rule">
-                  <app-icon name="snow" />Aporte de Rossana:
+                  <app-icon name="snow" />Aporte de {{ store.groupName('rossana') }}:
                   {{ money(store.fixedContributionCents()) }} · Saldo común:
                   {{ money(bill.amountCents - store.fixedContributionCents()) }}
                 </div>

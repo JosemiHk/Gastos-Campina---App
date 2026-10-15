@@ -1,4 +1,12 @@
-import { Allocation, Calculation, GroupCode, GROUP_ORDER, Receipt } from './models';
+import {
+  Allocation,
+  Calculation,
+  DEFAULT_PARTICIPANTS,
+  GroupCode,
+  GROUP_ORDER,
+  Receipt,
+  RuleParticipants,
+} from './models';
 import { MAX_RECEIPT_CENTS } from './money';
 
 export function splitEqual(
@@ -24,6 +32,7 @@ export function splitEqual(
 export function calculateDistribution(
   receipts: Pick<Receipt, 'service' | 'amountCents' | 'status'>[],
   fixedContributionCents: number,
+  participantsByService: RuleParticipants = DEFAULT_PARTICIPANTS,
 ): Calculation {
   if (
     !Number.isSafeInteger(fixedContributionCents) ||
@@ -49,7 +58,7 @@ export function calculateDistribution(
     let distributable = receipt.amountCents;
     if (receipt.service === 'electricity') {
       if (receipt.amountCents < fixedContributionCents)
-        throw new Error('El recibo de luz debe cubrir el aporte fijo de Rossana.');
+        throw new Error('El recibo de luz debe cubrir el aporte fijo especial.');
       allocations.push({
         service: 'electricity',
         groupCode: 'rossana',
@@ -58,8 +67,18 @@ export function calculateDistribution(
       });
       distributable -= fixedContributionCents;
     }
-    const participants: readonly GroupCode[] =
-      receipt.service === 'internet' ? ['miguel', 'jm'] : ['twins', 'miguel', 'jm'];
+    const configured = participantsByService[receipt.service];
+    if (
+      !Array.isArray(configured) ||
+      configured.length === 0 ||
+      configured.some((code) => !['twins', 'miguel', 'jm'].includes(code)) ||
+      new Set(configured).size !== configured.length
+    )
+      throw new Error('Selecciona grupos participantes válidos para cada servicio.');
+    // Match PostgreSQL's stable group order, independently of checkbox selection order.
+    const participants = GROUP_ORDER.filter((code) =>
+      configured.some((participant) => participant === code),
+    );
     allocations.push(
       ...splitEqual(distributable, participants).map((part) => ({
         ...part,

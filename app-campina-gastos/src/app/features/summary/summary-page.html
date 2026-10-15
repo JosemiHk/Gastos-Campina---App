@@ -152,8 +152,10 @@
           </section>
           @if (serviceAmount('electricity') !== null) {
             <p class="voucher-note">
-              La luz incluye {{ money(store.fixedContributionCents()) }} de Rossana. El saldo se
-              reparte entre los tres grupos.
+              La luz incluye {{ money(store.fixedContributionCents()) }} de
+              {{ store.groupName('rossana') }}. El saldo se reparte entre
+              {{ store.participants().electricity.length }}
+              {{ store.participants().electricity.length === 1 ? 'grupo' : 'grupos' }}.
             </p>
           }
           @if (store.data()!.accounts.length) {

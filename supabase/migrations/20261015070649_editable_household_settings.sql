@@ -139,7 +139,7 @@ begin
     amount:=bill.amount_cents;
     total:=total+amount;
     if bill.code='electricity' then
-      if amount<fixed then raise exception 'El recibo de luz debe cubrir el aporte fijo de Rossana.'; end if;
+      if amount<fixed then raise exception 'El recibo de luz debe cubrir el aporte fijo especial.'; end if;
       insert into public.allocations(household_id,calculation_id,receipt_id,group_id,amount_cents) select p.household_id,run_id,bill.id,id,fixed from public.payment_groups where household_id=p.household_id and code='rossana';
       amount:=amount-fixed;
     end if;
