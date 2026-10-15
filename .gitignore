@@ -10,4 +10,5 @@ test-results/
 .supabase/
 .vercel/
 app-campina-gastos/public/config.local.json
+app-campina-gastos/public/config.json
 *.log
