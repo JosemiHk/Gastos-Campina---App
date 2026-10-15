@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-background" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Registrar Recibo - Campiña Gastos</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-variant": "#dfe3e2",
+            "on-tertiary-fixed-variant": "#005048",
+            "surface-container-high": "#e5e9e8",
+            "surface-container-low": "#f0f4f3",
+            "text-primary": "#1F2937",
+            "background": "#f6faf9",
+            "on-tertiary-fixed": "#00201c",
+            "tertiary": "#00221d",
+            "secondary-fixed": "#adefe7",
+            "outline-variant": "#c0c8c5",
+            "on-primary-container": "#75a398",
+            "inverse-on-surface": "#edf2f1",
+            "on-tertiary": "#ffffff",
+            "secondary-fixed-dim": "#91d2cb",
+            "surface-dim": "#d7dbda",
+            "surface-container": "#ebefee",
+            "secondary": "#256863",
+            "on-error-container": "#93000a",
+            "surface-bright": "#f6faf9",
+            "tertiary-fixed-dim": "#79d7c8",
+            "on-secondary": "#ffffff",
+            "outline-subtle": "#D7E6E2",
+            "surface-tint": "#3a665d",
+            "primary-fixed": "#bcece0",
+            "error": "#ba1a1a",
+            "primary-container": "#053931",
+            "on-primary": "#ffffff",
+            "tertiary-container": "#003933",
+            "tertiary-fixed": "#95f3e3",
+            "on-error": "#ffffff",
+            "on-secondary-fixed-variant": "#00504b",
+            "primary": "#00221c",
+            "error-container": "#ffdad6",
+            "secondary-container": "#adefe7",
+            "on-background": "#181c1c",
+            "on-secondary-container": "#2c6e69",
+            "on-primary-fixed": "#00201b",
+            "text-secondary": "#6B7280",
+            "on-primary-fixed-variant": "#204e46",
+            "surface-container-lowest": "#ffffff",
+            "on-surface": "#181c1c",
+            "surface": "#f6faf9",
+            "outline": "#707976",
+            "inverse-surface": "#2c3131",
+            "on-tertiary-container": "#49a99b",
+            "inverse-primary": "#a1d0c4",
+            "primary-fixed-dim": "#a1d0c4",
+            "surface-container-highest": "#dfe3e2",
+            "on-secondary-fixed": "#00201e",
+            "on-surface-variant": "#404846"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter-md": "1.5rem",
+            "space-md": "1rem",
+            "space-sm": "0.5rem",
+            "margin-lg": "3rem",
+            "space-xs": "0.25rem",
+            "margin-md": "2rem",
+            "space-2xl": "3rem",
+            "gutter-lg": "2rem",
+            "margin": "1rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2rem",
+            "gutter": "1rem"
+          },
+          "fontFamily": {
+            "title-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "headline-lg": ["Inter"],
+            "currency-display": ["Inter"],
+            "body-lg": ["Inter"],
+            "headline-lg-mobile": ["Inter"],
+            "label-lg": ["Inter"],
+            "title-md": ["Inter"],
+            "currency-display-mobile": ["Inter"],
+            "label-sm": ["Inter"],
+            "headline-xl": ["Inter"],
+            "label-md": ["Inter"],
+            "body-md": ["Inter"],
+            "headline-xl-mobile": ["Inter"],
+            "headline-md": ["Inter"]
+          },
+          "fontSize": {
+            "title-lg": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "currency-display": ["48px", { "lineHeight": "52px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "title-md": ["16px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "currency-display-mobile": ["36px", { "lineHeight": "42px", "letterSpacing": "-0.025em", "fontWeight": "700" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-xl-mobile": ["32px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-md": ["24px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-shadow-card {
+      box-shadow: 0 4px 20px -2px rgba(5, 57, 49, 0.05), 0 2px 6px -1px rgba(5, 57, 49, 0.03);
+    }
+    .custom-shadow-elevated {
+      box-shadow: 0 8px 28px -4px rgba(5, 57, 49, 0.08), 0 4px 10px -2px rgba(5, 57, 49, 0.04);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased flex flex-col min-h-screen pb-28">
+<!-- Top App Bar Navigation -->
+<header class="sticky top-0 z-40 bg-surface-container-low/90 backdrop-blur-md">
+<div class="flex justify-between items-center w-full px-space-md py-space-sm max-w-7xl mx-auto">
+<div class="flex items-center gap-space-sm">
+<button aria-label="Volver atrás" class="w-10 h-10 rounded-full flex items-center justify-center text-primary hover:bg-surface-container active:scale-[0.98] transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<span class="text-title-lg font-title-lg text-primary tracking-tight">Campiña Gastos</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-space-sm py-1 rounded-full text-label-md font-label-md bg-secondary-container text-on-secondary-container">
+          Mayo 2024
+        </span>
+</div>
+</div>
+</header>
+<!-- Main Content Container (Mobile Centric / Constrained Width) -->
+<main class="w-full max-w-xl mx-auto px-space-md pt-space-md space-y-space-lg">
+<!-- Page Title & Guidance Header -->
+<section class="space-y-1">
+<h1 class="text-headline-md font-headline-md text-primary">Registrar Recibo</h1>
+<p class="text-body-md font-body-md text-text-secondary">Ingresa los datos del recibo para el cálculo automático y equitativo del hogar.</p>
+</section>
+<!-- Visual Service Selector (3 Selectable MD3 Cards) -->
+<section class="space-y-space-xs">
+<label class="block text-label-md font-label-md text-text-primary">Tipo de Servicio</label>
+<div class="grid grid-cols-3 gap-space-sm">
+<!-- Agua (Selected) -->
+<button class="relative flex flex-col items-center justify-center p-space-md rounded-xl bg-surface-container-lowest border-2 border-primary-container custom-shadow-elevated transition-transform active:scale-[0.98] text-left" type="button">
+<div class="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary-container text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]" data-icon="check" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-on-secondary-container text-[24px]" data-icon="water_drop" data-weight="fill" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+</div>
+<span class="text-label-lg font-label-lg text-primary font-semibold">Agua</span>
+<span class="text-label-sm font-label-sm text-text-secondary">Sedapal</span>
+</button>
+<!-- Luz (Unselected) -->
+<button class="flex flex-col items-center justify-center p-space-md rounded-xl bg-surface-container-lowest border border-outline-subtle custom-shadow-card hover:bg-surface-container-low transition-all active:scale-[0.98] text-left opacity-90" type="button">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-primary text-[24px]" data-icon="bolt">bolt</span>
+</div>
+<span class="text-label-lg font-label-lg text-on-surface">Luz</span>
+<span class="text-label-sm font-label-sm text-text-secondary">Enel / Pluz</span>
+</button>
+<!-- Internet WIN (Unselected) -->
+<button class="flex flex-col items-center justify-center p-space-md rounded-xl bg-surface-container-lowest border border-outline-subtle custom-shadow-card hover:bg-surface-container-low transition-all active:scale-[0.98] text-left opacity-90" type="button">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-primary text-[24px]" data-icon="wifi">wifi</span>
+</div>
+<span class="text-label-lg font-label-lg text-on-surface">Internet</span>
+<span class="text-label-sm font-label-sm text-text-secondary">WIN Fibra</span>
+</button>
+</div>
+</section>
+<!-- Main Registration Form -->
+<form class="space-y-space-md">
+<!-- Amount Input Card (Hero Currency Display) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg border border-outline-subtle custom-shadow-card space-y-space-xs">
+<div class="flex justify-between items-baseline">
+<label class="text-label-md font-label-md text-text-secondary" for="monto-total">Monto Total del Recibo</label>
+<span class="text-label-sm font-label-sm text-secondary bg-surface-container px-2 py-0.5 rounded-full">Moneda: PEN (S/)</span>
+</div>
+<div class="relative flex items-center">
+<span class="text-headline-lg-mobile font-headline-lg-mobile text-text-secondary mr-2 select-none">S/</span>
+<input class="w-full bg-transparent border-0 p-0 text-currency-display-mobile font-currency-display-mobile text-primary focus:ring-0 focus:outline-none placeholder:text-outline-variant tracking-tight font-bold" id="monto-total" inputmode="decimal" placeholder="90.00" step="0.01" type="number" value="90.00"/>
+</div>
+<p class="text-body-sm font-body-sm text-text-secondary pt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-body-sm text-secondary" data-icon="info">info</span>
+          Incluye cargos fijos y consumo mensual regulado
+        </p>
+</div>
+<!-- Billing Cycle & Due Date Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<!-- Month Selector -->
+<div class="space-y-1">
+<label class="block text-label-md font-label-md text-text-primary" for="mes-facturacion">Mes de Facturación</label>
+<div class="relative">
+<select class="w-full h-12 bg-surface-container-lowest border border-outline-subtle rounded-lg px-space-md pr-10 text-body-md font-body-md text-text-primary focus:border-secondary focus:ring-2 focus:ring-on-tertiary-container/30 appearance-none transition-all" id="mes-facturacion">
+<option selected="" value="mayo-2024">Mayo 2024</option>
+<option value="junio-2024">Junio 2024</option>
+<option value="abril-2024">Abril 2024</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-text-secondary">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+</div>
+</div>
+</div>
+<!-- Issue / Due Date -->
+<div class="space-y-1">
+<label class="block text-label-md font-label-md text-text-primary" for="fecha-vencimiento">Fecha de Vencimiento</label>
+<div class="relative">
+<input class="w-full h-12 bg-surface-container-lowest border border-outline-subtle rounded-lg px-space-md pr-10 text-body-md font-body-md text-text-primary focus:border-secondary focus:ring-2 focus:ring-on-tertiary-container/30 transition-all" id="fecha-vencimiento" type="text" value="15 de Mayo, 2024"/>
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-text-secondary">
+<span class="material-symbols-outlined" data-icon="event">event</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Document / Receipt Photo Upload Section -->
+<div class="space-y-space-xs">
+<label class="block text-label-md font-label-md text-text-primary">Comprobante o Foto del Recibo</label>
+<div class="border-2 border-dashed border-outline-subtle bg-surface-container-lowest rounded-xl p-space-md flex flex-col items-center justify-center text-center hover:border-secondary transition-all">
+<!-- Successfully Attached Thumbnail Card -->
+<div class="w-full bg-surface-container-low rounded-lg p-space-sm flex items-center justify-between border border-outline-subtle mb-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-12 h-12 rounded bg-surface-container-highest flex items-center justify-center overflow-hidden border border-outline-subtle">
+<img class="w-full h-full object-cover" data-alt="A clean, close-up photograph of an official Peruvian Sedapal water utility bill resting on a calm pale pine mist desk surface. Natural, soft daylight illumination reveals authentic barcode stamps, subtle evergreen highlights, and crisp print details in a modern domestic finance management context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrJo-3WcOzL6Ce137xa926TcvcgCACAEENWcmj5tnX_qJRsjH9BH-lmVIwdskBtTpffeRNc6GHFzxPuqQ8FDEKzJ5Xvd5a3DVEEL7mE7IjbkdTc-_RqgO7BQ54XPGvBo0VKePuznVYj04k5bnjBXnWbAuuTnpKKPQWpo5a16AGIElqRB54lD_RgRDTWz4n-M2VXpgoN6zuozlgdPIumEjLCUDQYI9JbPtQT8DoziD_e2wHYNzLmlJ8kA"/>
+</div>
+<div class="text-left">
+<p class="text-label-md font-label-md text-primary font-medium truncate max-w-[180px]">recibo_mayo_agua.jpg</p>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-emerald-100 text-secondary">
+                    ADJUNTADO
+                  </span>
+<span class="text-body-sm font-body-sm text-text-secondary">1.4 MB</span>
+</div>
+</div>
+</div>
+<button class="px-space-sm py-1 text-label-sm font-label-sm text-secondary hover:bg-surface-container-high rounded transition-colors active:scale-95 flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="sync">sync</span>
+              Reemplazar
+            </button>
+</div>
+<!-- Secondary Quick Actions -->
+<div class="flex items-center gap-space-md text-body-sm font-body-sm text-text-secondary pt-1">
+<button class="flex items-center gap-1.5 hover:text-primary transition-colors py-1 px-2 rounded hover:bg-surface-container-low" type="button">
+<span class="material-symbols-outlined text-secondary text-[18px]" data-icon="photo_camera">photo_camera</span>
+              Tomar foto
+            </button>
+<span class="text-outline-variant">•</span>
+<button class="flex items-center gap-1.5 hover:text-primary transition-colors py-1 px-2 rounded hover:bg-surface-container-low" type="button">
+<span class="material-symbols-outlined text-secondary text-[18px]" data-icon="upload_file">upload_file</span>
+              Sube PDF o Imagen
+            </button>
+</div>
+</div>
+</div>
+<!-- Informational Card: Automatic Domestic Split Preview -->
+<div class="bg-primary-container text-on-primary rounded-xl p-space-md custom-shadow-card space-y-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]" data-icon="pie_chart" data-weight="fill" style="font-variation-settings: 'FILL' 1;">pie_chart</span>
+</div>
+<h3 class="text-label-lg font-label-lg text-primary-fixed font-semibold">Previsualización de Reparto</h3>
+</div>
+<span class="text-label-sm font-label-sm text-on-primary-container uppercase tracking-wider">Regla 33.3%</span>
+</div>
+<p class="text-body-sm font-body-sm text-inverse-on-surface leading-relaxed">
+          Para <span class="font-semibold text-secondary-fixed">Agua</span>: el total se dividirá equitativamente entre los 3 integrantes activos de la casa:
+        </p>
+<!-- Member Chip Distribution List -->
+<div class="grid grid-cols-3 gap-2 pt-1">
+<!-- Member 1: Gemelas -->
+<div class="bg-tertiary-container/80 rounded-lg p-2 border border-on-tertiary-fixed-variant/40 flex flex-col items-center text-center">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-label-md mb-1">
+              G
+            </div>
+<span class="text-label-sm font-label-sm text-primary-fixed truncate w-full">Gemelas</span>
+<span class="text-label-md font-label-md font-bold text-on-primary mt-0.5">S/ 30.00</span>
+</div>
+<!-- Member 2: Miguel -->
+<div class="bg-tertiary-container/80 rounded-lg p-2 border border-on-tertiary-fixed-variant/40 flex flex-col items-center text-center">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-label-md mb-1">
+              M
+            </div>
+<span class="text-label-sm font-label-sm text-primary-fixed truncate w-full">Miguel</span>
+<span class="text-label-md font-label-md font-bold text-on-primary mt-0.5">S/ 30.00</span>
+</div>
+<!-- Member 3: JM -->
+<div class="bg-tertiary-container/80 rounded-lg p-2 border border-on-tertiary-fixed-variant/40 flex flex-col items-center text-center">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-label-md mb-1">
+              JM
+            </div>
+<span class="text-label-sm font-label-sm text-primary-fixed truncate w-full">JM</span>
+<span class="text-label-md font-label-md font-bold text-on-primary mt-0.5">S/ 30.00</span>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="space-y-3 pt-2">
+<!-- Primary Action -->
+<button class="w-full h-12 bg-primary-container hover:bg-tertiary text-on-primary rounded text-title-md font-title-md flex items-center justify-center gap-2 custom-shadow-elevated active:scale-[0.98] transition-all duration-200" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="calculate">calculate</span>
+          Guardar y Calcular Reparto
+        </button>
+<!-- Secondary Draft Action -->
+<button class="w-full h-12 bg-transparent hover:bg-surface-container-low text-secondary border border-outline-subtle rounded text-label-lg font-label-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-all duration-200" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="save_as">save_as</span>
+          Guardar como borrador
+        </button>
+</div>
+</form>
+</main>
+<!-- MD3 Bottom Navigation Bar with 'Registrar' Active -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-space-xs py-space-sm pb-safe bg-surface-container-lowest shadow-lg">
+<!-- Tab 1: Resumen -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-space-xs py-space-xs transition-colors hover:text-primary active:scale-[0.98]" href="#resumen">
+<span class="material-symbols-outlined text-[24px]" data-icon="dashboard">dashboard</span>
+<span class="text-label-sm font-label-sm mt-1">Resumen</span>
+</a>
+<!-- Tab 2: Registrar (ACTIVE MATCH) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-space-md py-space-xs transition-transform active:scale-[0.98]" href="#registrar">
+<span class="material-symbols-outlined text-[24px]" data-icon="add_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+<span class="text-label-sm font-label-sm font-semibold mt-0.5">Registrar</span>
+</a>
+<!-- Tab 3: Cálculo -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-space-xs py-space-xs transition-colors hover:text-primary active:scale-[0.98]" href="#calculo">
+<span class="material-symbols-outlined text-[24px]" data-icon="calculate">calculate</span>
+<span class="text-label-sm font-label-sm mt-1">Cálculo</span>
+</a>
+<!-- Tab 4: Historial -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-space-xs py-space-xs transition-colors hover:text-primary active:scale-[0.98]" href="#historial">
+<span class="material-symbols-outlined text-[24px]" data-icon="receipt_long">receipt_long</span>
+<span class="text-label-sm font-label-sm mt-1">Historial</span>
+</a>
+<!-- Tab 5: Ajustes -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-space-xs py-space-xs transition-colors hover:text-primary active:scale-[0.98]" href="#ajustes">
+<span class="material-symbols-outlined text-[24px]" data-icon="settings">settings</span>
+<span class="text-label-sm font-label-sm mt-1">Ajustes</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-background" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Confirmación de Envío · Campiña Gastos</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration verbatim from Design System -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-high": "#e5e9e8",
+            "secondary-fixed-dim": "#91d2cb",
+            "on-tertiary-fixed-variant": "#005048",
+            "secondary-fixed": "#adefe7",
+            "surface-container": "#FFFFFF",
+            "on-tertiary-container": "#49a99b",
+            "surface-bright": "#f6faf9",
+            "surface-tint": "#3a665d",
+            "primary-container": "#053931",
+            "primary-fixed": "#bcece0",
+            "on-secondary-fixed-variant": "#00504b",
+            "error": "#ba1a1a",
+            "tertiary": "#00221d",
+            "inverse-surface": "#2c3131",
+            "on-error-container": "#93000a",
+            "secondary-container": "#adefe7",
+            "surface": "#f6faf9",
+            "on-secondary-fixed": "#00201e",
+            "tertiary-fixed": "#95f3e3",
+            "primary-fixed-dim": "#a1d0c4",
+            "tertiary-fixed-dim": "#79d7c8",
+            "primary": "#00221c",
+            "surface-container-lowest": "#ffffff",
+            "error-container": "#ffdad6",
+            "outline-subtle": "#D7E6E2",
+            "tertiary-container": "#003933",
+            "surface-container-low": "#f0f4f3",
+            "on-background": "#181c1c",
+            "on-primary-container": "#75a398",
+            "on-secondary-container": "#2c6e69",
+            "background": "#f6faf9",
+            "surface-container-highest": "#dfe3e2",
+            "on-secondary": "#ffffff",
+            "on-primary": "#ffffff",
+            "outline": "#707976",
+            "text-secondary": "#6B7280",
+            "surface-variant": "#dfe3e2",
+            "on-surface": "#181c1c",
+            "on-primary-fixed-variant": "#204e46",
+            "on-surface-variant": "#404846",
+            "on-tertiary-fixed": "#00201c",
+            "secondary": "#256863",
+            "surface-dim": "#d7dbda",
+            "on-primary-fixed": "#00201b",
+            "on-tertiary": "#ffffff",
+            "text-primary": "#1F2937",
+            "on-error": "#ffffff",
+            "inverse-primary": "#a1d0c4",
+            "inverse-on-surface": "#edf2f1",
+            "outline-variant": "#c0c8c5"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter-md": "1.5rem",
+            "space-lg": "1.5rem",
+            "space-xs": "0.25rem",
+            "space-2xl": "3rem",
+            "margin": "1rem",
+            "space-sm": "0.5rem",
+            "margin-md": "2rem",
+            "gutter": "1rem",
+            "space-xl": "2rem",
+            "space-md": "1rem",
+            "margin-lg": "3rem",
+            "gutter-lg": "2rem"
+          },
+          "fontFamily": {
+            "label-sm": ["Inter"],
+            "currency-display-mobile": ["Inter"],
+            "body-sm": ["Inter"],
+            "label-md": ["Inter"],
+            "label-lg": ["Inter"],
+            "body-lg": ["Inter"],
+            "headline-lg": ["Inter"],
+            "headline-xl": ["Inter"],
+            "headline-md": ["Inter"],
+            "title-lg": ["Inter"],
+            "title-md": ["Inter"],
+            "headline-lg-mobile": ["Inter"],
+            "currency-display": ["Inter"],
+            "body-md": ["Inter"],
+            "headline-xl-mobile": ["Inter"]
+          },
+          "fontSize": {
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "currency-display-mobile": ["36px", { "lineHeight": "42px", "letterSpacing": "-0.025em", "fontWeight": "700" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "headline-md": ["24px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "title-lg": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "title-md": ["16px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "currency-display": ["48px", { "lineHeight": "52px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-xl-mobile": ["32px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    /* Ambient Forest Calm subtle drop shadow as per Level 1 and Level 2 elevation guidance */
+    .elevation-level-1 {
+      box-shadow: 0 4px 20px -2px rgba(5, 57, 49, 0.05), 0 2px 6px -1px rgba(5, 57, 49, 0.03);
+    }
+    .elevation-level-2 {
+      box-shadow: 0 8px 28px -4px rgba(5, 57, 49, 0.08), 0 4px 10px -2px rgba(5, 57, 49, 0.04);
+    }
+    .pulse-soft {
+      animation: gentle-breathe 3s ease-in-out infinite;
+    }
+    @keyframes gentle-breathe {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+  </style>
+</head>
+<body class="min-h-full bg-background text-on-surface antialiased flex flex-col justify-between selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+<!-- TOP APP BAR (Shared Component: TopAppBar mapped directly from JSON & hierarchy rules) -->
+<header class="bg-surface dark:bg-surface border-b border-outline-subtle dark:border-outline-variant w-full sticky top-0 z-30">
+<div class="flex justify-between items-center w-full px-4 h-16 max-w-lg mx-auto">
+<!-- Leading Icon / Brand Anchor -->
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-2xl flex items-center justify-center p-2 rounded-lg bg-surface-container-low transition-colors" data-icon="cottage">cottage</span>
+<span class="text-title-lg font-title-lg font-bold text-primary dark:text-inverse-primary tracking-tight">Campiña Gastos</span>
+</div>
+<!-- Trailing Action Button -->
+<button aria-label="Ayuda y soporte" class="p-2 rounded-full text-secondary hover:bg-surface-container-low transition-transform active:scale-95 flex items-center justify-center" type="button">
+<span class="material-symbols-outlined text-xl" data-icon="help">help</span>
+</button>
+</div>
+</header>
+<!-- MAIN VIEWPORT CANVAS (Mobile 4-Column Layout, max-w-lg for mobile-first domestic harmony) -->
+<main class="w-full max-w-lg mx-auto px-4 py-6 flex-1 flex flex-col justify-center">
+<!-- HERO SECTION: Atmospheric Badge & Positive Confirmation -->
+<div class="text-center flex flex-col items-center">
+<!-- Mint Green Gentle Hero Badge -->
+<div class="relative mb-6">
+<!-- Soft glowing halo ring -->
+<div class="absolute inset-0 rounded-full bg-secondary-fixed-dim/30 blur-xl transform scale-125 pulse-soft"></div>
+<!-- Outer circle container -->
+<div class="relative w-24 h-24 rounded-full bg-secondary-container/40 border border-outline-subtle flex items-center justify-center elevation-level-1">
+<!-- Inner icon container -->
+<div class="w-16 h-16 rounded-full bg-primary-container text-surface flex items-center justify-center shadow-inner">
+<span class="material-symbols-outlined text-3xl text-secondary-fixed" data-icon="mark_email_read" data-weight="fill" style="font-variation-settings: 'FILL' 1;">mark_email_read</span>
+</div>
+<!-- Micro sparkle accent badge -->
+<div class="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-surface-container border border-outline-subtle flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-secondary text-base" data-icon="auto_awesome" data-weight="fill" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+</div>
+</div>
+<!-- Headline & Subtitle -->
+<h1 class="text-headline-lg-mobile font-headline-lg-mobile text-text-primary tracking-tight mb-2">
+        ¡Enlace en camino!
+      </h1>
+<p class="text-body-md font-body-md text-text-secondary max-w-xs mx-auto leading-relaxed">
+        Hemos enviado las instrucciones de acceso seguro a tu bandeja de entrada.
+      </p>
+<!-- HIGHLIGHTED RECIPIENT EMAIL CARD -->
+<div class="mt-6 w-full bg-surface-container border border-outline-subtle rounded-xl p-4 elevation-level-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-center gap-3 text-left overflow-hidden">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center flex-shrink-0 text-secondary">
+<span class="material-symbols-outlined text-xl" data-icon="mail">mail</span>
+</div>
+<div class="min-w-0 flex-1">
+<p class="text-label-sm font-label-sm text-text-secondary">Destinatario registrado</p>
+<p class="text-body-md font-body-md font-medium text-text-primary truncate">denismiguel@gmail.com</p>
+</div>
+</div>
+<!-- Status Chip Badge -->
+<div class="inline-flex items-center self-start sm:self-center gap-1.5 px-3 py-1 rounded-full bg-secondary-fixed-dim/20 text-on-secondary-fixed-variant border border-secondary-fixed-dim/40 flex-shrink-0">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-label-sm font-label-sm">Enviado con éxito</span>
+</div>
+</div>
+</div>
+<!-- NEXT STEPS: Clarifying Bento Card -->
+<section class="mt-6 bg-surface-container border border-outline-subtle rounded-xl p-5 elevation-level-1">
+<div class="flex items-center justify-between mb-4 border-b border-outline-subtle/60 pb-3">
+<h2 class="text-title-md font-title-md text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-lg" data-icon="task_alt">task_alt</span>
+          Próximos pasos
+        </h2>
+<span class="text-label-sm font-label-sm text-secondary bg-surface-container-low px-2 py-0.5 rounded-full">3 pasos rápidos</span>
+</div>
+<div class="space-y-4 text-left">
+<!-- Step 1 -->
+<div class="flex items-start gap-3.5 group">
+<div class="w-7 h-7 rounded-full bg-secondary-container/50 text-secondary font-semibold text-label-md font-label-md flex items-center justify-center flex-shrink-0 mt-0.5">
+            1
+          </div>
+<div class="flex-1">
+<p class="text-body-md font-body-md text-text-primary">
+<span class="font-medium">Abre tu aplicación</span> de correo preferida.
+            </p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="flex items-start gap-3.5 group">
+<div class="w-7 h-7 rounded-full bg-secondary-container/50 text-secondary font-semibold text-label-md font-label-md flex items-center justify-center flex-shrink-0 mt-0.5">
+            2
+          </div>
+<div class="flex-1">
+<p class="text-body-md font-body-md text-text-primary">
+              Haz clic en el <span class="font-medium">botón de acceso mágico</span> o copia el código temporal de seguridad.
+            </p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="flex items-start gap-3.5 group">
+<div class="w-7 h-7 rounded-full bg-secondary-container/50 text-secondary font-semibold text-label-md font-label-md flex items-center justify-center flex-shrink-0 mt-0.5">
+            3
+          </div>
+<div class="flex-1">
+<p class="text-body-md font-body-md text-text-primary">
+              Serás redirigido directamente a los <span class="font-medium text-secondary">balances de Campiña Gastos</span> sin contraseñas tediosas.
+            </p>
+</div>
+</div>
+</div>
+</section>
+<!-- DOMESTIC REASSURANCE CALLOUT (Equilibrium & Calm Finance) -->
+<div class="mt-4 bg-surface-container-low border border-outline-subtle rounded-xl p-3.5 flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary text-xl mt-0.5 flex-shrink-0" data-icon="shield">shield</span>
+<p class="text-body-sm font-body-sm text-text-secondary leading-relaxed">
+<strong class="font-medium text-text-primary">Tranquilidad para el hogar:</strong> Recuerda que tus gastos y recibos del mes siguen protegidos y al día.
+      </p>
+</div>
+<!-- ACTION BUTTONS SECTION -->
+<div class="mt-6 flex flex-col gap-3">
+<!-- Primary Action: Open Mail / Return -->
+<a class="w-full h-12 bg-primary-container text-surface hover:bg-tertiary-container active:scale-[0.98] transition-all duration-150 rounded-lg font-label-lg text-label-lg font-medium flex items-center justify-center gap-2 elevation-level-1" href="mailto:denismiguel@gmail.com">
+<span class="material-symbols-outlined text-xl" data-icon="outgoing_mail">outgoing_mail</span>
+        Abrir mi correo
+      </a>
+<!-- Secondary Action: Return to login option -->
+<a class="w-full h-11 bg-surface-container text-secondary hover:bg-surface-container-low active:scale-[0.98] transition-all duration-150 border border-outline-subtle rounded-lg font-label-lg text-label-lg font-medium flex items-center justify-center gap-2" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="arrow_back">arrow_back</span>
+        Volver al inicio de sesión
+      </a>
+<!-- Dynamic Resend Timer / Interaction -->
+<div class="text-center pt-2">
+<p class="text-body-sm font-body-sm text-text-secondary">
+          ¿No llegó el correo? 
+          <button class="text-secondary font-medium hover:underline inline-flex items-center gap-1 focus:outline-none transition-colors ml-1 cursor-pointer" id="resend-btn" type="button">
+<span>Reenviar correo</span>
+<span class="text-label-sm font-label-sm text-text-secondary bg-surface-container-high px-1.5 py-0.5 rounded" id="countdown-badge">(espera <span id="timer-sec">60</span>s)</span>
+</button>
+</p>
+</div>
+</div>
+</main>
+<!-- FOOTER (Shared Component: Footer mapped directly from JSON & hierarchy rules) -->
+<footer class="bg-surface dark:bg-surface border-t border-outline-subtle dark:border-outline-variant full-width bottom pb-6 pt-4 mt-8">
+<div class="flex flex-col items-center justify-center gap-2 w-full px-4 max-w-lg mx-auto text-center">
+<div class="flex items-center gap-4 text-label-sm font-label-sm text-secondary">
+<a class="hover:text-secondary dark:hover:text-secondary-fixed transition-colors duration-150 active:opacity-80" href="#">Privacidad</a>
+<span class="text-outline-variant font-normal">·</span>
+<a class="hover:text-secondary dark:hover:text-secondary-fixed transition-colors duration-150 active:opacity-80" href="#">Seguridad</a>
+<span class="text-outline-variant font-normal">·</span>
+<a class="hover:text-secondary dark:hover:text-secondary-fixed transition-colors duration-150 active:opacity-80" href="#">Soporte</a>
+</div>
+<p class="text-body-sm font-body-sm text-text-secondary tracking-normal">
+        © 2024 Campiña Gastos · Finanzas Familiares Seguras
+      </p>
+</div>
+</footer>
+<!-- Micro-interaction JS for Timer & Feedback -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let secondsLeft = 60;
+      const timerSec = document.getElementById('timer-sec');
+      const resendBtn = document.getElementById('resend-btn');
+      const countdownBadge = document.getElementById('countdown-badge');
+
+      const countdown = setInterval(() => {
+        secondsLeft--;
+        if (timerSec) {
+          timerSec.textContent = secondsLeft;
+        }
+        if (secondsLeft <= 0) {
+          clearInterval(countdown);
+          if (countdownBadge) {
+            countdownBadge.textContent = "¡Disponible!";
+            countdownBadge.className = "text-label-sm font-label-sm text-on-secondary-fixed-variant bg-secondary-fixed px-2 py-0.5 rounded";
+          }
+        }
+      }, 1000);
+
+      if (resendBtn) {
+        resendBtn.addEventListener('click', (e) => {
+          if (secondsLeft > 0) {
+            e.preventDefault();
+          } else {
+            alert('¡Enlace reenviado! Revisa nuevamente tu bandeja de entrada o carpeta de promociones.');
+          }
+        });
+      }
+    });
+  </script>
+</body></html>

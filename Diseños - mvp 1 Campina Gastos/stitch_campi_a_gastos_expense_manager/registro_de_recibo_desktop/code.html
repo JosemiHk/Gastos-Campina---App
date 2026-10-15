@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-surface" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Campiña Gastos - Registrar Recibo</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Inter Google Font -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with Forms and Container Queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-surface": "#181c1c",
+            "error-container": "#ffdad6",
+            "surface-variant": "#dfe3e2",
+            "tertiary-fixed-dim": "#79d7c8",
+            "surface": "#f6faf9",
+            "primary-container": "#053931",
+            "surface-dim": "#d7dbda",
+            "on-surface-variant": "#404846",
+            "outline-subtle": "#D7E6E2",
+            "surface-tint": "#3a665d",
+            "background": "#f6faf9",
+            "on-tertiary-fixed": "#00201c",
+            "surface-container-high": "#e5e9e8",
+            "surface-container": "#FFFFFF",
+            "on-error-container": "#93000a",
+            "surface-container-highest": "#dfe3e2",
+            "error": "#ba1a1a",
+            "text-secondary": "#6B7280",
+            "text-primary": "#1F2937",
+            "surface-bright": "#f6faf9",
+            "primary-fixed-dim": "#a1d0c4",
+            "primary-fixed": "#bcece0",
+            "tertiary-fixed": "#95f3e3",
+            "on-primary-fixed-variant": "#204e46",
+            "secondary": "#256863",
+            "on-error": "#ffffff",
+            "outline": "#707976",
+            "on-secondary-fixed": "#00201e",
+            "on-background": "#181c1c",
+            "outline-variant": "#c0c8c5",
+            "tertiary": "#00221d",
+            "on-tertiary-fixed-variant": "#005048",
+            "surface-container-low": "#f0f4f3",
+            "secondary-container": "#adefe7",
+            "on-primary-container": "#75a398",
+            "on-primary": "#ffffff",
+            "on-primary-fixed": "#00201b",
+            "inverse-surface": "#2c3131",
+            "on-tertiary": "#ffffff",
+            "on-secondary-container": "#2c6e69",
+            "on-secondary": "#ffffff",
+            "secondary-fixed-dim": "#91d2cb",
+            "secondary-fixed": "#adefe7",
+            "inverse-on-surface": "#edf2f1",
+            "primary": "#00221c",
+            "inverse-primary": "#a1d0c4",
+            "tertiary-container": "#003933",
+            "on-tertiary-container": "#49a99b",
+            "on-secondary-fixed-variant": "#00504b",
+            "surface-container-lowest": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter-lg": "2rem",
+            "space-xs": "0.25rem",
+            "gutter": "1rem",
+            "margin-md": "2rem",
+            "margin": "1rem",
+            "margin-lg": "3rem",
+            "space-xl": "2rem",
+            "space-md": "1rem",
+            "space-2xl": "3rem",
+            "gutter-md": "1.5rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "headline-xl-mobile": ["Inter"],
+            "currency-display": ["Inter"],
+            "title-md": ["Inter"],
+            "headline-xl": ["Inter"],
+            "label-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "currency-display-mobile": ["Inter"],
+            "label-md": ["Inter"],
+            "headline-lg": ["Inter"],
+            "body-lg": ["Inter"],
+            "headline-lg-mobile": ["Inter"],
+            "body-md": ["Inter"],
+            "title-lg": ["Inter"]
+          },
+          "fontSize": {
+            "headline-md": ["24px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-xl-mobile": ["32px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "currency-display": ["48px", { "lineHeight": "52px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "title-md": ["16px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "currency-display-mobile": ["36px", { "lineHeight": "42px", "letterSpacing": "-0.025em", "fontWeight": "700" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "title-lg": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .custom-shadow-card {
+      box-shadow: 0 4px 20px -2px rgba(5, 57, 49, 0.05), 0 2px 6px -1px rgba(5, 57, 49, 0.03);
+    }
+    .custom-shadow-elevated {
+      box-shadow: 0 8px 28px -4px rgba(5, 57, 49, 0.08), 0 4px 10px -2px rgba(5, 57, 49, 0.04);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex">
+<!-- ==================== SHARED COMPONENT: SideNavBar ==================== -->
+<!-- Exact values from JSON applied: tab_labels, active style on 'Registrar Recibo', structure -->
+<aside class="fixed inset-y-0 left-0 w-64 flex flex-col z-40 bg-surface-container dark:bg-surface-container-high border-r border-outline-subtle dark:border-outline-variant shadow-sm dark:shadow-none h-screen p-4 justify-between overflow-y-auto">
+<!-- Header / Brand Section -->
+<div>
+<div class="flex items-center gap-3 px-2 py-3 mb-6">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-white flex items-center justify-center font-bold text-headline-md">
+<span class="material-symbols-outlined text-secondary-fixed text-headline-md">cottage</span>
+</div>
+<div>
+<div class="text-title-lg font-title-lg text-primary dark:text-inverse-primary tracking-tight leading-tight">Campiña Gastos</div>
+<p class="text-body-sm font-body-sm text-text-secondary">Hogar Campiña</p>
+</div>
+</div>
+<!-- Current Period Badge CTA from JSON -->
+<div class="mb-5 px-3 py-2 bg-surface-container-low rounded-lg flex items-center justify-between border border-outline-subtle">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-body-md" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+<span class="text-label-md font-label-md text-on-surface-variant font-medium">Periodo actual</span>
+</div>
+<span class="text-label-md font-label-md font-semibold text-primary bg-secondary-container px-2 py-0.5 rounded">Mayo 2024</span>
+</div>
+<!-- Navigation Links -->
+<nav class="space-y-1">
+<!-- 0: Dashboard (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low dark:hover:bg-inverse-surface rounded-lg transition-colors font-body-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-body-lg">dashboard</span>
+<span>Dashboard</span>
+</a>
+<!-- 1: Registrar Recibo (Active Match) -->
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container dark:bg-secondary-container dark:text-on-secondary-container rounded-lg font-label-lg active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-body-lg" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span>Registrar Recibo</span>
+</a>
+<!-- 2: Cálculo de Distribución (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low dark:hover:bg-inverse-surface rounded-lg transition-colors font-body-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-body-lg">calculate</span>
+<span>Cálculo de Distribución</span>
+</a>
+<!-- 3: Historial Mensual (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low dark:hover:bg-inverse-surface rounded-lg transition-colors font-body-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-body-lg">calendar_month</span>
+<span>Historial Mensual</span>
+</a>
+<!-- 4: Resumen WhatsApp (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low dark:hover:bg-inverse-surface rounded-lg transition-colors font-body-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-body-lg">chat</span>
+<span>Resumen WhatsApp</span>
+</a>
+<!-- 5: Configuración (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low dark:hover:bg-inverse-surface rounded-lg transition-colors font-body-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-body-lg">settings</span>
+<span>Configuración</span>
+</a>
+</nav>
+</div>
+<!-- SideNavBar Footer -->
+<div class="pt-4 border-t border-outline-subtle">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-error hover:bg-error-container/40 rounded-lg transition-colors font-body-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-body-lg">logout</span>
+<span>Cerrar sesión</span>
+</a>
+<div class="mt-4 px-2 py-2 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center text-primary font-bold text-label-md">
+          HC
+        </div>
+<div class="truncate">
+<p class="text-label-md font-label-md text-on-surface font-medium truncate">Familia Campiña</p>
+<p class="text-body-sm font-body-sm text-text-secondary truncate">3 Grupos registrados</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- ==================== MAIN CONTENT WRAPPER ==================== -->
+<div class="ml-64 flex-1 flex flex-col min-w-0">
+<!-- TopNavBar (Shared Component JSON Blueprint) -->
+<header class="sticky top-0 z-30 w-full bg-surface-container border-b border-outline-subtle shadow-sm flex justify-between items-center px-8 py-4">
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 text-text-secondary text-body-sm font-body-sm">
+<span>Hogar</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-primary font-medium">Registrar Recibo</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<!-- Actions from JSON: notifications, help_outline, Compartir Resumen, Nuevo Gasto -->
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-all text-on-surface-variant hover:text-on-surface active:scale-[0.98]" title="Notificaciones" type="button">
+<span class="material-symbols-outlined text-body-lg">notifications</span>
+</button>
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-all text-on-surface-variant hover:text-on-surface active:scale-[0.98]" title="Ayuda y Guías" type="button">
+<span class="material-symbols-outlined text-body-lg">help_outline</span>
+</button>
+</div>
+<div class="h-6 w-px bg-outline-subtle"></div>
+<button class="px-4 py-2 text-label-lg font-label-lg rounded-lg bg-surface-container-low text-secondary border border-outline-subtle hover:bg-surface-container-high transition-colors active:scale-[0.98] flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-body-md">share</span>
+<span>Compartir Resumen</span>
+</button>
+<button class="px-4 py-2 text-label-lg font-label-lg rounded-lg bg-primary-container text-white hover:bg-secondary transition-colors active:scale-[0.98] flex items-center gap-1.5 shadow-sm" type="button">
+<span class="material-symbols-outlined text-body-md">add</span>
+<span>Nuevo Gasto</span>
+</button>
+</div>
+</header>
+<!-- Canvas Workspace -->
+<main class="flex-1 p-8 max-w-7xl mx-auto w-full">
+<!-- Page Header -->
+<div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-fixed/50 text-secondary text-label-sm font-label-sm mb-2 border border-secondary-container">
+<span class="material-symbols-outlined text-label-sm" style="font-variation-settings: 'FILL' 1;">verified</span>
+            Ingreso de Servicio Básico
+          </span>
+<h1 class="text-headline-lg font-headline-lg text-primary tracking-tight">Registro de Recibo Mensual</h1>
+<p class="text-body-md font-body-md text-text-secondary mt-1">Ingresa el importe facturado y el comprobante para simular y calcular la distribución equitativa.</p>
+</div>
+<div class="flex items-center gap-2 text-body-sm font-body-sm text-text-secondary bg-surface-container px-3.5 py-2 rounded-lg border border-outline-subtle">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">info</span>
+<span>Los cálculos se ajustan automáticamente según las reglas de cada servicio.</span>
+</div>
+</div>
+<!-- 2-Column Responsive Desktop Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- ==================== COLUMNA IZQUIERDA: Formulario Principal (7 Cols) ==================== -->
+<section class="lg:col-span-7 space-y-6">
+<!-- Card: Tipo de Servicio -->
+<div class="bg-surface-container p-6 rounded-lg border border-outline-subtle custom-shadow-card">
+<div class="flex items-center justify-between mb-4">
+<label class="text-title-md font-title-md text-text-primary">1. Seleccionar Tipo de Servicio</label>
+<span class="text-label-sm font-label-sm text-secondary bg-surface-container-low px-2 py-0.5 rounded border border-outline-subtle">Requerido</span>
+</div>
+<!-- 3 Grand Selectable Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+<!-- Servicio 1: Agua Sedapal (Seleccionado Activo) -->
+<div class="relative rounded-lg p-4 cursor-pointer transition-all border-2 border-secondary bg-surface-container-low/70 custom-shadow-card flex flex-col justify-between group">
+<div class="flex items-start justify-between mb-3">
+<div class="w-10 h-10 rounded-lg bg-secondary-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-headline-md text-primary" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+</div>
+<!-- Checkmark verde activo -->
+<div class="w-6 h-6 rounded-full bg-secondary text-white flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-sm font-bold">check</span>
+</div>
+</div>
+<div>
+<h3 class="text-title-md font-title-md text-primary font-semibold">Agua Sedapal</h3>
+<p class="text-body-sm font-body-sm text-text-secondary mt-0.5">Suministro Principal</p>
+</div>
+<div class="mt-3 pt-2.5 border-t border-outline-subtle/80 flex items-center gap-1.5 text-secondary text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-xs">group</span>
+<span>División 33.3% c/u</span>
+</div>
+</div>
+<!-- Servicio 2: Luz Enel/Pluz (Inactivo) -->
+<div class="relative rounded-lg p-4 cursor-pointer transition-all border border-outline-subtle bg-surface-container hover:bg-surface-container-low/50 hover:border-outline-variant flex flex-col justify-between group">
+<div class="flex items-start justify-between mb-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-text-secondary group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-headline-md">bolt</span>
+</div>
+<div class="w-6 h-6 rounded-full border border-outline-variant group-hover:border-secondary transition-colors"></div>
+</div>
+<div>
+<h3 class="text-title-md font-title-md text-text-primary">Luz Enel / Pluz</h3>
+<p class="text-body-sm font-body-sm text-text-secondary mt-0.5">Medidor bifásico</p>
+</div>
+<div class="mt-3 pt-2.5 border-t border-outline-subtle/60 flex items-center gap-1.5 text-text-secondary text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-xs">pie_chart</span>
+<span>Por submedidor</span>
+</div>
+</div>
+<!-- Servicio 3: Internet WIN Fibra (Inactivo) -->
+<div class="relative rounded-lg p-4 cursor-pointer transition-all border border-outline-subtle bg-surface-container hover:bg-surface-container-low/50 hover:border-outline-variant flex flex-col justify-between group">
+<div class="flex items-start justify-between mb-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-text-secondary group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-headline-md">wifi</span>
+</div>
+<div class="w-6 h-6 rounded-full border border-outline-variant group-hover:border-secondary transition-colors"></div>
+</div>
+<div>
+<h3 class="text-title-md font-title-md text-text-primary">Internet WIN</h3>
+<p class="text-body-sm font-body-sm text-text-secondary mt-0.5">Fibra 500 Mbps</p>
+</div>
+<div class="mt-3 pt-2.5 border-t border-outline-subtle/60 flex items-center gap-1.5 text-text-secondary text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-xs">lock</span>
+<span>Tarifa fija plana</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card: Monto Total y Fechas -->
+<div class="bg-surface-container p-6 rounded-lg border border-outline-subtle custom-shadow-card space-y-6">
+<!-- Input de Monto Total Grande -->
+<div>
+<div class="flex items-center justify-between mb-2">
+<label class="text-title-md font-title-md text-text-primary" for="monto-total">2. Monto Total a Pagar</label>
+<span class="text-body-sm font-body-sm text-text-secondary">Incluye IGV y cargos fijos</span>
+</div>
+<div class="relative flex items-center rounded-lg border-2 border-outline-subtle bg-surface-container-lowest focus-within:border-secondary focus-within:ring-2 focus-within:ring-secondary/20 transition-all p-2.5">
+<!-- Selector de Moneda -->
+<div class="flex items-center gap-1.5 px-3 py-2 bg-surface-container-low rounded-lg text-primary font-semibold text-title-md border border-outline-subtle select-none">
+<span>S/ (PEN)</span>
+<span class="material-symbols-outlined text-body-md text-text-secondary">expand_more</span>
+</div>
+<!-- Input Numérico Principal -->
+<input class="w-full text-right bg-transparent border-0 font-currency-display text-currency-display text-primary focus:ring-0 focus:outline-none placeholder-outline pr-3" id="monto-total" placeholder="0.00" type="text" value="90.00"/>
+</div>
+<p class="text-body-sm font-body-sm text-text-secondary mt-2 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm text-secondary">check_circle</span>
+                Monto validado para SEDAPAL según último ciclo de consumo registrado.
+              </p>
+</div>
+<!-- Grid de 2 Columnas: Mes de Facturación y Fecha de Vencimiento -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-outline-subtle">
+<!-- Dropdown Mes de Facturación -->
+<div>
+<label class="block text-label-lg font-label-lg text-text-primary mb-1.5" for="mes-facturacion">Mes de Facturación</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-text-secondary">
+<span class="material-symbols-outlined text-body-lg">calendar_month</span>
+</div>
+<select class="w-full pl-10 pr-10 py-2.5 bg-surface-container rounded-lg border border-outline-subtle text-body-md font-body-md text-text-primary focus:border-secondary focus:ring-1 focus:ring-secondary focus:outline-none" id="mes-facturacion">
+<option selected="">Mayo 2024</option>
+<option>Abril 2024</option>
+<option>Marzo 2024</option>
+<option>Febrero 2024</option>
+</select>
+</div>
+</div>
+<!-- Datepicker Fecha de Vencimiento -->
+<div>
+<label class="block text-label-lg font-label-lg text-text-primary mb-1.5" for="fecha-vencimiento">Fecha de Vencimiento</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-text-secondary">
+<span class="material-symbols-outlined text-body-lg">event</span>
+</div>
+<input class="w-full pl-10 pr-4 py-2.5 bg-surface-container rounded-lg border border-outline-subtle text-body-md font-body-md text-text-primary focus:border-secondary focus:ring-1 focus:ring-secondary focus:outline-none" id="fecha-vencimiento" type="text" value="15 de Mayo, 2024"/>
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-text-secondary">
+<span class="material-symbols-outlined text-body-sm text-secondary">today</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Card: Dropzone de Comprobante / Recibo con Archivo Cargado -->
+<div class="bg-surface-container p-6 rounded-lg border border-outline-subtle custom-shadow-card">
+<div class="flex items-center justify-between mb-3">
+<label class="text-title-md font-title-md text-text-primary">3. Comprobante o Foto del Recibo</label>
+<span class="text-body-sm font-body-sm text-text-secondary">PDF, JPG o PNG hasta 10MB</span>
+</div>
+<!-- Previsualización de Archivo Cargado Activo -->
+<div class="border-2 border-dashed border-secondary/60 bg-surface-container-low/40 rounded-lg p-5">
+<div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-surface-container p-4 rounded-lg border border-outline-subtle shadow-sm">
+<div class="flex items-center gap-3.5 w-full sm:w-auto">
+<!-- Thumbnail / Icon File -->
+<div class="w-12 h-12 rounded-lg bg-secondary-container/60 text-secondary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-headline-md">description</span>
+</div>
+<div class="truncate">
+<div class="flex items-center gap-2">
+<span class="text-title-md font-title-md text-primary font-semibold truncate">recibo_mayo_agua.jpg</span>
+<span class="text-label-sm font-label-sm px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-medium">Cargado</span>
+</div>
+<p class="text-body-sm font-body-sm text-text-secondary mt-0.5">1.4 MB • Subido hoy, 10:42 AM</p>
+</div>
+</div>
+<!-- Botones de Acción de Archivo -->
+<div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+<button class="px-3 py-1.5 text-label-md font-label-md text-secondary bg-surface-container-low hover:bg-surface-container-high rounded border border-outline-subtle transition-colors flex items-center gap-1 active:scale-[0.98]" type="button">
+<span class="material-symbols-outlined text-body-md">visibility</span>
+<span>Ver documento</span>
+</button>
+<button class="px-3 py-1.5 text-label-md font-label-md text-text-secondary hover:text-primary bg-surface-container-low hover:bg-surface-container-high rounded border border-outline-subtle transition-colors flex items-center gap-1 active:scale-[0.98]" type="button">
+<span class="material-symbols-outlined text-body-md">sync</span>
+<span>Reemplazar</span>
+</button>
+<button class="p-1.5 text-text-secondary hover:text-error hover:bg-error-container/30 rounded transition-colors" title="Eliminar archivo" type="button">
+<span class="material-symbols-outlined text-body-md">delete_outline</span>
+</button>
+</div>
+</div>
+<!-- Info text bajo dropzone -->
+<p class="text-center text-body-sm font-body-sm text-text-secondary mt-3">
+                Arrastra tu comprobante aquí o selecciona archivo PDF / Imagen si deseas cambiar el archivo.
+              </p>
+</div>
+</div>
+<!-- Botones de Acción del Formulario -->
+<div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
+<button class="w-full sm:w-auto px-5 py-3 text-label-lg font-label-lg rounded-lg border border-outline-subtle text-text-secondary hover:text-text-primary hover:bg-surface-container transition-all active:scale-[0.98]" type="button">
+              Guardar como borrador
+            </button>
+<button class="w-full sm:w-auto px-7 py-3 text-label-lg font-label-lg rounded-lg bg-primary-container text-white hover:bg-secondary transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-md hover:shadow-lg" type="button">
+<span class="material-symbols-outlined text-body-lg">calculate</span>
+<span class="font-semibold">Guardar y Calcular Reparto</span>
+</button>
+</div>
+</section>
+<!-- ==================== COLUMNA DERECHA: Transparencia y Previsualización (5 Cols) ==================== -->
+<aside class="lg:col-span-5 space-y-6">
+<!-- Tarjeta Destacada: Previsualización en Tiempo Real -->
+<div class="bg-primary-container text-white rounded-lg p-6 custom-shadow-elevated relative overflow-hidden">
+<!-- Decorative soft glow element -->
+<div class="absolute -right-10 -bottom-10 w-44 h-44 rounded-full bg-secondary opacity-30 blur-2xl pointer-events-none"></div>
+<div class="flex items-center justify-between mb-4 relative z-10">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-fixed text-title-lg" style="font-variation-settings: 'FILL' 1;">insights</span>
+<h2 class="text-title-lg font-title-lg tracking-tight text-surface-container-lowest">Previsualización de Reparto en Tiempo Real</h2>
+</div>
+<span class="text-label-sm font-label-sm bg-secondary/40 text-secondary-fixed px-2 py-0.5 rounded-full border border-secondary-fixed-dim/30">
+                En vivo
+              </span>
+</div>
+<!-- Regla del Servicio Activo -->
+<div class="bg-tertiary-container/80 backdrop-blur-sm rounded-lg p-4 border border-outline/30 relative z-10 mb-6">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-secondary-fixed-dim text-body-lg mt-0.5">rule</span>
+<div>
+<p class="text-label-md font-label-md text-secondary-fixed font-semibold">Regla del Servicio: Agua Sedapal</p>
+<p class="text-body-sm font-body-sm text-surface-container-high/90 mt-0.5 leading-relaxed">
+                    Para el servicio de Agua, la división se realiza equitativamente: <span class="text-white font-medium">33.3% para cada uno de los 3 grupos</span> del hogar Campiña.
+                  </p>
+</div>
+</div>
+</div>
+<!-- 3 Tarjetas de Simulación de Cuota Resultante -->
+<div class="space-y-3 relative z-10">
+<p class="text-label-sm font-label-sm text-surface-variant tracking-wider uppercase">Cuotas calculadas sobre S/ 90.00</p>
+<!-- Cuota 1: Gemelas -->
+<div class="bg-surface-container-lowest/10 backdrop-blur-md rounded-lg p-3.5 border border-white/10 flex items-center justify-between hover:bg-surface-container-lowest/15 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-secondary-fixed text-primary flex items-center justify-center font-bold text-label-md">
+                    G
+                  </div>
+<div>
+<h4 class="text-title-md font-title-md text-white">Gemelas</h4>
+<p class="text-body-sm font-body-sm text-surface-variant">Cuota equitativa (1/3)</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-headline-md font-headline-md text-secondary-fixed">S/ 30.00</span>
+<div class="text-label-sm font-label-sm text-surface-variant">33.33%</div>
+</div>
+</div>
+<!-- Cuota 2: Miguel -->
+<div class="bg-surface-container-lowest/10 backdrop-blur-md rounded-lg p-3.5 border border-white/10 flex items-center justify-between hover:bg-surface-container-lowest/15 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-secondary-fixed text-primary flex items-center justify-center font-bold text-label-md">
+                    M
+                  </div>
+<div>
+<h4 class="text-title-md font-title-md text-white">Miguel</h4>
+<p class="text-body-sm font-body-sm text-surface-variant">Cuota equitativa (1/3)</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-headline-md font-headline-md text-secondary-fixed">S/ 30.00</span>
+<div class="text-label-sm font-label-sm text-surface-variant">33.33%</div>
+</div>
+</div>
+<!-- Cuota 3: JM -->
+<div class="bg-surface-container-lowest/10 backdrop-blur-md rounded-lg p-3.5 border border-white/10 flex items-center justify-between hover:bg-surface-container-lowest/15 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-secondary-fixed text-primary flex items-center justify-center font-bold text-label-md">
+                    JM
+                  </div>
+<div>
+<h4 class="text-title-md font-title-md text-white">JM</h4>
+<p class="text-body-sm font-body-sm text-surface-variant">Cuota equitativa (1/3)</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-headline-md font-headline-md text-secondary-fixed">S/ 30.00</span>
+<div class="text-label-sm font-label-sm text-surface-variant">33.33%</div>
+</div>
+</div>
+</div>
+<!-- Barra de Progreso de Distribución Total -->
+<div class="mt-5 pt-4 border-t border-white/15 relative z-10 flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-surface-variant">Suma asignada</span>
+<span class="text-white font-semibold">S/ 90.00 de S/ 90.00 (100%)</span>
+</div>
+</div>
+<!-- Comparativa con Mes Anterior -->
+<div class="bg-surface-container p-5 rounded-lg border border-outline-subtle custom-shadow-card">
+<h3 class="text-title-md font-title-md text-text-primary mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">compare_arrows</span>
+              Comparativa Histórica Inmediata
+            </h3>
+<div class="p-3.5 bg-surface-container-low rounded-lg border border-outline-subtle flex items-center justify-between">
+<div>
+<p class="text-label-md font-label-md text-text-secondary">Mes Anterior (Abril 2024)</p>
+<p class="text-headline-md font-headline-md text-text-primary mt-0.5">S/ 85.50</p>
+</div>
+<div class="text-right">
+<span class="inline-flex items-center gap-1 text-label-md font-label-md px-2.5 py-1 rounded bg-error-container text-on-error-container font-semibold">
+<span class="material-symbols-outlined text-xs">trending_up</span>
+                  + S/ 4.50 (+5.2%)
+                </span>
+<p class="text-body-sm font-body-sm text-text-secondary mt-1">Variación respecto al ciclo previo</p>
+</div>
+</div>
+<p class="text-body-sm font-body-sm text-text-secondary mt-2 px-1">
+              La cuota por persona subió aproximadamente <span class="font-medium text-text-primary">S/ 1.50</span> frente al mes de Abril.
+            </p>
+</div>
+<!-- Historial Rápido de Últimos Recibos Subidos -->
+<div class="bg-surface-container p-5 rounded-lg border border-outline-subtle custom-shadow-card">
+<div class="flex items-center justify-between mb-3.5">
+<h3 class="text-title-md font-title-md text-text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">history</span>
+                Historial Rápido de Agua Sedapal
+              </h3>
+<a class="text-label-md font-label-md text-secondary hover:underline" href="#">Ver todo</a>
+</div>
+<div class="space-y-2.5">
+<!-- Item 1: Abril 2024 -->
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors border border-outline-subtle/50">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container/50 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-body-md" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div>
+<p class="text-label-lg font-label-lg text-text-primary font-medium">Abril 2024</p>
+<p class="text-body-sm font-body-sm text-text-secondary">Liquidado • 3 pagos recibidos</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-title-md font-title-md text-text-primary font-semibold">S/ 85.50</p>
+<span class="text-label-sm font-label-sm text-secondary">S/ 28.50 c/u</span>
+</div>
+</div>
+<!-- Item 2: Marzo 2024 -->
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors border border-outline-subtle/50">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container/50 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-body-md" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div>
+<p class="text-label-lg font-label-lg text-text-primary font-medium">Marzo 2024</p>
+<p class="text-body-sm font-body-sm text-text-secondary">Liquidado • 3 pagos recibidos</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-title-md font-title-md text-text-primary font-semibold">S/ 92.10</p>
+<span class="text-label-sm font-label-sm text-secondary">S/ 30.70 c/u</span>
+</div>
+</div>
+<!-- Item 3: Febrero 2024 -->
+<div class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors border border-outline-subtle/50">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container/50 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-body-md" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div>
+<p class="text-label-lg font-label-lg text-text-primary font-medium">Febrero 2024</p>
+<p class="text-body-sm font-body-sm text-text-secondary">Liquidado • 3 pagos recibidos</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-title-md font-title-md text-text-primary font-semibold">S/ 88.00</p>
+<span class="text-label-sm font-label-sm text-secondary">S/ 29.33 c/u</span>
+</div>
+</div>
+</div>
+<!-- Transparency badge -->
+<div class="mt-4 p-2.5 bg-secondary-container/30 rounded-lg flex items-center gap-2 text-label-sm font-label-sm text-on-secondary-container">
+<span class="material-symbols-outlined text-body-md">lock</span>
+<span>Todos los recibos quedan archivados y visibles para los 3 grupos.</span>
+</div>
+</div>
+</aside>
+</div>
+</main>
+</div>
+</body></html>

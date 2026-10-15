@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Campiña Gastos - Historial Mensual</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-variant": "#dfe3e2",
+            "on-tertiary-fixed-variant": "#005048",
+            "surface-container-high": "#e5e9e8",
+            "surface-container-low": "#f0f4f3",
+            "text-primary": "#1F2937",
+            "background": "#f6faf9",
+            "on-tertiary-fixed": "#00201c",
+            "tertiary": "#00221d",
+            "secondary-fixed": "#adefe7",
+            "outline-variant": "#c0c8c5",
+            "on-primary-container": "#75a398",
+            "inverse-on-surface": "#edf2f1",
+            "on-tertiary": "#ffffff",
+            "secondary-fixed-dim": "#91d2cb",
+            "surface-dim": "#d7dbda",
+            "surface-container": "#ebefee",
+            "secondary": "#256863",
+            "on-error-container": "#93000a",
+            "surface-bright": "#f6faf9",
+            "tertiary-fixed-dim": "#79d7c8",
+            "on-secondary": "#ffffff",
+            "outline-subtle": "#D7E6E2",
+            "surface-tint": "#3a665d",
+            "primary-fixed": "#bcece0",
+            "error": "#ba1a1a",
+            "primary-container": "#053931",
+            "on-primary": "#ffffff",
+            "tertiary-container": "#003933",
+            "tertiary-fixed": "#95f3e3",
+            "on-error": "#ffffff",
+            "on-secondary-fixed-variant": "#00504b",
+            "primary": "#00221c",
+            "error-container": "#ffdad6",
+            "secondary-container": "#adefe7",
+            "on-background": "#181c1c",
+            "on-secondary-container": "#2c6e69",
+            "on-primary-fixed": "#00201b",
+            "text-secondary": "#6B7280",
+            "on-primary-fixed-variant": "#204e46",
+            "surface-container-lowest": "#ffffff",
+            "on-surface": "#181c1c",
+            "surface": "#f6faf9",
+            "outline": "#707976",
+            "inverse-surface": "#2c3131",
+            "on-tertiary-container": "#49a99b",
+            "inverse-primary": "#a1d0c4",
+            "primary-fixed-dim": "#a1d0c4",
+            "surface-container-highest": "#dfe3e2",
+            "on-secondary-fixed": "#00201e",
+            "on-surface-variant": "#404846"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter-md": "1.5rem",
+            "space-md": "1rem",
+            "space-sm": "0.5rem",
+            "margin-lg": "3rem",
+            "space-xs": "0.25rem",
+            "margin-md": "2rem",
+            "space-2xl": "3rem",
+            "gutter-lg": "2rem",
+            "margin": "1rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2rem",
+            "gutter": "1rem"
+          },
+          "fontFamily": {
+            "title-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "headline-lg": ["Inter"],
+            "currency-display": ["Inter"],
+            "body-lg": ["Inter"],
+            "headline-lg-mobile": ["Inter"],
+            "label-lg": ["Inter"],
+            "title-md": ["Inter"],
+            "currency-display-mobile": ["Inter"],
+            "label-sm": ["Inter"],
+            "headline-xl": ["Inter"],
+            "label-md": ["Inter"],
+            "body-md": ["Inter"],
+            "headline-xl-mobile": ["Inter"],
+            "headline-md": ["Inter"]
+          },
+          "fontSize": {
+            "title-lg": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "currency-display": ["48px", { "lineHeight": "52px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "title-md": ["16px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "currency-display-mobile": ["36px", { "lineHeight": "42px", "letterSpacing": "-0.025em", "fontWeight": "700" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-xl-mobile": ["32px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-md": ["24px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f6faf9;
+      color: #181c1c;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .pb-safe {
+      padding-bottom: env(safe-area-inset-bottom, 1rem);
+    }
+    .card-shadow {
+      box-shadow: 0 4px 20px -2px rgba(5, 57, 49, 0.05), 0 2px 6px -1px rgba(5, 57, 49, 0.03);
+    }
+    .card-shadow-elevated {
+      box-shadow: 0 8px 28px -4px rgba(5, 57, 49, 0.08), 0 4px 10px -2px rgba(5, 57, 49, 0.04);
+    }
+  </style>
+</head>
+<body class="bg-background min-h-screen flex flex-col justify-between selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- Top App Bar (Shared Component Anchor) -->
+<header class="bg-surface sticky top-0 z-40 w-full shadow-sm">
+<div class="flex justify-between items-center w-full px-space-md py-space-sm max-w-7xl mx-auto">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-label-md text-label-md">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="cottage">cottage</span>
+</div>
+<span class="text-title-lg font-title-lg text-primary tracking-tight">Campiña Gastos</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="text-label-md font-label-md text-primary bg-surface-container-low px-space-sm py-1 rounded-full border border-outline-subtle">
+          Mayo 2024
+        </span>
+</div>
+</div>
+</header>
+<!-- Main Container -->
+<main class="flex-1 w-full max-w-xl mx-auto px-space-md pt-space-md pb-28 flex flex-col gap-space-lg">
+<!-- Title & Year Filter Row -->
+<section class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<h1 class="text-headline-md font-headline-md text-primary tracking-tight">Historial de Gastos</h1>
+<div class="flex items-center bg-surface-container-low p-1 rounded-lg border border-outline-subtle">
+<button class="px-space-sm py-1 rounded-md text-label-md font-label-md bg-surface-container-lowest text-primary shadow-sm font-semibold transition-all">2024</button>
+<button class="px-space-sm py-1 rounded-md text-label-md font-label-md text-text-secondary hover:text-primary transition-all">2023</button>
+</div>
+</div>
+<p class="text-body-md font-body-md text-text-secondary">Registro histórico de servicios compartidos y balances de casa de campo.</p>
+</section>
+<!-- Annual Metric Card (Hero) -->
+<section class="bg-primary-container text-on-primary rounded-xl p-space-lg relative overflow-hidden card-shadow-elevated">
+<div class="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-on-tertiary-container/10 pointer-events-none"></div>
+<div class="flex justify-between items-start mb-space-md">
+<div>
+<span class="text-label-sm font-label-sm text-secondary-fixed uppercase tracking-wider block mb-1">Métrica Anual 2024</span>
+<div class="text-headline-xl-mobile font-headline-xl-mobile text-surface-container-lowest font-bold">
+            S/ 1,940.00
+          </div>
+<span class="text-body-sm font-body-sm text-primary-fixed block mt-1">Total acumulado en 5 ciclos registrados</span>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-lowest/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary-fixed text-[22px]" data-icon="trending_up">trending_up</span>
+</div>
+</div>
+<!-- Minimal Bar Chart of Months (Ene - May) -->
+<div class="pt-space-sm border-t border-on-primary-container/30">
+<div class="flex items-end justify-between h-20 pt-4 px-1">
+<!-- Ene -->
+<div class="flex flex-col items-center gap-1.5 flex-1">
+<span class="text-[10px] font-label-sm text-surface-variant/80">S/400</span>
+<div class="w-6 bg-on-tertiary-container/40 rounded-t-sm h-12"></div>
+<span class="text-[11px] font-label-sm text-surface-variant">Ene</span>
+</div>
+<!-- Feb -->
+<div class="flex flex-col items-center gap-1.5 flex-1">
+<span class="text-[10px] font-label-sm text-surface-variant/80">S/365</span>
+<div class="w-6 bg-on-tertiary-container/40 rounded-t-sm h-10"></div>
+<span class="text-[11px] font-label-sm text-surface-variant">Feb</span>
+</div>
+<!-- Mar -->
+<div class="flex flex-col items-center gap-1.5 flex-1">
+<span class="text-[10px] font-label-sm text-surface-variant/80">S/410</span>
+<div class="w-6 bg-on-tertiary-container/50 rounded-t-sm h-14"></div>
+<span class="text-[11px] font-label-sm text-surface-variant">Mar</span>
+</div>
+<!-- Abr -->
+<div class="flex flex-col items-center gap-1.5 flex-1">
+<span class="text-[10px] font-label-sm text-surface-variant/80">S/375</span>
+<div class="w-6 bg-on-tertiary-container/60 rounded-t-sm h-11"></div>
+<span class="text-[11px] font-label-sm text-surface-variant">Abr</span>
+</div>
+<!-- May (Active) -->
+<div class="flex flex-col items-center gap-1.5 flex-1">
+<span class="text-[10px] font-label-sm text-secondary-fixed font-semibold">S/390</span>
+<div class="w-6 bg-secondary-fixed rounded-t-sm h-12"></div>
+<span class="text-[11px] font-label-sm text-secondary-fixed font-semibold">May</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Monthly Chronological Cards -->
+<section class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between px-1">
+<h2 class="text-title-md font-title-md text-primary">Ciclos Mensuales</h2>
+<span class="text-label-md font-label-md text-text-secondary">4 períodos cerrados</span>
+</div>
+<!-- Card 1: Mayo 2024 (Mes Actual - Cerrado) -->
+<article class="bg-surface-container-lowest rounded-xl p-space-md border border-outline-subtle card-shadow flex flex-col gap-space-md transition-all active:scale-[0.99]">
+<!-- Top row: Month & Status Badge -->
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-title-md font-title-md text-text-primary">Mayo 2024</h3>
+<span class="text-[10px] font-label-sm uppercase px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">Cerrado</span>
+</div>
+<p class="text-body-sm font-body-sm text-text-secondary">Agua S/90 • Luz S/180 • Internet S/120</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-secondary-container/40 text-secondary font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+            3/3 Pagados
+          </span>
+</div>
+<!-- Total display -->
+<div class="flex items-baseline justify-between bg-surface-container-low/60 p-space-sm rounded-lg border border-outline-subtle/60">
+<span class="text-body-sm font-body-sm text-text-secondary">Total Consolidado</span>
+<span class="text-title-lg font-title-lg text-primary font-bold">S/ 390.00</span>
+</div>
+<!-- Group Breakdown Pills -->
+<div class="flex flex-col gap-1.5">
+<span class="text-label-sm font-label-sm text-text-secondary uppercase tracking-wider">Distribución por integrante</span>
+<div class="flex flex-wrap gap-1.5 text-label-md font-label-md">
+<span class="inline-flex items-center gap-1 bg-surface-container-low px-2.5 py-1 rounded-full text-text-primary border border-outline-subtle">
+<span class="w-4 h-4 rounded-full bg-secondary text-[9px] text-white flex items-center justify-center font-bold">G</span>
+              Gemelas <strong class="text-primary font-semibold">S/83.33</strong>
+</span>
+<span class="inline-flex items-center gap-1 bg-surface-container-low px-2.5 py-1 rounded-full text-text-primary border border-outline-subtle">
+<span class="w-4 h-4 rounded-full bg-secondary text-[9px] text-white flex items-center justify-center font-bold">M</span>
+              Miguel <strong class="text-primary font-semibold">S/143.33</strong>
+</span>
+<span class="inline-flex items-center gap-1 bg-surface-container-low px-2.5 py-1 rounded-full text-text-primary border border-outline-subtle">
+<span class="w-4 h-4 rounded-full bg-secondary text-[9px] text-white flex items-center justify-center font-bold">J</span>
+              JM <strong class="text-primary font-semibold">S/143.33</strong>
+</span>
+<span class="inline-flex items-center gap-1 bg-surface-container-low px-2.5 py-1 rounded-full text-text-primary border border-outline-subtle">
+<span class="w-4 h-4 rounded-full bg-secondary text-[9px] text-white flex items-center justify-center font-bold">R</span>
+              Rossana <strong class="text-primary font-semibold">S/20.00</strong>
+</span>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center justify-between pt-1 border-t border-outline-subtle/50">
+<button class="inline-flex items-center gap-1.5 text-label-md font-label-md text-primary font-semibold hover:text-secondary transition-colors">
+<span>Ver desglose detallado</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+</button>
+<button class="p-2 text-text-secondary hover:text-primary rounded-lg hover:bg-surface-container-low transition-colors" title="Descargar comprobante">
+<span class="material-symbols-outlined text-[20px]" data-icon="download">download</span>
+</button>
+</div>
+</article>
+<!-- Card 2: Abril 2024 -->
+<article class="bg-surface-container-lowest rounded-xl p-space-md border border-outline-subtle card-shadow flex flex-col gap-space-sm">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+</div>
+<div>
+<h3 class="text-title-md font-title-md text-text-primary">Abril 2024</h3>
+<p class="text-body-sm font-body-sm text-text-secondary">Agua S/85.50 • Luz S/170 • Internet S/120</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-secondary font-medium">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span>
+            Completado
+          </span>
+</div>
+<div class="flex items-center justify-between mt-1">
+<div>
+<span class="text-body-sm font-body-sm text-text-secondary block">Monto total</span>
+<span class="text-title-md font-title-md text-primary font-bold">S/ 375.50</span>
+</div>
+<!-- Participants Chips with Check -->
+<div class="flex items-center gap-1">
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm bg-secondary-container/20 text-on-secondary-container px-2 py-0.5 rounded-full border border-outline-subtle">
+<span class="material-symbols-outlined text-[12px] text-secondary" data-icon="done">done</span>
+              4 miembros
+            </span>
+<button class="p-1.5 text-text-secondary hover:text-primary rounded-lg">
+<span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 3: Marzo 2024 -->
+<article class="bg-surface-container-lowest rounded-xl p-space-md border border-outline-subtle card-shadow flex flex-col gap-space-sm">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+</div>
+<div>
+<h3 class="text-title-md font-title-md text-text-primary">Marzo 2024</h3>
+<p class="text-body-sm font-body-sm text-text-secondary">Agua S/105 • Luz S/185 • Internet S/120</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-secondary font-medium">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span>
+            Completado
+          </span>
+</div>
+<div class="flex items-center justify-between mt-1">
+<div>
+<span class="text-body-sm font-body-sm text-text-secondary block">Monto total</span>
+<span class="text-title-md font-title-md text-primary font-bold">S/ 410.00</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm bg-secondary-container/20 text-on-secondary-container px-2 py-0.5 rounded-full border border-outline-subtle">
+<span class="material-symbols-outlined text-[12px] text-secondary" data-icon="done">done</span>
+              4 miembros
+            </span>
+<button class="p-1.5 text-text-secondary hover:text-primary rounded-lg">
+<span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 4: Febrero 2024 -->
+<article class="bg-surface-container-lowest rounded-xl p-space-md border border-outline-subtle card-shadow flex flex-col gap-space-sm">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+</div>
+<div>
+<h3 class="text-title-md font-title-md text-text-primary">Febrero 2024</h3>
+<p class="text-body-sm font-body-sm text-text-secondary">Servicios integrados de campo</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-secondary font-medium">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span>
+            Completado
+          </span>
+</div>
+<div class="flex items-center justify-between mt-1">
+<div>
+<span class="text-body-sm font-body-sm text-text-secondary block">Monto total</span>
+<span class="text-title-md font-title-md text-primary font-bold">S/ 365.00</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm bg-secondary-container/20 text-on-secondary-container px-2 py-0.5 rounded-full border border-outline-subtle">
+<span class="material-symbols-outlined text-[12px] text-secondary" data-icon="done">done</span>
+              4 miembros
+            </span>
+<button class="p-1.5 text-text-secondary hover:text-primary rounded-lg">
+<span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</article>
+</section>
+<!-- Global Export Action Button -->
+<section class="mt-space-sm">
+<button class="w-full h-12 bg-surface-container-lowest border border-outline-subtle hover:bg-surface-container text-primary rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 card-shadow active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-[20px] text-secondary" data-icon="file_download">file_download</span>
+        Exportar Historial Completo a Excel / PDF
+      </button>
+<p class="text-center text-body-sm font-body-sm text-text-secondary mt-2">Los informes incluyen comprobantes adjuntos y marcas de pago.</p>
+</section>
+</main>
+<!-- Bottom Navigation Bar (MD3 Shared Component Execution) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-space-xs py-space-sm pb-safe bg-surface-container-lowest shadow-lg">
+<!-- Resumen -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-space-xs py-space-xs active:scale-[0.98] transition-all" href="#">
+<span class="material-symbols-outlined text-[22px]" data-icon="dashboard">dashboard</span>
+<span class="text-label-sm font-label-sm mt-1">Resumen</span>
+</a>
+<!-- Registrar -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-space-xs py-space-xs active:scale-[0.98] transition-all" href="#">
+<span class="material-symbols-outlined text-[22px]" data-icon="add_circle">add_circle</span>
+<span class="text-label-sm font-label-sm mt-1">Registrar</span>
+</a>
+<!-- Cálculo -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-space-xs py-space-xs active:scale-[0.98] transition-all" href="#">
+<span class="material-symbols-outlined text-[22px]" data-icon="calculate">calculate</span>
+<span class="text-label-sm font-label-sm mt-1">Cálculo</span>
+</a>
+<!-- Historial (Active Navigation Tab) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-space-md py-space-xs active:scale-[0.98] transition-all" href="#">
+<span class="material-symbols-outlined text-[22px]" data-icon="receipt_long" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span class="text-label-sm font-label-sm mt-0.5 font-semibold">Historial</span>
+</a>
+<!-- Ajustes -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-space-xs py-space-xs active:scale-[0.98] transition-all" href="#">
+<span class="material-symbols-outlined text-[22px]" data-icon="settings">settings</span>
+<span class="text-label-sm font-label-sm mt-1">Ajustes</span>
+</a>
+</nav>
+</body></html>

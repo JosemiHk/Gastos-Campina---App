@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-background" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Campiña Gastos - Resumen para WhatsApp</title>
+<!-- Material Symbols Outlined Font -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-surface": "#181c1c",
+            "error-container": "#ffdad6",
+            "surface-variant": "#dfe3e2",
+            "tertiary-fixed-dim": "#79d7c8",
+            "surface": "#f6faf9",
+            "primary-container": "#053931",
+            "surface-dim": "#d7dbda",
+            "on-surface-variant": "#404846",
+            "outline-subtle": "#D7E6E2",
+            "surface-tint": "#3a665d",
+            "background": "#f6faf9",
+            "on-tertiary-fixed": "#00201c",
+            "surface-container-high": "#e5e9e8",
+            "surface-container": "#FFFFFF",
+            "on-error-container": "#93000a",
+            "surface-container-highest": "#dfe3e2",
+            "error": "#ba1a1a",
+            "text-secondary": "#6B7280",
+            "text-primary": "#1F2937",
+            "surface-bright": "#f6faf9",
+            "primary-fixed-dim": "#a1d0c4",
+            "primary-fixed": "#bcece0",
+            "tertiary-fixed": "#95f3e3",
+            "on-primary-fixed-variant": "#204e46",
+            "secondary": "#256863",
+            "on-error": "#ffffff",
+            "outline": "#707976",
+            "on-secondary-fixed": "#00201e",
+            "on-background": "#181c1c",
+            "outline-variant": "#c0c8c5",
+            "tertiary": "#00221d",
+            "on-tertiary-fixed-variant": "#005048",
+            "surface-container-low": "#f0f4f3",
+            "secondary-container": "#adefe7",
+            "on-primary-container": "#75a398",
+            "on-primary": "#ffffff",
+            "on-primary-fixed": "#00201b",
+            "inverse-surface": "#2c3131",
+            "on-tertiary": "#ffffff",
+            "on-secondary-container": "#2c6e69",
+            "on-secondary": "#ffffff",
+            "secondary-fixed-dim": "#91d2cb",
+            "secondary-fixed": "#adefe7",
+            "inverse-on-surface": "#edf2f1",
+            "primary": "#00221c",
+            "inverse-primary": "#a1d0c4",
+            "tertiary-container": "#003933",
+            "on-tertiary-container": "#49a99b",
+            "on-secondary-fixed-variant": "#00504b",
+            "surface-container-lowest": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter-lg": "2rem",
+            "space-xs": "0.25rem",
+            "gutter": "1rem",
+            "margin-md": "2rem",
+            "margin": "1rem",
+            "margin-lg": "3rem",
+            "space-xl": "2rem",
+            "space-md": "1rem",
+            "space-2xl": "3rem",
+            "gutter-md": "1.5rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "headline-xl-mobile": ["Inter"],
+            "currency-display": ["Inter"],
+            "title-md": ["Inter"],
+            "headline-xl": ["Inter"],
+            "label-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "currency-display-mobile": ["Inter"],
+            "label-md": ["Inter"],
+            "headline-lg": ["Inter"],
+            "body-lg": ["Inter"],
+            "headline-lg-mobile": ["Inter"],
+            "body-md": ["Inter"],
+            "title-lg": ["Inter"]
+          },
+          "fontSize": {
+            "headline-md": ["24px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-xl-mobile": ["32px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "currency-display": ["48px", { "lineHeight": "52px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "title-md": ["16px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "currency-display-mobile": ["36px", { "lineHeight": "42px", "letterSpacing": "-0.025em", "fontWeight": "700" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "title-lg": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="h-full bg-background text-on-surface font-body-md antialiased overflow-x-hidden">
+<!-- Side Navigation Bar (Anchored Component) -->
+<aside class="fixed inset-y-0 left-0 w-64 flex flex-col z-40 bg-surface-container dark:bg-surface-container-high border-r border-outline-subtle dark:border-outline-variant shadow-sm dark:shadow-none">
+<div class="h-screen w-64 p-4 flex flex-col justify-between overflow-y-auto">
+<!-- Top Brand Section -->
+<div class="flex flex-col gap-6">
+<div class="flex items-center gap-3 px-2 pt-2">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-secondary-container shadow-sm">
+<span class="material-symbols-outlined text-[24px]">cottage</span>
+</div>
+<div>
+<span class="text-title-lg font-title-lg text-primary dark:text-inverse-primary tracking-tight block">Campiña Gastos</span>
+<span class="text-label-md font-label-md text-text-secondary block">Hogar Campiña</span>
+</div>
+</div>
+<!-- Period selector badge in sidebar -->
+<div class="px-2">
+<div class="flex items-center justify-between px-3 py-2 bg-surface-container-low rounded-lg border border-outline-subtle">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-secondary">calendar_today</span>
+<span class="text-label-lg font-label-lg text-primary font-semibold">Mayo 2024</span>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-secondary-container text-on-secondary-container">Activo</span>
+</div>
+</div>
+<!-- Navigation Tabs -->
+<nav class="flex flex-col gap-1">
+<!-- Dashboard (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low dark:hover:bg-inverse-surface rounded-lg transition-colors font-body-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span>Dashboard</span>
+</a>
+<!-- Registrar Recibo (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low dark:hover:bg-inverse-surface rounded-lg transition-colors font-body-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+<span>Registrar Recibo</span>
+</a>
+<!-- Cálculo de Distribución (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low dark:hover:bg-inverse-surface rounded-lg transition-colors font-body-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">calculate</span>
+<span>Cálculo de Distribución</span>
+</a>
+<!-- Historial Mensual (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low dark:hover:bg-inverse-surface rounded-lg transition-colors font-body-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">calendar_month</span>
+<span>Historial Mensual</span>
+</a>
+<!-- Resumen WhatsApp (ACTIVE MATCH MANDATE) -->
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container dark:bg-secondary-container dark:text-on-secondary-container rounded-lg font-label-lg active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">chat</span>
+<span>Resumen WhatsApp</span>
+</a>
+<!-- Configuración (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low dark:hover:bg-inverse-surface rounded-lg transition-colors font-body-md active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span>Configuración</span>
+</a>
+</nav>
+</div>
+<!-- Footer Action -->
+<div class="pt-4 border-t border-outline-subtle">
+<button class="w-full flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-error hover:bg-error-container/40 rounded-lg transition-colors font-body-md active:scale-[0.98]">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span>Cerrar sesión</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Main Content Wrapper with Sidebar Offset (w-64) -->
+<div class="pl-64 flex flex-col min-h-screen">
+<!-- Top Navigation Bar (Anchored Component) -->
+<header class="sticky top-0 z-30 w-full bg-surface dark:bg-inverse-surface border-b border-outline-subtle dark:border-outline-variant shadow-sm dark:shadow-none">
+<div class="flex justify-between items-center px-8 py-4 w-full">
+<!-- Breadcrumb / Header Title -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2">
+<span class="text-title-lg font-title-lg text-primary dark:text-inverse-primary tracking-tight">Campiña Gastos</span>
+<span class="text-text-secondary">/</span>
+<span class="text-title-md font-title-md text-secondary">Resumen WhatsApp</span>
+</div>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-label-sm font-label-sm bg-secondary-fixed text-on-secondary-fixed border border-outline-subtle font-medium">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+            Listo para enviar
+          </span>
+</div>
+<!-- Trailing Actions & Cluster -->
+<div class="flex items-center gap-4">
+<!-- Quick Month Dropdown -->
+<div class="relative inline-block text-left">
+<button class="inline-flex items-center gap-2 px-3 py-2 bg-surface-container rounded-lg border border-outline-subtle text-text-primary text-label-lg font-label-lg hover:bg-surface-container-low active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-[18px] text-secondary">event</span>
+<span>Mayo 2024</span>
+<span class="material-symbols-outlined text-[18px] text-text-secondary">expand_more</span>
+</button>
+</div>
+<div class="h-6 w-px bg-outline-subtle"></div>
+<!-- Notification & Help Icons -->
+<button class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low active:scale-[0.98] transition-all" title="Notificaciones">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low active:scale-[0.98] transition-all" title="Ayuda">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</button>
+<!-- Trailing Buttons from Spec -->
+<button class="hidden md:inline-flex items-center gap-2 px-4 py-2 bg-surface-container text-secondary border border-outline-subtle rounded-lg text-label-lg font-label-lg hover:bg-surface-container-low active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-[18px]">share</span>
+<span>Compartir Resumen</span>
+</button>
+<button class="inline-flex items-center gap-2 px-4 py-2 bg-primary-container text-on-primary rounded-lg text-label-lg font-label-lg hover:bg-secondary active:scale-[0.98] transition-all shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Nuevo Gasto</span>
+</button>
+<!-- Household Avatar -->
+<div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-container font-label-lg flex items-center justify-center font-bold ring-2 ring-outline-subtle" title="Avatar Hogar Campiña">
+            HC
+          </div>
+</div>
+</div>
+</header>
+<!-- Page Content (Two-Column Desktop Bento Workspace) -->
+<main class="flex-1 p-8 max-w-[1380px] w-full mx-auto">
+<!-- Top Context Banner -->
+<div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container rounded-xl p-6 border border-outline-subtle shadow-[0_4px_20px_-2px_rgba(5,57,49,0.05)]">
+<div>
+<h1 class="text-headline-md font-headline-md text-primary tracking-tight">Balance Mensual para Chat Familiar</h1>
+<p class="text-body-md font-body-md text-text-secondary mt-1">Genera automáticamente el desglose en formato optimizado para WhatsApp y descarga el comprobante gráfico del mes.</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="text-right pr-3 border-r border-outline-subtle hidden sm:block">
+<div class="text-label-sm font-label-sm text-text-secondary uppercase tracking-wider">Total del Período</div>
+<div class="text-title-lg font-title-lg text-primary font-bold">S/ 390.00</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-low border border-outline-subtle text-label-md font-label-md text-secondary">
+<span class="material-symbols-outlined text-[16px]">group</span>
+              4 Subgrupos / 6 Personas
+            </span>
+</div>
+</div>
+</div>
+<!-- Main 2-Column Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- LEFT COLUMN: Workspace & Configuration Controls (7 Cols) -->
+<div class="lg:col-span-7 flex flex-col gap-6">
+<!-- Card: Format Controls & Quick Sharing Actions -->
+<div class="bg-surface-container rounded-xl p-6 border border-outline-subtle shadow-[0_4px_20px_-2px_rgba(5,57,49,0.05)]">
+<h2 class="text-title-md font-title-md text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">send_to_mobile</span>
+              Acciones de Envío Inmediato
+            </h2>
+<!-- Format Selector Segmented Control -->
+<div class="mb-5">
+<label class="block text-label-md font-label-md text-text-primary mb-2">Formato de Salida a Compartir</label>
+<div class="grid grid-cols-3 gap-2 p-1 bg-surface-container-low rounded-lg border border-outline-subtle text-center text-label-md font-label-md">
+<button class="py-2 px-3 rounded-md bg-surface-container text-primary font-semibold shadow-xs border border-outline-subtle transition-all">
+                  Ambos (Recomendado)
+                </button>
+<button class="py-2 px-3 rounded-md text-text-secondary hover:text-on-surface hover:bg-surface-container transition-all">
+                  Solo Imagen Voucher
+                </button>
+<button class="py-2 px-3 rounded-md text-text-secondary hover:text-on-surface hover:bg-surface-container transition-all">
+                  Solo Texto WhatsApp
+                </button>
+</div>
+</div>
+<!-- Primary Action Buttons -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+<!-- WhatsApp Web Primary Action -->
+<button class="flex items-center justify-center gap-2.5 px-4 py-3.5 bg-[#00524D] hover:bg-[#053931] text-white rounded-lg font-label-lg text-label-lg shadow-sm active:scale-[0.98] transition-all duration-150" id="btnWhatsapp">
+<span class="material-symbols-outlined text-[20px] text-secondary-container" style="font-variation-settings: 'FILL' 1;">chat</span>
+<span>Enviar por WhatsApp Web</span>
+</button>
+<!-- Copy Text Action with Toast Feedback -->
+<button class="flex items-center justify-center gap-2 px-4 py-3.5 bg-surface-container-low hover:bg-outline-subtle/50 text-secondary border border-outline-subtle rounded-lg font-label-lg text-label-lg active:scale-[0.98] transition-all duration-150" id="btnCopyText">
+<span class="material-symbols-outlined text-[20px]" id="copyIcon">content_copy</span>
+<span id="copyTextLabel">Copiar formato texto</span>
+</button>
+</div>
+<!-- Target Group Selection & Recipient Info -->
+<div class="p-4 rounded-lg bg-surface-container-low border border-outline-subtle flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-semibold">
+<span class="material-symbols-outlined text-[20px]">groups</span>
+</div>
+<div>
+<div class="text-label-lg font-label-lg text-primary font-semibold">Grupo Familia Campiña - 4 integrantes</div>
+<div class="text-body-sm font-body-sm text-text-secondary">Destino predeterminado en WhatsApp familiar</div>
+</div>
+</div>
+<button class="text-label-sm font-label-sm text-secondary hover:underline flex items-center gap-1 font-semibold">
+                Cambiar chat
+                <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Card: Editable Payment Info (Abonos Rápidos) -->
+<div class="bg-surface-container rounded-xl p-6 border border-outline-subtle shadow-[0_4px_20px_-2px_rgba(5,57,49,0.05)]">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">account_balance_wallet</span>
+<h2 class="text-title-md font-title-md text-primary">Datos para Abonos Rápidos</h2>
+</div>
+<span class="text-label-sm font-label-sm text-text-secondary">Se incluirán al pie del mensaje</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Yape Info Field -->
+<div class="p-3.5 rounded-lg border border-outline-subtle bg-surface-container hover:border-secondary transition-colors">
+<div class="flex items-center justify-between mb-1">
+<span class="text-label-sm font-label-sm font-semibold text-secondary uppercase tracking-wider">Yape / Plin</span>
+<button class="text-text-secondary hover:text-primary" title="Editar">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+</div>
+<div class="text-title-md font-title-md text-primary font-semibold">987 654 321</div>
+<div class="text-body-sm font-body-sm text-text-secondary">Denis Miguel (Titular del servicio)</div>
+</div>
+<!-- BCP Info Field -->
+<div class="p-3.5 rounded-lg border border-outline-subtle bg-surface-container hover:border-secondary transition-colors">
+<div class="flex items-center justify-between mb-1">
+<span class="text-label-sm font-label-sm font-semibold text-secondary uppercase tracking-wider">BCP Ahorros Soles</span>
+<button class="text-text-secondary hover:text-primary" title="Editar">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+</div>
+<div class="text-title-md font-title-md text-primary font-semibold">194-98765432-0-11</div>
+<div class="text-body-sm font-body-sm text-text-secondary">CCI: 002-194-009876543201-92</div>
+</div>
+</div>
+</div>
+<!-- Card: Monospace WhatsApp Text Preview -->
+<div class="bg-surface-container rounded-xl p-6 border border-outline-subtle shadow-[0_4px_20px_-2px_rgba(5,57,49,0.05)]">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">notes</span>
+<h2 class="text-title-md font-title-md text-primary">Previsualización de Texto WhatsApp</h2>
+</div>
+<button class="text-label-sm font-label-sm text-secondary hover:text-primary font-semibold flex items-center gap-1" id="quickCopyPreBtn">
+<span class="material-symbols-outlined text-[16px]">copy_all</span>
+                Copiar Todo
+              </button>
+</div>
+<!-- Monospace styled code container -->
+<div class="relative bg-surface-container-low rounded-lg p-4 border border-outline-subtle font-mono text-[13px] leading-relaxed text-on-surface select-all overflow-x-auto">
+<pre class="whitespace-pre font-mono" id="whatsappPlainText">🏡 *CAMPIÑA GASTOS • MAYO 2024*
+Hola a todos, comparto el balance y distribución de los servicios del mes:
+
+💧 Agua: S/ 90.00
+💡 Luz: S/ 180.00 (congeladora descontada)
+🌐 Internet: S/ 120.00
+─────────────────────
+💰 *TOTAL MES: S/ 390.00*
+
+👥 *DISTRIBUCIÓN INDIVIDUAL:*
+• Gemelas: *S/ 83.33*
+• Miguel: *S/ 143.33*
+• JM: *S/ 143.33*
+• Tía Rossana: *S/ 20.00*
+
+📱 *DATOS DE ABONO:*
+• Yape: 987 654 321 (Denis Miguel)
+• BCP: 194-98765432-0-11
+_Favor de enviar captura al realizar el abono. ¡Gracias!_</pre>
+</div>
+<div class="mt-2 text-right">
+<span class="text-label-sm font-label-sm text-text-secondary">Listo con formato de negritas (*) y saltos de línea para WhatsApp</span>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Digital Card Voucher Preview & High-Res Download (5 Cols) -->
+<div class="lg:col-span-5 flex flex-col gap-6 sticky top-24">
+<!-- Action bar for the visual card -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">image</span>
+<h2 class="text-title-md font-title-md text-primary">Voucher Digital del Mes</h2>
+</div>
+<button class="text-label-sm font-label-sm text-secondary hover:underline flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+              Actualizar datos
+            </button>
+</div>
+<!-- Visual Voucher Card (Screenshot-Ready Component with #053931 background) -->
+<div class="relative bg-primary-container text-white rounded-2xl p-7 border border-[#204e46] shadow-[0_16px_40px_-8px_rgba(5,57,49,0.35)] overflow-hidden" id="voucherCard">
+<!-- Subtle Atmospheric Geometric Glow Elements -->
+<div class="absolute -top-16 -right-16 w-44 h-44 rounded-full bg-secondary-container/10 blur-2xl pointer-events-none"></div>
+<div class="absolute -bottom-16 -left-16 w-44 h-44 rounded-full bg-secondary/20 blur-2xl pointer-events-none"></div>
+<!-- Header of Voucher -->
+<div class="flex items-start justify-between pb-5 border-b border-[#204e46] relative z-10">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-xl bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold shadow-md">
+<span class="material-symbols-outlined text-[26px]">cottage</span>
+</div>
+<div>
+<h3 class="text-title-lg font-title-lg tracking-tight text-white font-bold">CAMPIÑA GASTOS</h3>
+<div class="text-label-sm font-label-sm text-[#79d7c8] uppercase tracking-wider">Comprobante de Reparto</div>
+</div>
+</div>
+<div class="text-right">
+<span class="inline-block px-3 py-1 rounded-full bg-[#00201b]/60 border border-[#79d7c8]/30 text-label-sm font-label-sm text-[#adefe7] font-semibold">
+                  MAYO 2024
+                </span>
+<div class="text-[10px] text-[#a1d0c4] mt-1 font-mono">ID: REC-2024-05</div>
+</div>
+</div>
+<!-- Big Highlight Total Section -->
+<div class="my-6 text-center py-4 bg-[#00221c]/50 rounded-xl border border-[#204e46] relative z-10">
+<div class="text-label-sm font-label-sm text-[#a1d0c4] uppercase tracking-wider font-semibold">Total Servicios del Mes</div>
+<div class="text-currency-display font-currency-display text-white tracking-tight my-1">
+                S/ 390<span class="text-headline-md font-headline-md text-[#79d7c8]">.00</span>
+</div>
+<div class="inline-flex items-center gap-1.5 text-label-sm font-label-sm text-[#a1d0c4]">
+<span class="material-symbols-outlined text-[14px] text-[#79d7c8]">verified</span>
+<span>3 recibos verificados &amp; distribuidos</span>
+</div>
+</div>
+<!-- Breakdown of Core Services -->
+<div class="mb-6 relative z-10">
+<div class="text-label-sm font-label-sm text-[#a1d0c4] uppercase tracking-wider mb-2.5 font-semibold flex items-center justify-between">
+<span>Servicios Computados</span>
+<span>Monto</span>
+</div>
+<div class="space-y-2 text-body-md font-body-md">
+<div class="flex items-center justify-between py-1.5 px-3 rounded-lg bg-[#00201b]/30 border border-[#204e46]/50">
+<span class="flex items-center gap-2 text-white">
+<span class="material-symbols-outlined text-[18px] text-[#79d7c8]">water_drop</span>
+                    Agua Sedapal
+                  </span>
+<span class="font-semibold text-white font-mono">S/ 90.00</span>
+</div>
+<div class="flex items-center justify-between py-1.5 px-3 rounded-lg bg-[#00201b]/30 border border-[#204e46]/50">
+<div class="flex items-center gap-2 text-white">
+<span class="material-symbols-outlined text-[18px] text-[#adefe7]">bolt</span>
+<span>Luz Enel <span class="text-[11px] text-[#a1d0c4]">(desc. cong.)</span></span>
+</div>
+<span class="font-semibold text-white font-mono">S/ 180.00</span>
+</div>
+<div class="flex items-center justify-between py-1.5 px-3 rounded-lg bg-[#00201b]/30 border border-[#204e46]/50">
+<span class="flex items-center gap-2 text-white">
+<span class="material-symbols-outlined text-[18px] text-[#79d7c8]">wifi</span>
+                    Internet Fibra
+                  </span>
+<span class="font-semibold text-white font-mono">S/ 120.00</span>
+</div>
+</div>
+</div>
+<!-- Member Split Badges & Exact Amounts -->
+<div class="mb-6 relative z-10">
+<div class="text-label-sm font-label-sm text-[#a1d0c4] uppercase tracking-wider mb-2.5 font-semibold">
+                Distribución por Participante
+              </div>
+<div class="grid grid-cols-2 gap-2.5">
+<!-- Gemelas -->
+<div class="p-2.5 rounded-lg bg-[#00201b]/60 border border-[#204e46] flex flex-col justify-between">
+<div class="flex items-center justify-between mb-1">
+<span class="text-label-md font-label-md text-[#adefe7] font-semibold">Gemelas</span>
+<span class="text-[10px] bg-[#256863]/60 px-1.5 py-0.5 rounded text-white font-mono">21.3%</span>
+</div>
+<div class="text-title-md font-title-md text-white font-bold font-mono">S/ 83.33</div>
+</div>
+<!-- Miguel -->
+<div class="p-2.5 rounded-lg bg-[#00201b]/60 border border-[#204e46] flex flex-col justify-between">
+<div class="flex items-center justify-between mb-1">
+<span class="text-label-md font-label-md text-[#adefe7] font-semibold">Miguel</span>
+<span class="text-[10px] bg-[#256863]/60 px-1.5 py-0.5 rounded text-white font-mono">36.7%</span>
+</div>
+<div class="text-title-md font-title-md text-white font-bold font-mono">S/ 143.33</div>
+</div>
+<!-- JM -->
+<div class="p-2.5 rounded-lg bg-[#00201b]/60 border border-[#204e46] flex flex-col justify-between">
+<div class="flex items-center justify-between mb-1">
+<span class="text-label-md font-label-md text-[#adefe7] font-semibold">JM</span>
+<span class="text-[10px] bg-[#256863]/60 px-1.5 py-0.5 rounded text-white font-mono">36.7%</span>
+</div>
+<div class="text-title-md font-title-md text-white font-bold font-mono">S/ 143.33</div>
+</div>
+<!-- Tía Rossana -->
+<div class="p-2.5 rounded-lg bg-[#00201b]/60 border border-[#204e46] flex flex-col justify-between">
+<div class="flex items-center justify-between mb-1">
+<span class="text-label-md font-label-md text-[#adefe7] font-semibold">Tía Rossana</span>
+<span class="text-[10px] bg-[#256863]/60 px-1.5 py-0.5 rounded text-white font-mono">5.1%</span>
+</div>
+<div class="text-title-md font-title-md text-white font-bold font-mono">S/ 20.00</div>
+</div>
+</div>
+</div>
+<!-- Footer Account Data inside Voucher -->
+<div class="pt-4 border-t border-[#204e46] flex items-center justify-between text-body-sm font-body-sm text-[#a1d0c4] relative z-10">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-[#79d7c8]">phone_iphone</span>
+<span>Yape: <strong class="text-white">987 654 321</strong></span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">shield</span>
+<span class="text-[11px]">Campiña Finanzas</span>
+</div>
+</div>
+</div>
+<!-- Download Button Component -->
+<div class="flex flex-col gap-2">
+<button class="w-full flex items-center justify-center gap-2.5 px-5 py-3.5 bg-primary-container text-white hover:bg-secondary rounded-lg font-label-lg text-label-lg active:scale-[0.98] transition-all duration-150 shadow-md" id="btnDownload">
+<span class="material-symbols-outlined text-[20px] text-secondary-container">download</span>
+<span>Descargar Imagen PNG de Alta Resolución</span>
+</button>
+<p class="text-center text-body-sm font-body-sm text-text-secondary">
+              Resolución calibrada 1080x1350 para adjuntar con máxima nitidez en chats de WhatsApp.
+            </p>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Micro-interactions Script for Immediate Feedback -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const copyBtn = document.getElementById('btnCopyText');
+      const copyPreBtn = document.getElementById('quickCopyPreBtn');
+      const copyLabel = document.getElementById('copyTextLabel');
+      const copyIcon = document.getElementById('copyIcon');
+      const plainText = document.getElementById('whatsappPlainText');
+      const whatsappBtn = document.getElementById('btnWhatsapp');
+      const downloadBtn = document.getElementById('btnDownload');
+
+      function triggerCopy() {
+        if (!plainText) return;
+        navigator.clipboard.writeText(plainText.innerText).then(() => {
+          // Visual Feedback
+          if (copyLabel) copyLabel.textContent = '¡Copiado al portapapeles!';
+          if (copyIcon) copyIcon.textContent = 'done';
+          copyBtn.classList.add('bg-secondary-container', 'text-on-secondary-container', 'border-secondary');
+
+          setTimeout(() => {
+            if (copyLabel) copyLabel.textContent = 'Copiar formato texto';
+            if (copyIcon) copyIcon.textContent = 'content_copy';
+            copyBtn.classList.remove('bg-secondary-container', 'text-on-secondary-container', 'border-secondary');
+          }, 2400);
+        }).catch(err => {
+          console.error('Error copying text: ', err);
+        });
+      }
+
+      if (copyBtn) copyBtn.addEventListener('click', triggerCopy);
+      if (copyPreBtn) copyPreBtn.addEventListener('click', triggerCopy);
+
+      if (whatsappBtn) {
+        whatsappBtn.addEventListener('click', () => {
+          const encoded = encodeURIComponent(plainText.innerText);
+          window.open(`https://web.whatsapp.com/send?text=${encoded}`, '_blank');
+        });
+      }
+
+      if (downloadBtn) {
+        downloadBtn.addEventListener('click', () => {
+          downloadBtn.innerHTML = `
+            <span class="material-symbols-outlined text-[20px] animate-spin text-secondary-container">autorenew</span>
+            <span>Generando archivo PNG...</span>
+          `;
+          setTimeout(() => {
+            downloadBtn.innerHTML = `
+              <span class="material-symbols-outlined text-[20px] text-secondary-container">check_circle</span>
+              <span>¡Imagen descargada con éxito!</span>
+            `;
+            setTimeout(() => {
+              downloadBtn.innerHTML = `
+                <span class="material-symbols-outlined text-[20px] text-secondary-container">download</span>
+                <span>Descargar Imagen PNG de Alta Resolución</span>
+              `;
+            }, 2500);
+          }, 1200);
+        });
+      }
+    });
+  </script>
+</body></html>

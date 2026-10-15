@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Campiña Gastos - Resumen Mayo 2024</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-variant": "#dfe3e2",
+            "on-tertiary-fixed-variant": "#005048",
+            "surface-container-high": "#e5e9e8",
+            "surface-container-low": "#f0f4f3",
+            "text-primary": "#1F2937",
+            "background": "#f6faf9",
+            "on-tertiary-fixed": "#00201c",
+            "tertiary": "#00221d",
+            "secondary-fixed": "#adefe7",
+            "outline-variant": "#c0c8c5",
+            "on-primary-container": "#75a398",
+            "inverse-on-surface": "#edf2f1",
+            "on-tertiary": "#ffffff",
+            "secondary-fixed-dim": "#91d2cb",
+            "surface-dim": "#d7dbda",
+            "surface-container": "#ebefee",
+            "secondary": "#256863",
+            "on-error-container": "#93000a",
+            "surface-bright": "#f6faf9",
+            "tertiary-fixed-dim": "#79d7c8",
+            "on-secondary": "#ffffff",
+            "outline-subtle": "#D7E6E2",
+            "surface-tint": "#3a665d",
+            "primary-fixed": "#bcece0",
+            "error": "#ba1a1a",
+            "primary-container": "#053931",
+            "on-primary": "#ffffff",
+            "tertiary-container": "#003933",
+            "tertiary-fixed": "#95f3e3",
+            "on-error": "#ffffff",
+            "on-secondary-fixed-variant": "#00504b",
+            "primary": "#00221c",
+            "error-container": "#ffdad6",
+            "secondary-container": "#adefe7",
+            "on-background": "#181c1c",
+            "on-secondary-container": "#2c6e69",
+            "on-primary-fixed": "#00201b",
+            "text-secondary": "#6B7280",
+            "on-primary-fixed-variant": "#204e46",
+            "surface-container-lowest": "#ffffff",
+            "on-surface": "#181c1c",
+            "surface": "#f6faf9",
+            "outline": "#707976",
+            "inverse-surface": "#2c3131",
+            "on-tertiary-container": "#49a99b",
+            "inverse-primary": "#a1d0c4",
+            "primary-fixed-dim": "#a1d0c4",
+            "surface-container-highest": "#dfe3e2",
+            "on-secondary-fixed": "#00201e",
+            "on-surface-variant": "#404846"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "1rem",
+            "xl": "1.25rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter-md": "1.5rem",
+            "space-md": "1rem",
+            "space-sm": "0.5rem",
+            "margin-lg": "3rem",
+            "space-xs": "0.25rem",
+            "margin-md": "2rem",
+            "space-2xl": "3rem",
+            "gutter-lg": "2rem",
+            "margin": "1rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2rem",
+            "gutter": "1rem"
+          },
+          "fontFamily": {
+            "title-lg": ["Inter", "sans-serif"],
+            "body-sm": ["Inter", "sans-serif"],
+            "headline-lg": ["Inter", "sans-serif"],
+            "currency-display": ["Inter", "sans-serif"],
+            "body-lg": ["Inter", "sans-serif"],
+            "headline-lg-mobile": ["Inter", "sans-serif"],
+            "label-lg": ["Inter", "sans-serif"],
+            "title-md": ["Inter", "sans-serif"],
+            "currency-display-mobile": ["Inter", "sans-serif"],
+            "label-sm": ["Inter", "sans-serif"],
+            "headline-xl": ["Inter", "sans-serif"],
+            "label-md": ["Inter", "sans-serif"],
+            "body-md": ["Inter", "sans-serif"],
+            "headline-xl-mobile": ["Inter", "sans-serif"],
+            "headline-md": ["Inter", "sans-serif"]
+          },
+          "fontSize": {
+            "title-lg": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "currency-display": ["48px", { "lineHeight": "52px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+            "title-md": ["16px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "currency-display-mobile": ["36px", { "lineHeight": "42px", "letterSpacing": "-0.025em", "fontWeight": "700" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-xl-mobile": ["32px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-md": ["24px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Ambient elevation shadows as per design spec */
+    .elevation-level-1 {
+      box-shadow: 0 4px 20px -2px rgba(5, 57, 49, 0.05), 0 2px 6px -1px rgba(5, 57, 49, 0.03);
+    }
+    .elevation-level-2 {
+      box-shadow: 0 8px 28px -4px rgba(5, 57, 49, 0.08), 0 4px 10px -2px rgba(5, 57, 49, 0.04);
+    }
+    .elevation-level-hero {
+      box-shadow: 0 16px 32px -8px rgba(5, 57, 49, 0.22);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen pb-28 selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- Shared TopAppBar Component -->
+<header class="bg-surface shadow-sm sticky top-0 z-40">
+<div class="flex justify-between items-center w-full px-space-md py-space-sm max-w-7xl mx-auto">
+<!-- Leading: Household Avatar / Info -->
+<div class="flex items-center gap-space-sm">
+<div class="relative w-10 h-10 rounded-full overflow-hidden border border-outline-subtle bg-surface-container flex items-center justify-center text-primary font-title-md">
+<img class="w-full h-full object-cover" data-alt="Warm and authentic candid portrait of a young multi-member Peruvian household smiling together in a brightly lit modern living room with lush indoor plants and Nordic wood accents under morning natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNXfB2MRZTRzJoWLAvCEpbNjotDtKgLnrDhv0DiBmsTaheeAm4cp3wQ0OSZOWowu1vOxz6V1z2sk1hJB1JG1Eb47EobLnS7vPm31M0e_SS-gSP_Syd4WswU6EmeGb6xBHQ2zwiV68waaeDJMT2p1_MNaL6bXu46foT6AM4tTPxFxayIP53TDj2C8kblDeHxaqWZ2i7crhT63WbfMAYeDbrLd5lGb3U95lri9Xl86bpVx4RmehkPIxWKw"/>
+</div>
+<div>
+<span class="text-label-sm font-label-sm text-secondary block leading-none">Hogar Familiar</span>
+<h1 class="text-title-lg font-title-lg text-primary tracking-tight">Campiña Gastos</h1>
+</div>
+</div>
+<!-- Trailing: Month Action Selector -->
+<button class="flex items-center gap-1 bg-surface-container px-space-sm py-1.5 rounded-full border border-outline-subtle text-primary hover:bg-surface-variant transition-transform duration-200 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px] text-secondary">calendar_month</span>
+<span class="text-label-md font-label-md font-semibold">Mayo 2024</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">arrow_drop_down</span>
+</button>
+</div>
+</header>
+<!-- Main Mobile Canvas -->
+<main class="px-space-md pt-space-md max-w-md mx-auto space-y-space-lg">
+<!-- Welcome Greeting Header -->
+<div class="flex items-center justify-between">
+<div>
+<h2 class="text-headline-md font-headline-md text-primary">Hola, Familia Campiña</h2>
+<p class="text-body-md font-body-md text-on-surface-variant">Cuentas compartidas del mes en orden</p>
+</div>
+<div class="flex items-center gap-1 bg-secondary-container text-on-secondary-container px-2.5 py-1 rounded-full text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Al día</span>
+</div>
+</div>
+<!-- Hero Balance Card: Resumen Total del Mes -->
+<section class="bg-primary-container text-on-primary rounded-lg p-space-md elevation-level-hero relative overflow-hidden border border-on-tertiary-container/30">
+<div class="absolute -right-10 -bottom-10 w-36 h-36 bg-secondary-container/10 rounded-full blur-2xl pointer-events-none"></div>
+<!-- Card Top Meta -->
+<div class="flex justify-between items-start mb-space-sm relative z-10">
+<div>
+<span class="text-label-md font-label-md text-on-primary-container tracking-wide block">Gasto Total del Mes</span>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="text-headline-lg-mobile font-headline-lg-mobile text-on-primary font-bold">S/ 390.00</span>
+</div>
+</div>
+<div class="inline-flex items-center gap-1 bg-surface-container-lowest/15 backdrop-blur-sm px-2.5 py-1 rounded-full text-on-tertiary text-label-sm font-label-sm border border-white/10">
+<span class="material-symbols-outlined text-[15px] text-secondary-fixed" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span>3 de 3 recibos</span>
+</div>
+</div>
+<!-- Micro status bar -->
+<div class="w-full bg-surface-container-lowest/20 h-1.5 rounded-full overflow-hidden my-space-sm">
+<div class="bg-secondary-fixed h-full rounded-full w-full"></div>
+</div>
+<!-- Quick Distribution Mini-bar -->
+<div class="pt-space-xs border-t border-white/10 mt-space-sm flex justify-between items-center text-label-md font-label-md text-on-primary-container">
+<span class="text-surface-container-low text-label-sm">Distribución calculada:</span>
+<span class="text-secondary-fixed font-semibold">4 Miembros activos</span>
+</div>
+</section>
+<!-- WhatsApp Share & Quick Action Banner -->
+<div class="grid grid-cols-2 gap-space-sm">
+<button class="flex items-center justify-center gap-1.5 bg-surface-container-lowest border border-outline-subtle text-primary py-2.5 px-space-sm rounded-lg elevation-level-1 hover:bg-surface-container active:scale-[0.98] transition-all duration-200">
+<span class="material-symbols-outlined text-[20px] text-secondary">share</span>
+<span class="text-label-md font-label-md font-semibold">Resumen WhatsApp</span>
+</button>
+<button class="flex items-center justify-center gap-1.5 bg-primary text-on-primary py-2.5 px-space-sm rounded-lg elevation-level-1 hover:bg-tertiary-container active:scale-[0.98] transition-all duration-200">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span class="text-label-md font-label-md font-semibold">Nuevo Recibo</span>
+</button>
+</div>
+<!-- Grid de 3 Tarjetas de Servicios -->
+<section class="space-y-space-sm">
+<div class="flex items-center justify-between">
+<h3 class="text-title-md font-title-md text-primary">Servicios Registrados (3)</h3>
+<span class="text-label-sm font-label-sm text-secondary bg-surface-container-low px-2 py-0.5 rounded-full">100% ingresados</span>
+</div>
+<!-- Service 1: Agua -->
+<div class="bg-surface-container-lowest rounded-lg p-space-md border border-outline-subtle elevation-level-1 space-y-space-xs transition-all hover:elevation-level-2">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-secondary-container/30 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">water_drop</span>
+</div>
+<div>
+<h4 class="text-title-md font-title-md text-primary">Agua (SEDAPAL)</h4>
+<p class="text-body-sm font-body-sm text-text-secondary">Registrado el 12 May</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-title-lg font-title-lg text-primary font-bold">S/ 90.00</span>
+<span class="block text-label-sm font-label-sm text-secondary font-medium">Equitativo (1/3)</span>
+</div>
+</div>
+<div class="pt-2 border-t border-surface-container flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">group</span>
+            3 partes: Gemelas, Miguel, JM
+          </span>
+<span class="font-semibold text-primary">S/ 30.00 c/u</span>
+</div>
+</div>
+<!-- Service 2: Luz -->
+<div class="bg-surface-container-lowest rounded-lg p-space-md border border-outline-subtle elevation-level-1 space-y-space-xs transition-all hover:elevation-level-2">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-800 flex items-center justify-center border border-amber-200/50">
+<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div>
+<h4 class="text-title-md font-title-md text-primary">Luz (Enel)</h4>
+<p class="text-body-sm font-body-sm text-text-secondary">Registrado el 14 May</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-title-lg font-title-lg text-primary font-bold">S/ 180.00</span>
+<span class="block text-label-sm font-label-sm text-amber-900 font-medium">Regla especial</span>
+</div>
+</div>
+<div class="pt-2 border-t border-surface-container space-y-1 text-body-sm font-body-sm text-on-surface-variant">
+<div class="flex items-center justify-between">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">kitchen</span>
+              Fijo Rossana (Congeladora):
+            </span>
+<span class="font-semibold text-primary">S/ 20.00</span>
+</div>
+<div class="flex items-center justify-between text-text-secondary">
+<span>Restante (S/ 160.00) entre 3 grupos:</span>
+<span class="font-semibold text-primary">S/ 53.33 c/u</span>
+</div>
+</div>
+</div>
+<!-- Service 3: Internet -->
+<div class="bg-surface-container-lowest rounded-lg p-space-md border border-outline-subtle elevation-level-1 space-y-space-xs transition-all hover:elevation-level-2">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container text-primary flex items-center justify-center border border-outline-subtle">
+<span class="material-symbols-outlined text-[22px]">wifi</span>
+</div>
+<div>
+<h4 class="text-title-md font-title-md text-primary">Internet (WIN Fibra)</h4>
+<p class="text-body-sm font-body-sm text-text-secondary">Registrado el 10 May</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-title-lg font-title-lg text-primary font-bold">S/ 120.00</span>
+<span class="block text-label-sm font-label-sm text-secondary font-medium">Solo 2 personas</span>
+</div>
+</div>
+<div class="pt-2 border-t border-surface-container flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">person_off</span>
+            Miguel y JM (Gemelas excluidas)
+          </span>
+<span class="font-semibold text-primary">S/ 60.00 c/u</span>
+</div>
+</div>
+</section>
+<!-- Reparto Rápido por Grupo / Persona -->
+<section class="space-y-space-sm">
+<div class="flex items-center justify-between">
+<div>
+<h3 class="text-title-md font-title-md text-primary">Reparto por Persona / Grupo</h3>
+<p class="text-body-sm font-body-sm text-text-secondary">Total a transferir para cubrir el fondo</p>
+</div>
+<span class="material-symbols-outlined text-secondary text-[20px]">tune</span>
+</div>
+<div class="space-y-2">
+<!-- Grupo 1: Gemelas -->
+<div class="bg-surface-container-lowest p-space-sm rounded-lg border border-outline-subtle elevation-level-1 flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary font-bold border border-outline-subtle">
+<span class="material-symbols-outlined text-[20px] text-secondary">diversity_2</span>
+</div>
+<div>
+<h4 class="text-title-md font-title-md text-primary leading-tight">Gemelas (Amy &amp; Annie)</h4>
+<p class="text-label-sm font-label-sm text-text-secondary">Agua S/30 + Luz S/53.33</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-title-md font-title-md text-primary font-bold block">S/ 83.33</span>
+<span class="text-label-sm font-label-sm text-secondary bg-secondary-container/30 px-1.5 py-0.5 rounded">Pendiente</span>
+</div>
+</div>
+<!-- Grupo 2: Miguel -->
+<div class="bg-surface-container-lowest p-space-sm rounded-lg border border-outline-subtle elevation-level-1 flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold">
+              DM
+            </div>
+<div>
+<h4 class="text-title-md font-title-md text-primary leading-tight">Miguel (Denis Miguel)</h4>
+<p class="text-label-sm font-label-sm text-text-secondary">Agua S/30 + Luz S/53.33 + Net S/60</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-title-md font-title-md text-primary font-bold block">S/ 143.33</span>
+<span class="text-label-sm font-label-sm text-secondary bg-secondary-container/30 px-1.5 py-0.5 rounded">Pendiente</span>
+</div>
+</div>
+<!-- Grupo 3: JM -->
+<div class="bg-surface-container-lowest p-space-sm rounded-lg border border-outline-subtle elevation-level-1 flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold">
+              JM
+            </div>
+<div>
+<h4 class="text-title-md font-title-md text-primary leading-tight">JM (José Miguel)</h4>
+<p class="text-label-sm font-label-sm text-text-secondary">Agua S/30 + Luz S/53.33 + Net S/60</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-title-md font-title-md text-primary font-bold block">S/ 143.33</span>
+<span class="text-label-sm font-label-sm text-secondary bg-secondary-container/30 px-1.5 py-0.5 rounded">Pendiente</span>
+</div>
+</div>
+<!-- Grupo 4: Rossana -->
+<div class="bg-surface-container-lowest p-space-sm rounded-lg border border-outline-subtle elevation-level-1 flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container-low text-secondary flex items-center justify-center border border-outline-subtle font-bold">
+              RO
+            </div>
+<div>
+<h4 class="text-title-md font-title-md text-primary leading-tight">Rossana</h4>
+<p class="text-label-sm font-label-sm text-text-secondary">Aporte congeladora fijo</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-title-md font-title-md text-primary font-bold block">S/ 20.00</span>
+<span class="text-label-sm font-label-sm text-primary font-semibold bg-surface-container px-1.5 py-0.5 rounded">Fijo</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Actividad Reciente -->
+<section class="space-y-space-sm">
+<div class="flex items-center justify-between">
+<h3 class="text-title-md font-title-md text-primary">Actividad Reciente</h3>
+<button class="text-label-md font-label-md text-secondary font-semibold hover:underline">Ver historial</button>
+</div>
+<div class="bg-surface-container-lowest rounded-lg border border-outline-subtle divide-y divide-outline-subtle overflow-hidden">
+<!-- Item 1 -->
+<div class="p-space-sm flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-amber-700 bg-amber-50 p-2 rounded-lg text-[20px]">receipt</span>
+<div>
+<p class="text-body-md font-body-md text-primary font-medium">Recibo Luz Enel subido</p>
+<p class="text-body-sm font-body-sm text-text-secondary">14 May 2024, 08:30 PM • Por José Miguel</p>
+</div>
+</div>
+<span class="text-label-md font-label-md font-bold text-primary">S/ 180.00</span>
+</div>
+<!-- Item 2 -->
+<div class="p-space-sm flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary bg-surface-container-low p-2 rounded-lg text-[20px]">water</span>
+<div>
+<p class="text-body-md font-body-md text-primary font-medium">Recibo SEDAPAL subido</p>
+<p class="text-body-sm font-body-sm text-text-secondary">12 May 2024, 11:15 AM • Por Denis Miguel</p>
+</div>
+</div>
+<span class="text-label-md font-label-md font-bold text-primary">S/ 90.00</span>
+</div>
+<!-- Item 3 -->
+<div class="p-space-sm flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary bg-surface-container-low p-2 rounded-lg text-[20px]">router</span>
+<div>
+<p class="text-body-md font-body-md text-primary font-medium">Recibo WIN Internet registrado</p>
+<p class="text-body-sm font-body-sm text-text-secondary">10 May 2024, 09:40 AM • Por José Miguel</p>
+</div>
+</div>
+<span class="text-label-md font-label-md font-bold text-primary">S/ 120.00</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Shared BottomNavBar Component (Destination Shell) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-space-xs py-space-sm pb-safe bg-surface-container-lowest dark:bg-surface-container shadow-lg">
+<!-- Tab 1: Resumen (Active as this is Dashboard) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-full px-space-md py-space-xs transition-all duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-label-sm font-label-sm font-semibold">Resumen</span>
+</a>
+<!-- Tab 2: Registrar -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-space-xs py-space-xs hover:bg-surface-container-high transition-all duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[22px]">add_circle</span>
+<span class="text-label-sm font-label-sm">Registrar</span>
+</a>
+<!-- Tab 3: Cálculo -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-space-xs py-space-xs hover:bg-surface-container-high transition-all duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[22px]">calculate</span>
+<span class="text-label-sm font-label-sm">Cálculo</span>
+</a>
+<!-- Tab 4: Historial -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-space-xs py-space-xs hover:bg-surface-container-high transition-all duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[22px]">receipt_long</span>
+<span class="text-label-sm font-label-sm">Historial</span>
+</a>
+<!-- Tab 5: Ajustes -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-space-xs py-space-xs hover:bg-surface-container-high transition-all duration-200 active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined text-[22px]">settings</span>
+<span class="text-label-sm font-label-sm">Ajustes</span>
+</a>
+</nav>
+</body></html>

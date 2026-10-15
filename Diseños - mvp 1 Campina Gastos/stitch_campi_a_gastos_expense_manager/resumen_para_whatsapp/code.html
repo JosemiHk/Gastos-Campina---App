@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Campiña Gastos - Resumen para WhatsApp</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Inter Google Font -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "surface-variant": "#dfe3e2",
+          "on-tertiary-fixed-variant": "#005048",
+          "surface-container-high": "#e5e9e8",
+          "surface-container-low": "#f0f4f3",
+          "text-primary": "#1F2937",
+          "background": "#f6faf9",
+          "on-tertiary-fixed": "#00201c",
+          "tertiary": "#00221d",
+          "secondary-fixed": "#adefe7",
+          "outline-variant": "#c0c8c5",
+          "on-primary-container": "#75a398",
+          "inverse-on-surface": "#edf2f1",
+          "on-tertiary": "#ffffff",
+          "secondary-fixed-dim": "#91d2cb",
+          "surface-dim": "#d7dbda",
+          "surface-container": "#ebefee",
+          "secondary": "#256863",
+          "on-error-container": "#93000a",
+          "surface-bright": "#f6faf9",
+          "tertiary-fixed-dim": "#79d7c8",
+          "on-secondary": "#ffffff",
+          "outline-subtle": "#D7E6E2",
+          "surface-tint": "#3a665d",
+          "primary-fixed": "#bcece0",
+          "error": "#ba1a1a",
+          "primary-container": "#053931",
+          "on-primary": "#ffffff",
+          "tertiary-container": "#003933",
+          "tertiary-fixed": "#95f3e3",
+          "on-error": "#ffffff",
+          "on-secondary-fixed-variant": "#00504b",
+          "primary": "#00221c",
+          "error-container": "#ffdad6",
+          "secondary-container": "#adefe7",
+          "on-background": "#181c1c",
+          "on-secondary-container": "#2c6e69",
+          "on-primary-fixed": "#00201b",
+          "text-secondary": "#6B7280",
+          "on-primary-fixed-variant": "#204e46",
+          "surface-container-lowest": "#ffffff",
+          "on-surface": "#181c1c",
+          "surface": "#f6faf9",
+          "outline": "#707976",
+          "inverse-surface": "#2c3131",
+          "on-tertiary-container": "#49a99b",
+          "inverse-primary": "#a1d0c4",
+          "primary-fixed-dim": "#a1d0c4",
+          "surface-container-highest": "#dfe3e2",
+          "on-secondary-fixed": "#00201e",
+          "on-surface-variant": "#404846"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px"
+        },
+        "spacing": {
+          "gutter-md": "1.5rem",
+          "space-md": "1rem",
+          "space-sm": "0.5rem",
+          "margin-lg": "3rem",
+          "space-xs": "0.25rem",
+          "margin-md": "2rem",
+          "space-2xl": "3rem",
+          "gutter-lg": "2rem",
+          "margin": "1rem",
+          "space-lg": "1.5rem",
+          "space-xl": "2rem",
+          "gutter": "1rem"
+        },
+        "fontFamily": {
+          "title-lg": ["Inter"],
+          "body-sm": ["Inter"],
+          "headline-lg": ["Inter"],
+          "currency-display": ["Inter"],
+          "body-lg": ["Inter"],
+          "headline-lg-mobile": ["Inter"],
+          "label-lg": ["Inter"],
+          "title-md": ["Inter"],
+          "currency-display-mobile": ["Inter"],
+          "label-sm": ["Inter"],
+          "headline-xl": ["Inter"],
+          "label-md": ["Inter"],
+          "body-md": ["Inter"],
+          "headline-xl-mobile": ["Inter"],
+          "headline-md": ["Inter"]
+        },
+        "fontSize": {
+          "title-lg": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+          "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+          "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+          "currency-display": ["48px", { "lineHeight": "52px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+          "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }],
+          "headline-lg-mobile": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+          "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+          "title-md": ["16px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "600" }],
+          "currency-display-mobile": ["36px", { "lineHeight": "42px", "letterSpacing": "-0.025em", "fontWeight": "700" }],
+          "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+          "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+          "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+          "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+          "headline-xl-mobile": ["32px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+          "headline-md": ["24px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+        }
+      }
+    }
+  }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .receipt-shadow {
+      box-shadow: 0 16px 36px -6px rgba(5, 57, 49, 0.08), 0 4px 14px -2px rgba(5, 57, 49, 0.04);
+    }
+    .receipt-cutout {
+      position: relative;
+    }
+    .receipt-cutout::before,
+    .receipt-cutout::after {
+      content: '';
+      position: absolute;
+      top: -12px;
+      width: 24px;
+      height: 24px;
+      background-color: #f6faf9;
+      border-radius: 9999px;
+      z-index: 10;
+    }
+    .receipt-cutout::before {
+      left: -20px;
+    }
+    .receipt-cutout::after {
+      right: -20px;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased font-body-md min-h-screen pb-32">
+<!-- Top App Bar (Task-Focused with Back action and Action Buttons) -->
+<header class="sticky top-0 z-40 bg-surface/95 backdrop-blur-md px-space-md py-space-sm shadow-sm transition-all duration-200">
+<div class="max-w-md mx-auto flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<button aria-label="Volver" class="p-space-xs text-primary rounded-full hover:bg-surface-container active:scale-[0.98] transition-all" type="button">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div>
+<h1 class="text-title-md font-title-md text-primary tracking-tight">Resumen para WhatsApp</h1>
+<p class="text-label-sm font-label-sm text-text-secondary">Mayo 2024 • Liquidación lista</p>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-space-xs text-secondary hover:bg-surface-container rounded-full active:scale-[0.98] transition-transform" id="btnQuickCopy" title="Copiar texto" type="button">
+<span class="material-symbols-outlined">content_copy</span>
+</button>
+<button class="p-space-xs text-secondary hover:bg-surface-container rounded-full active:scale-[0.98] transition-transform" id="btnShareModal" title="Compartir imagen" type="button">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Container (Optimized for Mobile Screenshot Scan) -->
+<main class="max-w-md mx-auto px-space-md pt-space-md flex flex-col gap-space-lg">
+<!-- Notification / Instruction Pill -->
+<div class="flex items-center gap-space-sm bg-secondary-container/40 px-space-md py-space-xs rounded-full border border-secondary-fixed-dim/50">
+<span class="material-symbols-outlined text-secondary text-[18px]">photo_camera</span>
+<span class="text-label-sm font-label-sm text-on-secondary-container">Listo para captura de pantalla o enviar como texto</span>
+</div>
+<!-- The Shareable Receipt Voucher Card -->
+<section class="receipt-shadow bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-subtle relative transition-all" id="voucherCard">
+<!-- Top Decorative Branding Bar -->
+<div class="bg-primary-container px-space-lg py-space-md text-on-primary">
+<div class="flex justify-between items-start">
+<div>
+<div class="flex items-center gap-1.5 mb-1">
+<span class="material-symbols-outlined text-secondary-fixed text-[20px]" style="font-variation-settings: 'FILL' 1;">eco</span>
+<span class="text-title-md font-title-md tracking-tight text-white font-bold">Campiña Gastos</span>
+</div>
+<p class="text-label-sm font-label-sm text-secondary-fixed font-medium">Cuentas Claras • Hogar Armonioso</p>
+</div>
+<div class="text-right">
+<span class="inline-block bg-white/10 px-space-sm py-0.5 rounded text-label-sm font-label-sm tracking-wide text-white font-semibold">
+              MAYO 2024
+            </span>
+<p class="text-label-sm font-label-sm text-on-primary-container mt-1">Liq: 15 de Mayo</p>
+</div>
+</div>
+</div>
+<!-- Receipt Body -->
+<div class="p-space-lg flex flex-col gap-space-md">
+<!-- Section 1: Desglose de Servicios -->
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="text-label-sm font-label-sm text-text-secondary tracking-wider font-semibold">SERVICIOS DEL HOGAR</span>
+<span class="text-label-sm font-label-sm text-secondary font-medium">3 Recibos</span>
+</div>
+<div class="space-y-2.5">
+<!-- Agua -->
+<div class="flex items-center justify-between text-body-md font-body-md">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded bg-secondary-container/40 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[16px]">water_drop</span>
+</span>
+<span class="text-text-primary">Agua (Sedapal)</span>
+</div>
+<span class="font-semibold text-text-primary font-body-md">S/ 90.00</span>
+</div>
+<!-- Luz -->
+<div class="flex items-start justify-between text-body-md font-body-md">
+<div class="flex items-start gap-2">
+<span class="w-6 h-6 rounded bg-secondary-container/40 flex items-center justify-center text-secondary mt-0.5">
+<span class="material-symbols-outlined text-[16px]">bolt</span>
+</span>
+<div>
+<span class="text-text-primary block">Luz (Enel)</span>
+<span class="text-label-sm font-label-sm text-text-secondary">Incluye -S/20 congeladora</span>
+</div>
+</div>
+<span class="font-semibold text-text-primary font-body-md">S/ 180.00</span>
+</div>
+<!-- Internet -->
+<div class="flex items-center justify-between text-body-md font-body-md">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded bg-secondary-container/40 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[16px]">wifi</span>
+</span>
+<span class="text-text-primary">Internet (WIN Fibra)</span>
+</div>
+<span class="font-semibold text-text-primary font-body-md">S/ 120.00</span>
+</div>
+</div>
+<!-- Subtotal Casa Highlight -->
+<div class="mt-space-md p-space-sm bg-surface-container-low rounded-lg flex items-center justify-between border border-outline-subtle/70">
+<span class="text-label-lg font-label-lg text-primary font-semibold">Total de la Casa:</span>
+<span class="text-title-lg font-title-lg text-primary font-bold">S/ 390.00</span>
+</div>
+</div>
+<!-- Dotted Ticket Cutout Line -->
+<div class="receipt-cutout -mx-space-lg my-1 border-t-2 border-dashed border-outline-variant relative"></div>
+<!-- Section 2: Reparto Equitativo Individual -->
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="text-label-sm font-label-sm text-text-secondary tracking-wider font-semibold">TOTAL A PAGAR POR CADA UNO:</span>
+<span class="material-symbols-outlined text-secondary text-[18px]">payments</span>
+</div>
+<div class="space-y-3">
+<!-- Gemelas (Amy & Annie) -->
+<div class="p-space-sm rounded-lg bg-surface hover:bg-surface-container-low transition-colors border border-outline-subtle/50">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="text-[18px]">👥</span>
+<div>
+<h2 class="text-title-md font-title-md text-text-primary font-semibold">Gemelas (Amy &amp; Annie)</h2>
+<p class="text-label-sm font-label-sm text-text-secondary">Agua S/30.00 + Luz S/53.33</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-title-md font-title-md text-primary font-bold">S/ 83.33</span>
+<span class="block text-[10px] text-secondary font-semibold uppercase tracking-wider">Pendiente</span>
+</div>
+</div>
+</div>
+<!-- Miguel (Denis Miguel) -->
+<div class="p-space-sm rounded-lg bg-surface hover:bg-surface-container-low transition-colors border border-outline-subtle/50">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="text-[18px]">👤</span>
+<div>
+<h2 class="text-title-md font-title-md text-text-primary font-semibold">Miguel (Denis Miguel)</h2>
+<p class="text-label-sm font-label-sm text-text-secondary">Agua S/30 + Luz S/53.33 + Net S/60</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-title-md font-title-md text-primary font-bold">S/ 143.33</span>
+<span class="block text-[10px] text-secondary font-semibold uppercase tracking-wider">A Cargo</span>
+</div>
+</div>
+</div>
+<!-- JM (José Miguel) -->
+<div class="p-space-sm rounded-lg bg-surface hover:bg-surface-container-low transition-colors border border-outline-subtle/50">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="text-[18px]">👤</span>
+<div>
+<h2 class="text-title-md font-title-md text-text-primary font-semibold">JM (José Miguel)</h2>
+<p class="text-label-sm font-label-sm text-text-secondary">Agua S/30 + Luz S/53.33 + Net S/60</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-title-md font-title-md text-primary font-bold">S/ 143.33</span>
+<span class="block text-[10px] text-secondary font-semibold uppercase tracking-wider">A Cargo</span>
+</div>
+</div>
+</div>
+<!-- Tía Rossana -->
+<div class="p-space-sm rounded-lg bg-surface hover:bg-surface-container-low transition-colors border border-outline-subtle/50">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="text-[18px]">❄️</span>
+<div>
+<h2 class="text-title-md font-title-md text-text-primary font-semibold">Tía Rossana</h2>
+<p class="text-label-sm font-label-sm text-text-secondary">Aporte fijo congeladora</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-title-md font-title-md text-primary font-bold">S/ 20.00</span>
+<span class="block text-[10px] text-text-secondary font-semibold uppercase tracking-wider">Fijo</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Dotted Ticket Cutout Line -->
+<div class="receipt-cutout -mx-space-lg my-1 border-t-2 border-dashed border-outline-variant relative"></div>
+<!-- Section 3: Datos de Transferencia -->
+<div class="bg-surface-container-low p-space-sm rounded-lg border border-outline-subtle">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-secondary text-[20px] mt-0.5">account_balance_wallet</span>
+<div>
+<p class="text-label-md font-label-md text-text-primary font-semibold">Datos de Transferencia sugeridos:</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-0.5">
+                Transferir o Yapear a <span class="font-semibold text-primary">Denis Miguel / José Miguel</span> al <span class="font-bold tracking-wider text-primary">987-xxx-xxx</span>.
+              </p>
+</div>
+</div>
+</div>
+<!-- Footer del Comprobante: Verification & Branding -->
+<div class="pt-space-xs flex items-center justify-between text-label-sm font-label-sm text-text-secondary">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[16px]">verified</span>
+<span>Generado automáticamente por Campiña Gastos 🌿</span>
+</div>
+<div class="flex items-center gap-1 font-mono text-[10px] bg-surface-container px-2 py-0.5 rounded text-on-surface-variant">
+<span>ID: MAY-24</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Out-of-Card Action Buttons -->
+<section class="flex flex-col gap-space-sm">
+<!-- Primary WhatsApp Action Button -->
+<a class="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white py-3.5 px-space-md rounded-lg font-label-lg text-label-lg font-semibold shadow hover:opacity-95 active:scale-[0.98] transition-all" href="https://api.whatsapp.com/send?text=%F0%9F%8C%BF%20*CAMPI%C3%91A%20GASTOS%20%E2%80%A2%20MAYO%202024*%0A%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%0A*SERVICIOS%20DEL%20HOGAR*%0A%E2%80%A2%20Agua%20(Sedapal)%3A%20S%2F%2090.00%0A%E2%80%A2%20Luz%20(Enel)%3A%20S%2F%20180.00%20(congeladora%20descontada)%0A%E2%80%A2%20Internet%20(WIN)%3A%20S%2F%20120.00%0A%E2%96%B6%20*Total%20de%20la%20Casa%3A%20S%2F%20390.00*%0A%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%0A*TOTAL%20A%20PAGAR%20POR%20CADA%20UNO%3A*%0A%F0%9F%91%A5%20*Gemelas%20(Amy%20%26%20Annie)%3A%20S%2F%2083.33*%0A%20%20(Agua%20S%2F30.00%20%2B%20Luz%20S%2F53.33)%0A%0A%F0%9F%91%A4%20*Miguel%20(Denis%20Miguel)%3A%20S%2F%20143.33*%0A%20%20(Agua%20S%2F30%20%2B%20Luz%20S%2F53.33%20%2B%20Net%20S%2F60)%0A%0A%F0%9F%91%A4%20*JM%20(Jos%C3%A9%20Miguel)%3A%20S%2F%20143.33*%0A%20%20(Agua%20S%2F30%20%2B%20Luz%20S%2F53.33%20%2B%20Net%20S%2F60)%0A%0A%E2%9D%84%EF%B8%8F%20*T%C3%ADa%20Rossana%3A%20S%2F%2020.00*%0A%20%20(Aporte%20fijo%20congeladora)%0A%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%E2%95%90%0A%F0%9F%92%B3%20*Transferir%20o%20Yapear%20al%3A*%20987-xxx-xxx%20(Denis%20%2F%20JM)%0A_Generado%20por%20Campi%C3%B1a%20Gastos%20%F0%9F%8C%BF_" id="btnWhatsAppShare" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[22px]">send</span>
+<span>Compartir en Grupo de WhatsApp</span>
+</a>
+<!-- Secondary Text Copy Toggle Button -->
+<button class="w-full flex items-center justify-center gap-2 bg-secondary-container/60 text-on-secondary-container py-3 px-space-md rounded-lg font-label-lg text-label-lg font-medium hover:bg-secondary-container active:scale-[0.98] transition-all border border-secondary-fixed-dim/40" id="togglePlainViewBtn" type="button">
+<span class="material-symbols-outlined text-[20px]">description</span>
+<span>Copiar formato texto para WhatsApp</span>
+</button>
+<!-- Plain Text Preview Box (Collapsible / Interactive) -->
+<div class="bg-surface-container-lowest p-space-md rounded-lg border border-outline-subtle space-y-2.5 transition-all" id="plainTextContainer">
+<div class="flex items-center justify-between">
+<span class="text-label-sm font-label-sm text-text-secondary font-semibold uppercase tracking-wider">
+            Previsualización del texto plano
+          </span>
+<button class="text-secondary hover:text-primary flex items-center gap-1 text-label-sm font-label-sm font-medium" id="btnCopyRawText" type="button">
+<span class="material-symbols-outlined text-[16px]">file_copy</span>
+<span id="copyFeedbackText">Copiar</span>
+</button>
+</div>
+<pre class="text-body-sm font-body-sm font-mono bg-surface-container-low p-space-sm rounded text-on-surface-variant overflow-x-auto whitespace-pre-wrap leading-relaxed select-all" id="rawWhatsAppText">🌿 *CAMPIÑA GASTOS • MAYO 2024*
+═══════════════════
+*SERVICIOS DEL HOGAR*
+• Agua (Sedapal): S/ 90.00
+• Luz (Enel): S/ 180.00 (congeladora descontada)
+• Internet (WIN): S/ 120.00
+▶ *Total de la Casa: S/ 390.00*
+═══════════════════
+*TOTAL A PAGAR POR CADA UNO:*
+👥 *Gemelas (Amy &amp; Annie): S/ 83.33*
+  (Agua S/30.00 + Luz S/53.33)
+
+👤 *Miguel (Denis Miguel): S/ 143.33*
+  (Agua S/30 + Luz S/53.33 + Net S/60)
+
+👤 *JM (José Miguel): S/ 143.33*
+  (Agua S/30 + Luz S/53.33 + Net S/60)
+
+❄️ *Tía Rossana: S/ 20.00*
+  (Aporte fijo congeladora)
+═══════════════════
+💳 *Transferir o Yapear al:* 987-xxx-xxx (Denis / JM)
+_Generado por Campiña Gastos 🌿_</pre>
+</div>
+</section>
+</main>
+<!-- MD3 Bottom Navigation Bar (Preserved from Shared Components) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-space-xs py-space-sm pb-safe bg-surface-container-lowest dark:bg-surface-container shadow-lg">
+<!-- Resumen (Active: Screen is Resumen para WhatsApp) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-full px-space-md py-space-xs active:scale-[0.98] transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-label-sm font-label-sm">Resumen</span>
+</a>
+<!-- Registrar -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-space-xs py-space-xs hover:bg-surface-container-high active:scale-[0.98] transition-all rounded-full" href="#">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+<span class="text-label-sm font-label-sm">Registrar</span>
+</a>
+<!-- Cálculo -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-space-xs py-space-xs hover:bg-surface-container-high active:scale-[0.98] transition-all rounded-full" href="#">
+<span class="material-symbols-outlined text-[20px]">calculate</span>
+<span class="text-label-sm font-label-sm">Cálculo</span>
+</a>
+<!-- Historial -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-space-xs py-space-xs hover:bg-surface-container-high active:scale-[0.98] transition-all rounded-full" href="#">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+<span class="text-label-sm font-label-sm">Historial</span>
+</a>
+<!-- Ajustes -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-space-xs py-space-xs hover:bg-surface-container-high active:scale-[0.98] transition-all rounded-full" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="text-label-sm font-label-sm">Ajustes</span>
+</a>
+</nav>
+<!-- Interactive Logic for Clipboard Micro-Interactions -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const copyRawBtn = document.getElementById('btnCopyRawText');
+      const quickCopyBtn = document.getElementById('btnQuickCopy');
+      const rawTextEl = document.getElementById('rawWhatsAppText');
+      const feedbackText = document.getElementById('copyFeedbackText');
+      const shareModalBtn = document.getElementById('btnShareModal');
+
+      const triggerCopy = () => {
+        const text = rawTextEl.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+          if (feedbackText) {
+            const original = feedbackText.innerText;
+            feedbackText.innerText = '¡Copiado!';
+            feedbackText.classList.add('text-secondary', 'font-bold');
+            setTimeout(() => {
+              feedbackText.innerText = original;
+              feedbackText.classList.remove('text-secondary', 'font-bold');
+            }, 2000);
+          }
+        }).catch(err => {
+          console.error('Error al copiar texto: ', err);
+        });
+      };
+
+      if (copyRawBtn) copyRawBtn.addEventListener('click', triggerCopy);
+      if (quickCopyBtn) quickCopyBtn.addEventListener('click', triggerCopy);
+
+      if (shareModalBtn) {
+        shareModalBtn.addEventListener('click', () => {
+          if (navigator.share) {
+            navigator.share({
+              title: 'Resumen Campiña Gastos - Mayo 2024',
+              text: rawTextEl.innerText,
+            }).catch(console.error);
+          } else {
+            triggerCopy();
+            alert('Texto copiado al portapapeles para compartir.');
+          }
+        });
+      }
+    });
+  </script>
+</body></html>
