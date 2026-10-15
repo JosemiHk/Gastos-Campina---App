@@ -66,7 +66,7 @@ export class Auth {
   }
   async logout(): Promise<void> {
     await this.backend.initialize();
-    const { error } = await this.backend.client.auth.signOut();
+    const { error } = await this.backend.client.auth.signOut({ scope: 'local' });
     if (error) throw error;
     this.user.set(null);
   }
