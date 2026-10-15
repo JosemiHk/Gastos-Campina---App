@@ -75,6 +75,11 @@ export const routes: Routes = [
           import('./features/settings/settings-page').then((m) => m.SettingsPage),
         title: 'Reglas y configuración · Campiña Gastos',
       },
+      {
+        path: 'compartir',
+        loadComponent: () => import('./features/summary/summary-page').then((m) => m.SummaryPage),
+        title: 'Resumen WhatsApp · Campiña Gastos',
+      },
       { path: '', pathMatch: 'full', redirectTo: 'resumen' },
       { path: '**', redirectTo: 'resumen' },
     ],
