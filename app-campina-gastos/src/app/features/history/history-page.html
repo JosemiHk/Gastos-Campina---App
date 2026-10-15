@@ -1,0 +1,121 @@
+<div class="page-heading">
+  <div>
+    <span class="eyebrow">Las cuentas, siempre a mano</span>
+    <h1>Historial mensual</h1>
+    <p>Consulta los servicios, las cuotas y los aportes de cada mes.</p>
+  </div>
+  <div class="field year-select">
+    <label for="history-year" class="sr-only">Año del historial</label
+    ><select id="history-year" [value]="year()" (change)="year.set($any($event.target).value)">
+      @for (option of years(); track option) {
+        <option [value]="option">{{ option }}</option>
+      }
+    </select>
+  </div>
+</div>
+@if (periods().length) {
+  <section class="hero history-overview">
+    <div>
+      <span class="eyebrow">Total registrado · {{ year() }}</span
+      ><strong class="money annual-total">{{ money(total()) }}</strong>
+      <p>{{ chart().length }} meses con recibos confirmados</p>
+    </div>
+    <div class="average">
+      <span>Promedio de meses registrados</span><strong class="money">{{ money(average()) }}</strong
+      ><small>Incluye los meses con recibos parciales.</small>
+    </div>
+    @if (chart().length) {
+      <div class="monthly-chart" role="img" aria-label="Comparación de importes mensuales">
+        @for (period of chart(); track period.id) {
+          <div class="chart-column">
+            <span class="chart-amount money">{{ money(period.calculation!.totalCents) }}</span>
+            <div class="bar-track">
+              <span
+                class="bar"
+                [class.current]="period.month === store.selectedMonth()"
+                [style.height.%]="(period.calculation!.totalCents / max()) * 100"
+              ></span>
+            </div>
+            <span>{{ shortMonth(period.month) }}</span>
+          </div>
+        }
+      </div>
+    }
+  </section>
+  <div class="section-heading">
+    <h2>Periodos registrados</h2>
+    <span class="badge">{{ periods().length }} meses</span>
+  </div>
+  <div class="stack history-list">
+    @for (period of periods(); track period.id) {
+      <details class="card period-card">
+        <summary>
+          <span class="period-icon icon-tile"><app-icon name="calendar" /></span
+          ><span class="period-name"
+            ><strong>{{ monthLabel(period.month) }}</strong
+            ><span>{{ period.calculation?.receiptCount ?? 0 }} de 3 recibos confirmados</span></span
+          ><span class="badge" [class.closed]="period.status === 'closed'">{{
+            period.status === 'closed' ? 'Cerrado' : 'Abierto'
+          }}</span
+          ><strong class="money period-total">{{
+            money(period.calculation?.totalCents ?? 0)
+          }}</strong
+          ><span class="expand">+</span>
+        </summary>
+        <div class="period-detail">
+          <div class="service-list">
+            @for (bill of period.receipts; track bill.id) {
+              <span
+                >{{
+                  bill.service === 'water'
+                    ? 'Agua'
+                    : bill.service === 'electricity'
+                      ? 'Luz'
+                      : 'Internet'
+                }}: <strong class="money">{{ money(bill.amountCents) }}</strong>
+                @if (bill.status === 'draft') {
+                  <small> · borrador</small>
+                }
+              </span>
+            }
+          </div>
+          @if (period.calculation?.receiptCount) {
+            <div class="historical-groups">
+              @for (group of groups(period); track group.code) {
+                <span
+                  >{{ group.name }} <strong class="money">{{ money(group.amount) }}</strong></span
+                >
+              }
+            </div>
+            <div class="detail-footer">
+              <span class="badge">{{ paidCount(period) }}</span
+              ><a
+                mat-stroked-button
+                routerLink="/calculo"
+                [queryParams]="{ mes: period.month.slice(0, 7) }"
+                >Ver liquidación<app-icon name="arrow"
+              /></a>
+            </div>
+          } @else {
+            <p>Este mes solo tiene borradores.</p>
+            <a mat-button routerLink="/resumen" [queryParams]="{ mes: period.month.slice(0, 7) }"
+              >Ver borradores</a
+            >
+          }
+        </div>
+      </details>
+    }
+  </div>
+} @else {
+  <section class="card empty-state">
+    <span class="icon-tile"><app-icon name="calendar" /></span>
+    <h2>Tus meses irán quedando aquí</h2>
+    <p>
+      Todavía no hay recibos registrados en {{ year() }}. Cuando empieces, podrás volver a consultar
+      cada reparto.
+    </p>
+    <a mat-flat-button routerLink="/resumen" queryParamsHandling="preserve"
+      >Ir al resumen mensual</a
+    >
+  </section>
+}

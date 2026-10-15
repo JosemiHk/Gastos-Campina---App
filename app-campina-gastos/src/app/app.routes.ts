@@ -62,6 +62,11 @@ export const routes: Routes = [
           import('./features/distribution/distribution-page').then((m) => m.DistributionPage),
         title: 'Cálculo de distribución · Campiña Gastos',
       },
+      {
+        path: 'historial',
+        loadComponent: () => import('./features/history/history-page').then((m) => m.HistoryPage),
+        title: 'Historial mensual · Campiña Gastos',
+      },
       { path: '', pathMatch: 'full', redirectTo: 'resumen' },
       { path: '**', redirectTo: 'resumen' },
     ],
