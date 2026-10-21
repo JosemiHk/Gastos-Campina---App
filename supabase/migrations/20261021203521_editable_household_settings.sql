@@ -1,4 +1,4 @@
--- Review branch only: do not apply to production before reviewing the editor.
+-- Editable household settings with versioned participation and historical labels.
 alter table public.households add column configuration_revision integer not null default 0 check (configuration_revision >= 0);
 
 create function private.rule_groups(p_rule uuid) returns jsonb language sql stable set search_path = '' as $$

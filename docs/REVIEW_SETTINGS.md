@@ -22,7 +22,7 @@ Además de la revisión del mes, existe una revisión compartida de la configura
 
 ## Cómo probar sin modificar producción
 
-No se aplicó la quinta migración al proyecto alojado ni se fusionó esta rama en `main`.
+La quinta migración se aplicó al proyecto alojado el 21 de octubre de 2026 tras las pruebas. Para reproducir la revisión, usa datos de prueba en un entorno aislado.
 
 1. Ejecutar desde `app-campina-gastos`: `npm ci`, `npm test`, `npm run test:db`, `npm run test:upgrade`, `npm run test:setup`, `npm run build` y `npm run security:check`.
 2. Para revisión visual, usar una instancia Supabase de pruebas o local. Aplicar las migraciones de esta rama, crear un administrador y aprovisionar su hogar siguiendo `SETUP.md`.
@@ -35,10 +35,12 @@ En una base sin la nueva migración, la edición ampliada permanece deshabilitad
 
 Las pruebas automatizadas usan componentes y PostgreSQL efímero. La prueba de actualización crea primero un hogar con datos y un mes cerrado usando el esquema anterior; aplica después la nueva migración y comprueba su conservación. No sustituyen la inspección visual, entrega de correos ni subida real de adjuntos.
 
-## Activación después de aprobar
+## Activación y verificación
 
-Respaldar la base. Aplicar únicamente la migración pendiente mediante la CLI enlazada al proyecto correcto, comprobar el historial y publicar la rama aprobada. No ejecutar de nuevo la instalación inicial completa sobre producción.
+La migración aplicada es `20261021203521_editable_household_settings`. No ejecutar de nuevo la instalación inicial completa sobre producción. Para futuras actualizaciones, comprobar el historial y aplicar únicamente las migraciones pendientes.
 
 Actualizar las pestañas de los usuarios antes de editar participantes. Después de usar reglas personalizadas, no volver sin revisión al cliente anterior: sus textos y previsualización todavía asumen el reparto inicial, aunque el servidor conserve el cálculo canónico.
 
-La revisión y el merge quedan a cargo del propietario; no se publicaron estos cambios en la web de producción.
+El propietario autorizó las pruebas y la publicación en producción. Pasaron 41 pruebas de componentes, 25 de base nueva y 26 de actualización, además de instalación, auditoría de credenciales, formato y compilación. La revisión visual utilizó desktop y móvil con PostgreSQL efímero y autenticación simulada; no representa una nueva prueba de entrega de correo. Se comprobaron cambios, cancelación de recálculo, conservación de un mes cerrado y descarga real del PNG con márgenes uniformes.
+
+En producción, las huellas agregadas de las 14 tablas confirmaron que los registros previos se conservaron. Una prueba de la nueva RPC con rol autenticado se revirtió íntegramente y no dejó un periodo de prueba. El respaldo completo local fue bloqueado por la revisión automática y no se exportó.

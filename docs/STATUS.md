@@ -16,19 +16,19 @@
 
 ## Pendiente de entorno y validación real
 
-Las cuatro migraciones iniciales están aplicadas en Supabase y sus versiones locales coinciden con el historial remoto. Las 14 tablas tienen RLS; el bucket `receipts` es privado y limita archivos a JPG/PNG/PDF de 10 MiB. La URL y clave pública están exclusivamente en archivos locales excluidos de Git. La web está publicada en Vercel, conectada a GitHub.
+Las cinco migraciones están aplicadas en Supabase y sus versiones locales coinciden con el historial remoto; la última es `20261021203521_editable_household_settings`. Las 14 tablas tienen RLS; el bucket `receipts` es privado y limita archivos a JPG/PNG/PDF de 10 MiB. La URL y clave pública están exclusivamente en archivos locales excluidos de Git. La web está publicada en Vercel, conectada a GitHub.
 
 El propietario creó y confirmó la cuenta en Auth. Se configuraron su nombre y pertenencia activa como administrador, y se aprovisionó el hogar con sus reglas iniciales. Sus datos de alta se conservan en `supabase/.temp/admin-request.json`, excluido de Git. La verificación remota mediante el rol `authenticated` comprobó lectura como administrador, tres recibos, cálculo y cierre dentro de una transacción revertida; no quedaron periodos ni recibos de prueba. También se verificaron las denegaciones para acceso anónimo y ausencia de identidad. Estas comprobaciones SQL no sustituyen una sesión real del navegador.
 
 El propietario configuró SMTP de Brevo, plantilla Magic Link y las URL de producción, y confirmó mediante capturas la recepción del correo y la sesión real como administrador. Se corrigió el envío nativo del formulario que recargaba la página; se detectó además que Auth enviaba ocho dígitos y se indicó ajustar el código a seis antes del acceso exitoso. La transferencia de archivos mediante la API de Storage sigue pendiente de prueba real. Ver `SETUP.md` y `SECURITY.md`.
 
-La exportación PNG está implementada y requiere inspección del archivo generado en un navegador real, junto con las pruebas de compartición en dispositivos. Los tests de componentes verifican contenido y comportamiento, no píxeles.
+La exportación PNG se inspeccionó en un navegador real con datos de prueba: imagen de 1080 px de ancho, márgenes iguales y contenido completo desde una vista móvil. La compartición nativa en dispositivos sigue pendiente; los tests de componentes no verifican el menú del sistema operativo.
 
-## Mejoras en rama de revisión
+## Mejoras verificadas el 21 de octubre de 2026
 
-`codex/editable-household-settings` contiene movimiento sutil con preferencia de movimiento reducido y edición de nombres, integrantes y participación por servicio. Añade una quinta migración pendiente, revisión compartida y conservación de integrantes históricos. No se aplicó a la base de producción ni se fusionó la rama en `main`. La implementación conserva compatibilidad con el servidor inicial y mantiene deshabilitada la edición ampliada mientras falte esa migración.
+Movimiento sutil con preferencia de movimiento reducido, edición de nombres, integrantes y participación por servicio, revisión compartida y conservación de integrantes históricos. La quinta migración ya está aplicada en producción. Se compararon conteos y huellas de los registros de las 14 tablas antes y después: los tres recibos, el periodo y los tres cálculos previos conservan sus datos. La nueva RPC se comprobó con el rol autenticado dentro de una transacción revertida, sin dejar datos de prueba.
 
-Consultar `REVIEW_SETTINGS.md` para preparar un entorno de pruebas, revisar desktop/móvil y activar después de aprobar. El editor libre de fórmulas y proporciones queda para una fase posterior.
+Consultar `REVIEW_SETTINGS.md` para reproducir las pruebas. El editor libre de fórmulas y proporciones queda para una fase posterior.
 
 ## Fuera del MVP
 

@@ -35,7 +35,7 @@ supabase db push
 
 Alternativamente, ejecuta una sola vez y en orden los archivos de `supabase/migrations` mediante SQL Editor. No apliques ambas alternativas sobre una base ya migrada. El proyecto conectado ya tiene las migraciones aplicadas mediante MCP; no vuelvas a instalarlo.
 
-La rama `codex/editable-household-settings` añade una migración pendiente para la edición de grupos y participantes. Aún no está aplicada al proyecto conectado. Para revisarla utiliza una instancia de pruebas siguiendo `REVIEW_SETTINGS.md`; no ejecutes `db push` contra producción antes de aprobarla.
+La migración `20261021203521_editable_household_settings` para editar grupos y participantes ya está aplicada al proyecto conectado. No vuelvas a ejecutarla manualmente. Para probar cambios futuros utiliza una instancia de pruebas siguiendo `REVIEW_SETTINGS.md` y comprueba siempre el historial antes de migrar.
 
 Para preparar un solo archivo con todas las migraciones, desde `app-campina-gastos` ejecuta `npm run prepare:supabase`. Copia todo el contenido de `supabase/.temp/setup-campina.sql` en SQL Editor y pulsa Run. El archivo está excluido de Git y envuelve la instalación en una transacción. Úsalo únicamente para la instalación inicial en un proyecto vacío; los archivos de `migrations` siguen siendo la fuente de verdad.
 
