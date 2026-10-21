@@ -27,6 +27,85 @@
       >
     </div>
   }
+  <ng-template #voucherContent>
+    <header class="voucher-header">
+      <div class="voucher-brand">
+        <span class="voucher-logo"><app-icon name="home" /></span>
+        <div><strong>CAMPIÑA GASTOS</strong><span>CUENTAS CLARAS EN CASA</span></div>
+      </div>
+      <span class="voucher-month">{{ monthLabel(store.selectedMonth()) }}</span>
+    </header>
+    @if (store.calculation()!.receiptCount < 3) {
+      <div class="voucher-partial">
+        RESUMEN PARCIAL · {{ store.calculation()!.receiptCount }} DE 3 RECIBOS
+      </div>
+    }
+    <div class="voucher-total">
+      <span>Total de servicios del mes</span
+      ><strong class="money">{{ money(store.calculation()!.totalCents) }}</strong
+      ><small>{{ store.calculation()!.receiptCount }} recibos registrados y distribuidos</small>
+    </div>
+    <section class="voucher-services">
+      <div class="voucher-section-title"><span>Servicios del hogar</span><span>Importe</span></div>
+      @for (service of services; track service.code) {
+        @if (serviceAmount(service.code) !== null) {
+          <div class="voucher-service">
+            <app-icon [name]="service.icon" /><span>{{ service.name }}</span
+            ><strong class="money">{{ money(serviceAmount(service.code)!) }}</strong>
+          </div>
+        }
+      }
+    </section>
+    <section class="voucher-groups">
+      <div class="voucher-section-title">Cuotas del mes por grupo</div>
+      <div class="voucher-group-grid">
+        @for (group of groups(); track group.id) {
+          <div>
+            <span>{{ groupName(group.code) }}</span
+            ><strong class="money">{{ money(store.totals()[group.code]) }}</strong
+            ><small>{{
+              group.kind === 'special'
+                ? 'Aporte fijo · congeladora'
+                : store.paid(group.code) > 0
+                  ? store.balance(group.code) <= 0
+                    ? 'Aporte recibido'
+                    : 'Aporte parcial recibido'
+                  : 'Pendiente'
+            }}</small>
+          </div>
+        }
+      </div>
+    </section>
+    @if (serviceAmount('electricity') !== null) {
+      <p class="voucher-note">
+        La luz incluye {{ money(store.fixedContributionCents()) }} de
+        {{ store.groupName('rossana') }}. El saldo se reparte entre
+        {{ store.participants().electricity.length }}
+        {{ store.participants().electricity.length === 1 ? 'grupo' : 'grupos' }}.
+      </p>
+    }
+    @if (store.data()!.accounts.length) {
+      <section class="voucher-accounts">
+        <div class="voucher-section-title">Datos para transferir</div>
+        @for (account of store.data()!.accounts; track account.id) {
+          <div>
+            <strong>{{ account.label }} · {{ account.number }}</strong
+            ><span>{{ account.holder }}</span>
+            @if (account.kind === 'bank' && account.cci) {
+              <span>CCI: {{ account.cci }}</span>
+            }
+          </div>
+        }
+      </section>
+    }
+    <footer class="voucher-footer">
+      <span><app-icon name="leaf" />Generado por Campiña Gastos</span
+      ><span>{{ store.selectedMonth().slice(0, 7) }}</span>
+    </footer>
+  </ng-template>
+  <div class="voucher-export" aria-hidden="true">
+    <article #voucher class="voucher"><ng-container [ngTemplateOutlet]="voucherContent" /></article>
+  </div>
   <div class="share-layout">
     <div class="share-controls stack">
       <section class="card">
@@ -97,85 +176,8 @@
         }
       </div>
       <div class="voucher-viewport">
-        <article #voucher class="voucher" aria-label="Imagen del resumen mensual">
-          <header class="voucher-header">
-            <div class="voucher-brand">
-              <span class="voucher-logo"><app-icon name="home" /></span>
-              <div><strong>CAMPIÑA GASTOS</strong><span>CUENTAS CLARAS EN CASA</span></div>
-            </div>
-            <span class="voucher-month">{{ monthLabel(store.selectedMonth()) }}</span>
-          </header>
-          @if (store.calculation()!.receiptCount < 3) {
-            <div class="voucher-partial">
-              RESUMEN PARCIAL · {{ store.calculation()!.receiptCount }} DE 3 RECIBOS
-            </div>
-          }
-          <div class="voucher-total">
-            <span>Total de servicios del mes</span
-            ><strong class="money">{{ money(store.calculation()!.totalCents) }}</strong
-            ><small
-              >{{ store.calculation()!.receiptCount }} recibos registrados y distribuidos</small
-            >
-          </div>
-          <section class="voucher-services">
-            <div class="voucher-section-title">
-              <span>Servicios del hogar</span><span>Importe</span>
-            </div>
-            @for (service of services; track service.code) {
-              @if (serviceAmount(service.code) !== null) {
-                <div class="voucher-service">
-                  <app-icon [name]="service.icon" /><span>{{ service.name }}</span
-                  ><strong class="money">{{ money(serviceAmount(service.code)!) }}</strong>
-                </div>
-              }
-            }
-          </section>
-          <section class="voucher-groups">
-            <div class="voucher-section-title">Cuotas del mes por grupo</div>
-            <div class="voucher-group-grid">
-              @for (group of groups(); track group.id) {
-                <div>
-                  <span>{{ groupName(group.code) }}</span
-                  ><strong class="money">{{ money(store.totals()[group.code]) }}</strong
-                  ><small>{{
-                    group.kind === 'special'
-                      ? 'Aporte fijo · congeladora'
-                      : store.paid(group.code) > 0
-                        ? store.balance(group.code) <= 0
-                          ? 'Aporte recibido'
-                          : 'Aporte parcial recibido'
-                        : 'Pendiente'
-                  }}</small>
-                </div>
-              }
-            </div>
-          </section>
-          @if (serviceAmount('electricity') !== null) {
-            <p class="voucher-note">
-              La luz incluye {{ money(store.fixedContributionCents()) }} de
-              {{ store.groupName('rossana') }}. El saldo se reparte entre
-              {{ store.participants().electricity.length }}
-              {{ store.participants().electricity.length === 1 ? 'grupo' : 'grupos' }}.
-            </p>
-          }
-          @if (store.data()!.accounts.length) {
-            <section class="voucher-accounts">
-              <div class="voucher-section-title">Datos para transferir</div>
-              @for (account of store.data()!.accounts; track account.id) {
-                <div>
-                  <strong>{{ account.label }} · {{ account.number }}</strong
-                  ><span>{{ account.holder }}</span>
-                  @if (account.kind === 'bank' && account.cci) {
-                    <span>CCI: {{ account.cci }}</span>
-                  }
-                </div>
-              }
-            </section>
-          }
-          <footer class="voucher-footer">
-            <span><app-icon name="leaf" />Generado por Campiña Gastos</span
-            ><span>{{ store.selectedMonth().slice(0, 7) }}</span>
-          </footer>
+        <article class="voucher" aria-label="Imagen del resumen mensual">
+          <ng-container [ngTemplateOutlet]="voucherContent" />
         </article>
       </div>
       <p class="image-help">

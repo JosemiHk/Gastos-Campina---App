@@ -9,6 +9,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -20,7 +21,7 @@ import { Icon } from '../../shared/ui/icon';
 
 @Component({
   selector: 'app-summary-page',
-  imports: [RouterLink, ReactiveFormsModule, MatButtonModule, Icon],
+  imports: [RouterLink, ReactiveFormsModule, MatButtonModule, Icon, NgTemplateOutlet],
   templateUrl: './summary-page.html',
   styleUrl: './summary-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -103,12 +104,14 @@ export class SummaryPage {
     try {
       await document.fonts.ready;
       const { toBlob } = await import('html-to-image');
+      // The offscreen export renders the shared template at 540px before cloning.
+      // Its children therefore fill the image even when the visible preview is mobile.
       const blob = await toBlob(element, {
         width: 540,
-        height: Math.max(675, Math.ceil(element.scrollHeight)),
+        height: Math.ceil(element.scrollHeight) || 675,
         pixelRatio: 2,
         backgroundColor: '#053931',
-        style: { width: '540px', maxWidth: 'none', minHeight: '675px' },
+        style: { width: '540px', maxWidth: 'none', minHeight: '0' },
         cacheBust: false,
       });
       if (!blob) throw new Error('No se pudo crear la imagen.');

@@ -1,6 +1,63 @@
 .partial-note {
   margin-bottom: 24px;
 }
+
+// Render the export at a stable size before html-to-image captures computed styles.
+// Keep it out of both the visible page and the accessibility tree (see template).
+.voucher-export {
+  position: fixed;
+  left: -10000px;
+  top: 0;
+  width: 540px;
+  pointer-events: none;
+  .voucher {
+    width: 540px;
+    min-height: 0;
+    padding: 16px;
+  }
+  .voucher-header {
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .voucher-brand strong {
+    font-size: 17px;
+  }
+  .voucher-brand div > span {
+    font-size: 8px;
+  }
+  .voucher-logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+  }
+  .voucher-logo app-icon {
+    width: 26px;
+    height: 26px;
+  }
+  .voucher-month {
+    font-size: 10px;
+    max-width: 95px;
+  }
+  .voucher-total {
+    padding: 24px 12px;
+    margin-bottom: 24px;
+  }
+  .voucher-total > strong {
+    font-size: 42px;
+  }
+  .voucher-group-grid strong {
+    font-size: 23px;
+  }
+  .voucher-group-grid > div {
+    padding: 14px;
+  }
+  .voucher-service {
+    font-size: 12px;
+  }
+  .voucher-footer {
+    font-size: 8px;
+  }
+}
 .share-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(340px, 1fr);

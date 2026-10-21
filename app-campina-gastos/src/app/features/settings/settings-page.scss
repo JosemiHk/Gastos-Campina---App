@@ -32,6 +32,9 @@ fieldset:disabled select {
   font-size: 9px;
   white-space: nowrap;
 }
+.group-settings .grow {
+  overflow-wrap: anywhere;
+}
 .group-services {
   display: flex;
   flex-wrap: wrap;
@@ -252,6 +255,9 @@ fieldset:disabled select {
   }
   .group-settings .row > .badge {
     margin-left: 52px;
+  }
+  .group-settings .row > .grow {
+    min-width: calc(100% - 60px);
   }
   .group-settings h3 {
     font-size: 14px;
