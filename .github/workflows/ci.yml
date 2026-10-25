@@ -29,4 +29,8 @@ jobs:
       - run: npm run test:upgrade
       - run: npm run test:collaboration
       - run: npm run test:invitations
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: '2.9.6'
+      - run: deno check --frozen --config ../supabase/functions/deno.json ../supabase/functions/invite-household/index.ts
       - run: npm run build

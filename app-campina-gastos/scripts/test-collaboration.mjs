@@ -60,7 +60,7 @@ async function resolve(id, approve = true, reason = '') {
 const migrationDir = new URL('../../supabase/migrations/', import.meta.url);
 try {
   await db.exec(
-    `create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,email text);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth to authenticated;grant execute on function auth.uid() to authenticated;create schema storage;create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);create table storage.objects(id uuid default gen_random_uuid() primary key,bucket_id text,name text,metadata jsonb);alter table storage.objects enable row level security;grant usage on schema storage to authenticated;grant select,insert,delete on storage.objects to authenticated;create function public.rls_auto_enable() returns event_trigger language plpgsql security definer as $$begin end$$;`,
+    `create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,email text);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth to authenticated;grant execute on function auth.uid() to authenticated;create schema storage;create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);create table storage.objects(id uuid default gen_random_uuid() primary key,bucket_id text,name text,metadata jsonb,owner_id text default auth.uid()::text);alter table storage.objects enable row level security;grant usage on schema storage to authenticated;grant select,insert,delete on storage.objects to authenticated;create function public.rls_auto_enable() returns event_trigger language plpgsql security definer as $$begin end$$;`,
   );
   for (const [name, id] of Object.entries(ids))
     await db.query('insert into auth.users values($1,$2)', [id, `${name}@example.test`]);
@@ -260,6 +260,36 @@ try {
         (await db.query('select count(*)::int as n from storage.objects where name=$1', [path]))
           .rows[0].n,
         1,
+      );
+    },
+  );
+  await check(
+    'Un integrante no elimina ni toma adjuntos ajenos todavía sin registrar',
+    async () => {
+      const otherPath = `${h}/2028-01/${crypto.randomUUID()}.pdf`;
+      await db.exec('reset role');
+      await db.query(
+        'insert into storage.objects(bucket_id,name,metadata,owner_id) values(\'receipts\',$1,\'{"size":12,"mimetype":"application/pdf"}\',$2)',
+        [otherPath, ids.reviewer],
+      );
+      await as('member');
+      await db.query('delete from storage.objects where name=$1', [otherPath]);
+      assert.equal(
+        (
+          await db.query('select count(*)::int as n from storage.objects where name=$1', [
+            otherPath,
+          ])
+        ).rows[0].n,
+        1,
+      );
+      await assert.rejects(
+        request({
+          ...electricity,
+          filePath: otherPath,
+          fileType: 'application/pdf',
+          fileName: 'otro.pdf',
+          fileSize: 12,
+        }),
       );
     },
   );

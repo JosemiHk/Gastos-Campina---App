@@ -36,3 +36,7 @@ content_path = "./templates/magic-link.html"
 [auth.email.template.invite]
 subject = "Te invitaron a Campiña Gastos"
 content_path = "./templates/invite.html"
+[functions.invite-household]
+# The handler validates the user JWT with Auth.getUser and checks live admin
+# membership through guarded RPCs. This supports current signing/API keys.
+verify_jwt = false

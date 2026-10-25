@@ -19,7 +19,7 @@ try {
     grant usage on schema auth to authenticated; grant execute on function auth.uid() to authenticated;
     create schema storage;
     create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);
-    create table storage.objects(id uuid default gen_random_uuid() primary key,bucket_id text,name text,metadata jsonb);
+    create table storage.objects(id uuid default gen_random_uuid() primary key,bucket_id text,name text,metadata jsonb,owner_id text default auth.uid()::text);
     alter table storage.objects enable row level security;
     grant usage on schema storage to authenticated; grant select,insert,delete on storage.objects to authenticated;
     create function public.rls_auto_enable() returns event_trigger language plpgsql security definer as $$ begin end $$;

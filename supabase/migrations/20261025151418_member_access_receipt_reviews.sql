@@ -80,7 +80,7 @@ revoke all on function private.receipt_snapshot(uuid) from public,anon,authentic
 
 -- Central validation reused by direct writes and correction requests.
 create function private.validate_receipt(p_household uuid,p_month date,p_receipt jsonb) returns void language plpgsql set search_path='' as $$
-declare path text; meta jsonb; amount integer;
+declare path text; meta jsonb; file_owner text; amount integer;
 begin
   if jsonb_typeof(p_receipt) is distinct from 'object' or (p_receipt->>'id')::uuid is null
      or p_receipt->>'status' is null or p_receipt->>'status' not in ('draft','confirmed') then raise exception 'Datos del recibo inválidos.'; end if;
@@ -91,8 +91,9 @@ begin
   path:=nullif(p_receipt->>'filePath','');
   if path is not null then
     if split_part(path,'/',1)<>p_household::text or split_part(path,'/',2)<>to_char(p_month,'YYYY-MM') or path like '%..%' or length(path)>250 then raise exception 'Archivo del recibo inválido.'; end if;
-    select metadata into meta from storage.objects where bucket_id='receipts' and name=path;
+    select metadata,owner_id into meta,file_owner from storage.objects where bucket_id='receipts' and name=path;
     if not found then raise exception 'El archivo no se terminó de cargar.'; end if;
+    if not private.is_member(p_household,true) and file_owner is distinct from auth.uid()::text and not private.file_in_use(path) then raise exception 'No autorizado para usar este archivo.' using errcode='42501'; end if;
     if (meta->>'size')::bigint is distinct from (p_receipt->>'fileSize')::bigint or meta->>'mimetype' is distinct from p_receipt->>'fileType'
       or p_receipt->>'fileType' not in ('image/jpeg','image/png','application/pdf')
       or (p_receipt->>'fileSize')::integer not between 1 and 10485760
@@ -212,7 +213,7 @@ $$;
 drop policy household_receipt_upload on storage.objects;
 create policy household_receipt_upload on storage.objects for insert to authenticated with check(bucket_id='receipts' and private.can_register(private.file_household(name)) and name ~ '^[0-9a-f-]{36}/[0-9]{4}-(0[1-9]|1[0-2])/[0-9a-f-]{36}\.(jpg|png|pdf)$' and not exists(select 1 from public.billing_periods where household_id=private.file_household(name) and to_char(month,'YYYY-MM')=split_part(name,'/',2) and status='closed'));
 drop policy household_receipt_cleanup on storage.objects;
-create policy household_receipt_cleanup on storage.objects for delete to authenticated using(bucket_id='receipts' and private.can_register(private.file_household(name)) and not private.file_in_use(name));
+create policy household_receipt_cleanup on storage.objects for delete to authenticated using(bucket_id='receipts' and private.can_register(private.file_household(name)) and (private.is_member(private.file_household(name),true) or owner_id=(select auth.uid()::text)) and not private.file_in_use(name));
 
 -- Existing financial payload stays stable; only add collaboration fields.
 alter function public.get_household() rename to household_base;
