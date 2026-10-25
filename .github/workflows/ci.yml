@@ -27,4 +27,6 @@ jobs:
       - run: npm test
       - run: npm run test:db
       - run: npm run test:upgrade
+      - run: npm run test:collaboration
+      - run: npm run test:invitations
       - run: npm run build

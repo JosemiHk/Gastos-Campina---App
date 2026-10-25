@@ -33,3 +33,6 @@ max_frequency = "60s"
 [auth.email.template.magic_link]
 subject = "Tu acceso a Campiña Gastos"
 content_path = "./templates/magic-link.html"
+[auth.email.template.invite]
+subject = "Te invitaron a Campiña Gastos"
+content_path = "./templates/invite.html"

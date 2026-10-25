@@ -35,7 +35,7 @@ try {
   } else {
     for (const file of readdirSync(migrations)
       .filter((f) => f.endsWith('.sql'))
-      .filter((f) => !process.argv.includes('--upgrade') || f !== upgradeFile)
+      .filter((f) => !process.argv.includes('--upgrade') || f < upgradeFile)
       .sort())
       await db.exec(readFileSync(new URL(file, migrations), 'utf8'));
   }
@@ -64,6 +64,7 @@ try {
     await db.exec('set role authenticated');
   }
   const bundle = async () => (await db.query('select public.get_household() as data')).rows[0].data;
+  let reviewSchemaReady = !process.argv.includes('--upgrade');
   const save = async (
     service,
     amountCents,
@@ -72,12 +73,12 @@ try {
     status = 'confirmed',
     id = crypto.randomUUID(),
   ) =>
-    db.query('select public.save_receipt($1,$2,$3,$4::jsonb)', [
-      household,
-      month,
-      revision,
-      JSON.stringify({ id, service, amountCents, status }),
-    ]);
+    db.query(
+      reviewSchemaReady
+        ? "select public.save_receipt($1,$2,$3,$4::jsonb,'Corrección administrativa de prueba')"
+        : 'select public.save_receipt($1,$2,$3,$4::jsonb)',
+      [household, month, revision, JSON.stringify({ id, service, amountCents, status })],
+    );
   await asUser(admin);
   await check('El hogar inicial no contiene recibos ni cuentas ficticias', async () => {
     const data = await bundle();
@@ -277,6 +278,11 @@ try {
     const before = (await bundle()).periods.find((p) => p.month === '2026-10-01').calculation;
     await db.exec('reset role');
     await db.exec(readFileSync(new URL(upgradeFile, migrations), 'utf8'));
+    for (const file of readdirSync(migrations)
+      .filter((f) => f.endsWith('.sql') && f > upgradeFile)
+      .sort())
+      await db.exec(readFileSync(new URL(file, migrations), 'utf8'));
+    reviewSchemaReady = true;
     await asUser(admin);
     await check(
       'La migración actualiza un hogar existente sin modificar importes ni nombres cerrados',
