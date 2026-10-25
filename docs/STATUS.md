@@ -30,6 +30,10 @@ Movimiento sutil con preferencia de movimiento reducido, edición de nombres, in
 
 Consultar `REVIEW_SETTINGS.md` para reproducir las pruebas. El editor libre de fórmulas y proporciones queda para una fase posterior.
 
+## Nueva entrega aislada: accesos y correcciones
+
+La rama `codex/member-access-and-receipt-reviews` prepara integrantes con permiso opcional de revisión, invitaciones por correo desde Configuración, solicitudes de corrección e historial, y avisos de cambios con Realtime. La sexta migración y la función de invitaciones no están aplicadas en producción. Ver `REVIEW_ACCESS_AND_CORRECTIONS.md` para alcance, pruebas y validación alojada pendiente. Esta entrega no cambia el algoritmo del reparto ni las exportaciones.
+
 ## Fuera del MVP
 
 Alta/baja libre de grupos y servicios, fórmulas o proporciones personalizadas, reapertura de meses, PDF/Excel/CSV, constancias de pago y múltiples adjuntos, recordatorios programados y modo oscuro. No hay integración bancaria automática.
