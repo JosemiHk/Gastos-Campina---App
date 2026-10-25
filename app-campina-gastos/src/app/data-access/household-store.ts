@@ -27,6 +27,23 @@ export class HouseholdStore {
   readonly error = signal('');
   readonly selectedMonth = signal(monthNow());
   readonly hasUnsavedChanges = signal(false);
+  readonly externalChanges = signal(false);
+  readonly collaborationEnabled = computed(() => this.data()?.accessEnabled === true);
+  readonly canRegister = computed(
+    () => this.isAdmin() || (this.collaborationEnabled() && this.data()?.role === 'member'),
+  );
+  readonly canReview = computed(
+    () => this.collaborationEnabled() && (this.isAdmin() || this.data()?.canReview === true),
+  );
+  readonly corrections = computed(() => this.data()?.corrections ?? []);
+  readonly pendingCount = computed(
+    () => this.corrections().filter((c) => c.status === 'pending').length,
+  );
+  readonly roleLabel = computed(() =>
+    this.isAdmin() ? 'Administrador' : this.data()?.role === 'member' ? 'Integrante' : 'Consulta',
+  );
+  readonly currentUserId = computed(() => this.data()?.currentUserId ?? this.auth.user()?.id ?? '');
+  readonly currentUserEmail = computed(() => this.auth.user()?.email ?? '');
   readonly participants = computed(
     () =>
       this.period()?.participants ?? this.data()?.household.participants ?? DEFAULT_PARTICIPANTS,
@@ -55,6 +72,7 @@ export class HouseholdStore {
         this.loadId++;
         this.data.set(null);
         this.error.set('');
+        this.externalChanges.set(false);
       }
     });
   }
@@ -75,10 +93,11 @@ export class HouseholdStore {
           !Array.isArray(data['groups']) ||
           !Array.isArray(data['periods']) ||
           !Array.isArray(data['accounts']) ||
-          !['admin', 'viewer'].includes(String(data['role'])))
+          !['admin', 'member', 'viewer'].includes(String(data['role'])))
       )
         throw new Error('Los datos del hogar no son válidos.');
       this.data.set(data as unknown as HouseholdData | null);
+      this.externalChanges.set(false);
     } catch (error) {
       if (request === this.loadId) this.error.set(errorMessage(error));
     } finally {
@@ -120,9 +139,9 @@ export class HouseholdStore {
       ? `Aporte fijo + reparto entre ${count}`
       : `Entre ${count} ${count === 1 ? 'grupo' : 'grupos'}`;
   }
-  private args() {
+  private args(admin = true) {
     const household = this.data()?.household.id;
-    if (!household || !this.isAdmin())
+    if (!household || (admin ? !this.isAdmin() : !this.canRegister()))
       throw new Error('No tienes permiso para modificar este hogar.');
     return {
       p_household: household,
@@ -130,10 +149,44 @@ export class HouseholdStore {
       p_revision: this.period()?.revision ?? 0,
     };
   }
-  async saveReceipt(receipt: ReceiptInput): Promise<void> {
-    const args = this.args();
+  async saveReceipt(receipt: ReceiptInput, reason = ''): Promise<void> {
+    const args = this.args(false);
+    if (!this.isAdmin() && this.receipts().some((r) => r.id === receipt.id))
+      throw new Error('Solicita una corrección para cambiar este recibo.');
     await this.mutate(() =>
-      this.backend.client.rpc('save_receipt', { ...args, p_receipt: receipt as unknown as Json }),
+      this.backend.client.rpc('save_receipt', {
+        ...args,
+        p_receipt: receipt as unknown as Json,
+        ...(this.collaborationEnabled() ? { p_reason: reason } : {}),
+      }),
+    );
+  }
+  async requestCorrection(
+    receipt: ReceiptInput,
+    baseRevision: number,
+    reason: string,
+  ): Promise<void> {
+    const args = this.args(false);
+    if (!this.collaborationEnabled()) throw new Error('Las correcciones aún no están habilitadas.');
+    await this.mutate(() =>
+      this.backend.client.rpc('request_receipt_correction', {
+        ...args,
+        p_receipt: receipt as unknown as Json,
+        p_base_revision: baseRevision,
+        p_reason: reason,
+      }),
+    );
+  }
+  async resolveCorrection(id: string, approve: boolean, reason: string): Promise<void> {
+    const args = this.args(false);
+    if (!this.canReview()) throw new Error('No autorizado.');
+    await this.mutate(() =>
+      this.backend.client.rpc('resolve_receipt_correction', {
+        ...args,
+        p_correction: id,
+        p_approve: approve,
+        p_reason: reason,
+      }),
     );
   }
   async closePeriod(): Promise<void> {

@@ -6,7 +6,50 @@ export interface Database {
     Views: Record<string, never>;
     Functions: {
       get_household: { Args: Record<string, never>; Returns: Json };
-      save_receipt: { Args: PeriodArgs & { p_receipt: Json }; Returns: undefined };
+      save_receipt: {
+        Args: PeriodArgs & { p_receipt: Json; p_reason?: string };
+        Returns: undefined;
+      };
+      request_receipt_correction: {
+        Args: PeriodArgs & { p_receipt: Json; p_base_revision: number; p_reason: string };
+        Returns: undefined;
+      };
+      resolve_receipt_correction: {
+        Args: PeriodArgs & { p_correction: string; p_approve: boolean; p_reason: string };
+        Returns: undefined;
+      };
+      get_household_access: { Args: { p_household: string }; Returns: Json };
+      update_household_access: {
+        Args: {
+          p_household: string;
+          p_user: string;
+          p_revision: number;
+          p_name: string;
+          p_role: string;
+          p_can_review: boolean;
+          p_active: boolean;
+        };
+        Returns: undefined;
+      };
+      prepare_household_invitation: {
+        Args: {
+          p_household: string;
+          p_id: string;
+          p_email: string;
+          p_name: string;
+          p_role: string;
+          p_can_review: boolean;
+        };
+        Returns: Json;
+      };
+      complete_household_invitation: {
+        Args: { p_household: string; p_id: string };
+        Returns: undefined;
+      };
+      cancel_household_invitation: {
+        Args: { p_household: string; p_id: string };
+        Returns: undefined;
+      };
       close_period: { Args: PeriodArgs; Returns: undefined };
       confirm_payment: {
         Args: PeriodArgs & { p_group: string; p_method: string };

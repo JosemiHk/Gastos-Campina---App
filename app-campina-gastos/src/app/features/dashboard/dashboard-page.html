@@ -8,7 +8,7 @@
     <a mat-stroked-button routerLink="/compartir" queryParamsHandling="preserve"
       ><app-icon name="share" />Resumen WhatsApp</a
     >
-    @if (store.isAdmin() && !store.closed()) {
+    @if (store.canRegister() && !store.closed()) {
       <a mat-flat-button routerLink="/registrar" queryParamsHandling="preserve"
         ><app-icon name="plus" />Nuevo recibo</a
       >
@@ -76,7 +76,7 @@
     <span class="icon-tile"><app-icon name="receipt" /></span>
     <h2>Un mes en orden empieza aquí</h2>
     <p>Registra los recibos de agua, luz e internet. Campiña hará el reparto por ti.</p>
-    @if (store.isAdmin() && !store.closed()) {
+    @if (store.canRegister() && !store.closed()) {
       <a mat-flat-button routerLink="/registrar" queryParamsHandling="preserve"
         ><app-icon name="plus" />Registrar primer recibo</a
       >
@@ -124,11 +124,13 @@
                 } @else {
                   <small class="muted">Sin comprobante adjunto</small>
                 }
-                @if (store.isAdmin() && !store.closed()) {
+                @if (store.canRegister() && !store.closed()) {
                   <a
                     routerLink="/registrar"
                     [queryParams]="{ mes: store.selectedMonth().slice(0, 7), recibo: bill.id }"
-                    ><app-icon name="edit" />Editar</a
+                    ><app-icon name="edit" />{{
+                      store.isAdmin() ? 'Editar' : 'Solicitar corrección'
+                    }}</a
                   >
                 }
               </div>

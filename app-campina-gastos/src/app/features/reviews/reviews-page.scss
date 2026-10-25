@@ -1,0 +1,36 @@
+.reviews-list {
+  margin-top: 24px;
+}
+.comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.comparison section {
+  background: var(--surface-variant);
+  border-radius: 12px;
+  padding: 16px;
+}
+.comparison strong {
+  font-size: 24px;
+}
+h2,
+h3,
+p {
+  margin: 0;
+}
+.comparison p {
+  margin-top: 8px;
+  font-size: 13px;
+}
+.request-reason {
+  overflow-wrap: anywhere;
+}
+.row {
+  flex-wrap: wrap;
+}
+@media (max-width: 400px) {
+  .comparison {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

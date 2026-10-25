@@ -17,6 +17,7 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { RouterLink } from '@angular/router';
 import { HouseholdStore } from '../../data-access/household-store';
 import {
   EditablePaymentGroup,
@@ -88,7 +89,7 @@ function groupForm(group: PaymentGroup, rules: RuleParticipants) {
 }
 @Component({
   selector: 'app-settings-page',
-  imports: [ReactiveFormsModule, MatButtonModule, Icon],
+  imports: [ReactiveFormsModule, MatButtonModule, Icon, RouterLink],
   templateUrl: './settings-page.html',
   styleUrl: './settings-page.scss',
   host: { '(window:beforeunload)': 'beforeUnload($event)' },

@@ -22,7 +22,7 @@ export class ReceiptPreview {
   private readonly files = inject(Files);
   private readonly dialog = inject(MatDialog);
   private readonly snack = inject(MatSnackBar);
-  async open(receipt: Receipt): Promise<void> {
+  async open(receipt: Pick<Receipt, 'filePath' | 'fileType' | 'fileName'>): Promise<void> {
     if (!receipt.filePath) return;
     try {
       const url = await this.files.signedUrl(receipt.filePath);

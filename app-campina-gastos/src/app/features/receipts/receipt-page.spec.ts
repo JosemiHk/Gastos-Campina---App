@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
+import { of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ReceiptPage } from './receipt-page';
 import { HouseholdStore } from '../../data-access/household-store';
@@ -37,6 +38,7 @@ describe('registro de recibos', () => {
         status: 'confirmed',
         filePath: null,
       }),
+      '',
     );
   });
   it('bloquea importes inválidos y luz menor al aporte fijo', async () => {
@@ -64,6 +66,7 @@ describe('registro de recibos', () => {
     await page.save('draft');
     expect(store.saveReceipt).toHaveBeenCalledWith(
       expect.objectContaining({ amountCents: 1000, status: 'draft' }),
+      '',
     );
   });
   it('el perfil consulta no puede guardar aunque invoque la acción directamente', async () => {
@@ -73,5 +76,27 @@ describe('registro de recibos', () => {
     fixture.componentInstance.form.controls.amount.setValue('90');
     await fixture.componentInstance.save('confirmed');
     expect(store.saveReceipt).not.toHaveBeenCalled();
+  });
+  it('un integrante solicita corrección sin guardar directamente el recibo vigente', async () => {
+    store = storeFixture();
+    const receipt = store.receipts()[0];
+    receipt.revision = 4;
+    store.data.update((data) => ({ ...data, accessEnabled: true, role: 'member' }));
+    TestBed.overrideProvider(HouseholdStore, { useValue: store });
+    const params = convertToParamMap({ recibo: receipt.id });
+    TestBed.overrideProvider(ActivatedRoute, {
+      useValue: { queryParamMap: of(params), snapshot: { queryParamMap: params } },
+    });
+    vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    const fixture = TestBed.createComponent(ReceiptPage);
+    fixture.detectChanges();
+    fixture.componentInstance.form.patchValue({ amount: '95.00', reason: 'Corregir consumo' });
+    await fixture.componentInstance.save('confirmed');
+    expect(store.saveReceipt).not.toHaveBeenCalled();
+    expect(store.requestCorrection).toHaveBeenCalledWith(
+      expect.objectContaining({ id: receipt.id, amountCents: 9500 }),
+      4,
+      'Corregir consumo',
+    );
   });
 });

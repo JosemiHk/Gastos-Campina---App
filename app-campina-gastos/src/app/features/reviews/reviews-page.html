@@ -1,0 +1,119 @@
+<div class="page-heading">
+  <div>
+    <span class="eyebrow">Recibos del hogar</span>
+    <h1>Revisiones</h1>
+    <p>Revisa las correcciones sin alterar el recibo vigente hasta aprobarlas.</p>
+  </div>
+  <span class="badge">{{ monthLabel(store.selectedMonth()) }}</span>
+</div>
+@if (!store.collaborationEnabled()) {
+  <section class="card"><p>Las revisiones aún no están habilitadas en este entorno.</p></section>
+} @else {
+  <div class="actions">
+    <button mat-stroked-button (click)="showHistory.set(!showHistory())">
+      {{ showHistory() ? 'Ver solo pendientes' : 'Ver también el historial' }}
+    </button>
+  </div>
+  @if (error()) {
+    <div class="error-message" role="alert">{{ error() }}</div>
+  }
+  <div class="stack reviews-list">
+    @for (c of items(); track c.id) {
+      <article class="card stack">
+        <div class="row">
+          <span class="icon-tile"><app-icon name="receipt" /></span>
+          <div class="grow">
+            <h2>{{ service(c) }}</h2>
+            <p>{{ c.requestedName }} · {{ c.requestedAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+          <span class="badge">{{
+            c.kind === 'direct' ? 'Edición directa' : labels[c.status]
+          }}</span>
+        </div>
+        <div class="comparison">
+          <section>
+            <h3>Anterior</h3>
+            <strong class="money">{{ money(c.before.amountCents) }}</strong>
+            <p>{{ c.before.status === 'draft' ? 'Borrador' : 'Confirmado' }}</p>
+            <p>
+              Emisión: {{ c.before.issueDate || 'Sin fecha' }}<br />Vencimiento:
+              {{ c.before.dueDate || 'Sin fecha' }}
+            </p>
+            @if (c.before.filePath) {
+              <button mat-button (click)="preview.open(c.before)">Ver adjunto anterior</button>
+            } @else {
+              <small>Sin adjunto</small>
+            }
+          </section>
+          <section>
+            <h3>Propuesto</h3>
+            <strong class="money">{{ money(c.proposed.amountCents) }}</strong>
+            <p>{{ c.proposed.status === 'draft' ? 'Borrador' : 'Confirmado' }}</p>
+            <p>
+              Emisión: {{ c.proposed.issueDate || 'Sin fecha' }}<br />Vencimiento:
+              {{ c.proposed.dueDate || 'Sin fecha' }}
+            </p>
+            @if (c.proposed.filePath) {
+              <button mat-button (click)="preview.open(c.proposed)">Ver adjunto propuesto</button>
+            } @else {
+              <small>Sin adjunto</small>
+            }
+          </section>
+        </div>
+        <p class="request-reason"><strong>Motivo:</strong> {{ c.reason }}</p>
+        @if (c.resolutionReason) {
+          <p class="muted">{{ c.resolutionReason }}</p>
+        }
+        @if (c.resolvedAt) {
+          <small class="muted"
+            >Resuelta el {{ c.resolvedAt | date: 'dd/MM/yyyy HH:mm' }}
+            @if (c.resolvedName) {
+              · {{ c.resolvedName }}
+            }
+          </small>
+        }
+        @if (c.status === 'pending' && c.requestedBy === store.currentUserId()) {
+          <div class="rule-note">
+            <app-icon name="info" />Otro responsable debe revisar tu solicitud.
+          </div>
+        }
+        @if (canResolve(c)) {
+          <div class="actions">
+            <button mat-flat-button [disabled]="busy()" (click)="resolve(c, true)">
+              Aprobar y recalcular</button
+            ><button
+              mat-stroked-button
+              [disabled]="busy()"
+              (click)="selected.set(c.id); reason.reset()"
+            >
+              Rechazar
+            </button>
+          </div>
+          @if (selected() === c.id) {
+            <div class="field">
+              <label [for]="'reject-' + c.id">Motivo del rechazo</label
+              ><textarea
+                [id]="'reject-' + c.id"
+                [formControl]="reason"
+                maxlength="300"
+                rows="3"
+              ></textarea
+              ><button mat-stroked-button [disabled]="busy()" (click)="resolve(c, false)">
+                Confirmar rechazo
+              </button>
+            </div>
+          }
+        }
+      </article>
+    } @empty {
+      <section class="card empty-state">
+        <span class="icon-tile"><app-icon name="check" /></span>
+        <h2>Todo al día</h2>
+        <p>
+          No hay {{ showHistory() ? 'correcciones' : 'solicitudes pendientes' }} para mostrar en
+          este mes.
+        </p>
+      </section>
+    }
+  </div>
+}

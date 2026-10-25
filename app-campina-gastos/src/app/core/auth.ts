@@ -54,11 +54,11 @@ export class Auth {
     this.user.set(data.user);
     this.clearPending();
   }
-  async verifyLink(tokenHash: string): Promise<void> {
+  async verifyLink(tokenHash: string, type: 'email' | 'invite' = 'email'): Promise<void> {
     await this.backend.initialize();
     const { data, error } = await this.backend.client.auth.verifyOtp({
       token_hash: tokenHash,
-      type: 'email',
+      type,
     });
     if (error) throw error;
     this.user.set(data.user);

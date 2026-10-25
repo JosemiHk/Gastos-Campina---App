@@ -68,6 +68,18 @@ export const routes: Routes = [
         title: 'Historial mensual · Campiña Gastos',
       },
       {
+        path: 'configuracion/accesos',
+        canDeactivate: [unsavedChanges],
+        loadComponent: () => import('./features/access/access-page').then((m) => m.AccessPage),
+        title: 'Integrantes y accesos · Campiña Gastos',
+      },
+      {
+        path: 'revisiones',
+        canDeactivate: [unsavedChanges],
+        loadComponent: () => import('./features/reviews/reviews-page').then((m) => m.ReviewsPage),
+        title: 'Revisiones · Campiña Gastos',
+      },
+      {
         path: 'configuracion',
         canDeactivate: [unsavedChanges],
         runGuardsAndResolvers: 'paramsOrQueryParamsChange',

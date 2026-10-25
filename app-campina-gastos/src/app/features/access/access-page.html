@@ -1,0 +1,150 @@
+<div class="page-heading">
+  <div>
+    <span class="eyebrow">Configuración del hogar</span>
+    <h1>Integrantes y accesos</h1>
+    <p>Cada persona usa su correo. Los grupos de pago siguen compartiendo su cuota.</p>
+  </div>
+  <a mat-stroked-button routerLink="/configuracion" queryParamsHandling="preserve"
+    >Volver a configuración</a
+  >
+</div>
+@if (!store.isAdmin()) {
+  <section class="card empty-state">
+    <app-icon name="lock" />
+    <h2>Solo para administradores</h2>
+    <p>Tu cuenta no tiene permiso para gestionar accesos.</p>
+  </section>
+} @else if (!store.collaborationEnabled()) {
+  <section class="card">
+    <p>La gestión de accesos aún no está habilitada en este entorno.</p>
+  </section>
+} @else {
+  @if (error()) {
+    <div class="error-message" role="alert">{{ error() }}</div>
+  }
+  @if (loading()) {
+    <p role="status">Cargando accesos…</p>
+  }
+  <div class="access-layout">
+    <section class="stack">
+      <div class="section-heading">
+        <h2>Cuentas del hogar</h2>
+        <button mat-button [disabled]="busy()" (click)="select(null)">Invitar integrante</button>
+      </div>
+      @for (member of access.members(); track member.userId) {
+        <article class="card access-card">
+          <div class="row">
+            <span class="avatar">{{
+              (member.name || member.email).slice(0, 2).toUpperCase()
+            }}</span>
+            <div class="grow">
+              <h3>
+                {{ member.name || 'Integrante' }}
+                @if (member.userId === store.currentUserId()) {
+                  <small>(tú)</small>
+                }
+              </h3>
+              <p>{{ member.email }}</p>
+            </div>
+          </div>
+          <div class="row">
+            <span class="badge">{{
+              member.active
+                ? member.role === 'admin'
+                  ? 'Administrador'
+                  : member.role === 'member'
+                    ? 'Integrante'
+                    : 'Consulta'
+                : 'Acceso desactivado'
+            }}</span>
+            @if (member.canReview && member.role === 'member') {
+              <span class="badge">Revisa correcciones</span>
+            }
+          </div>
+          <button mat-stroked-button [disabled]="busy()" (click)="select(member)">
+            Editar acceso
+          </button>
+        </article>
+      }
+      @if (access.invitations().length) {
+        <h2>Invitaciones pendientes</h2>
+      }
+      @for (invitation of access.invitations(); track invitation.id) {
+        <article class="card access-card">
+          <h3>{{ invitation.name }}</h3>
+          <p>{{ invitation.email }}</p>
+          <p class="muted">
+            Envío pendiente o incompleto. Reintenta con los mismos datos después de un minuto.
+          </p>
+          <div class="actions">
+            <button mat-button [disabled]="busy()" (click)="select(null, invitation)">
+              Preparar reenvío</button
+            ><button mat-button [disabled]="busy()" (click)="cancel(invitation.id)">
+              Cancelar invitación
+            </button>
+          </div>
+        </article>
+      }
+    </section>
+    <form #editor class="card stack" [formGroup]="form" (ngSubmit)="save()">
+      <h2>{{ editing() ? 'Editar acceso' : 'Invitar por correo' }}</h2>
+      <fieldset [disabled]="busy()" class="stack">
+        <div class="field">
+          <label for="access-name">Nombre</label
+          ><input id="access-name" formControlName="name" maxlength="80" autocomplete="name" />
+        </div>
+        <div class="field">
+          <label for="access-email">Correo electrónico</label
+          ><input
+            id="access-email"
+            formControlName="email"
+            type="email"
+            maxlength="254"
+            autocomplete="email"
+          />
+          @if (editing()) {
+            <small>Para sustituirlo, invita al nuevo correo y desactiva el anterior.</small>
+          }
+        </div>
+        <div class="field">
+          <label for="access-role">Perfil</label
+          ><select id="access-role" formControlName="role">
+            <option value="viewer">Consulta</option>
+            <option value="member">Integrante</option>
+            <option value="admin">Administrador</option></select
+          ><small
+            >Consulta: ver y compartir. Integrante: registrar recibos faltantes y solicitar
+            correcciones. Administrador: gestionar todo el hogar.</small
+          >
+        </div>
+        @if (form.controls.role.value === 'member') {
+          <label class="permission"
+            ><input type="checkbox" formControlName="canReview" />Puede aprobar y rechazar
+            correcciones</label
+          >
+        }
+        @if (form.controls.role.value === 'admin') {
+          <div class="rule-note">
+            <app-icon name="shield" />Este perfil puede gestionar accesos y reglas, además de
+            revisar recibos.
+          </div>
+        }
+        @if (editing()) {
+          <label class="permission"
+            ><input type="checkbox" formControlName="active" />Acceso activo al hogar</label
+          >
+        }
+        @if (form.invalid && form.touched) {
+          <p class="field-error">Completa un nombre y correo válidos.</p>
+        }
+        <button mat-flat-button type="submit" [disabled]="busy() || form.invalid">
+          {{ busy() ? 'Guardando…' : editing() ? 'Guardar acceso' : 'Enviar invitación' }}
+        </button>
+      </fieldset>
+      <small class="muted"
+        >Siempre debe quedar un administrador activo. Los accesos no modifican el reparto ni
+        eliminan el historial.</small
+      >
+    </form>
+  </div>
+}

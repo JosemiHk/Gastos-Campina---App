@@ -49,6 +49,12 @@ export class ReceiptPage {
     () => this.store.receipts().find((r) => r.id === this.query().get('recibo')) ?? null,
   );
   readonly notFound = computed(() => !!this.query().get('recibo') && !this.editing());
+  readonly requestMode = computed(() => !!this.editing() && !this.store.isAdmin());
+  readonly pendingCorrection = computed(() =>
+    this.store
+      .corrections()
+      .find((c) => c.receiptId === this.editing()?.id && c.status === 'pending'),
+  );
   readonly form = new FormGroup({
     service: new FormControl<ServiceCode>('water', {
       nonNullable: true,
@@ -63,6 +69,7 @@ export class ReceiptPage {
     }),
     dueDate: new FormControl('', { nonNullable: true }),
     issueDate: new FormControl('', { nonNullable: true }),
+    reason: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(300)] }),
   });
   readonly value = toSignal(this.form.valueChanges, { initialValue: this.form.getRawValue() });
   readonly file = signal<File | null>(null);
@@ -118,6 +125,7 @@ export class ReceiptPage {
         amount: existing ? (existing.amountCents / 100).toFixed(2) : '',
         dueDate: existing?.dueDate ?? '',
         issueDate: existing?.issueDate ?? '',
+        reason: '',
       });
       if (existing) this.form.controls.service.disable();
       else this.form.controls.service.enable();
@@ -160,10 +168,16 @@ export class ReceiptPage {
       this.form.invalid ||
       this.busy() ||
       this.duplicate() ||
-      !this.store.isAdmin() ||
+      !this.store.canRegister() ||
+      (this.requestMode() && !!this.pendingCorrection()) ||
       this.store.closed()
     )
       return;
+    const reason = this.form.controls.reason.value.trim();
+    if (this.editing() && this.store.collaborationEnabled() && reason.length < 3) {
+      this.error.set('Indica el motivo de la corrección del recibo.');
+      return;
+    }
     if (status === 'confirmed' && this.simulation().error) {
       this.error.set(this.simulation().error);
       return;
@@ -181,7 +195,7 @@ export class ReceiptPage {
       }
       const existing = this.editing();
       const values = this.form.getRawValue();
-      await this.store.saveReceipt({
+      const input = {
         id: this.receiptId,
         service: values.service,
         amountCents: parseMoney(values.amount)!,
@@ -192,11 +206,18 @@ export class ReceiptPage {
         fileName: uploaded?.fileName ?? (!this.removeFile() ? existing?.fileName : null) ?? null,
         fileSize: uploaded?.fileSize ?? (!this.removeFile() ? existing?.fileSize : null) ?? null,
         fileType: uploaded?.fileType ?? (!this.removeFile() ? existing?.fileType : null) ?? null,
-      });
+      };
+      if (this.requestMode())
+        await this.store.requestCorrection(input, existing?.revision ?? 0, reason);
+      else await this.store.saveReceipt(input, reason);
       this.form.markAsPristine();
       this.store.hasUnsavedChanges.set(false);
       this.snack.open(
-        status === 'draft' ? 'Borrador guardado.' : 'Recibo guardado y reparto actualizado.',
+        this.requestMode()
+          ? 'Corrección enviada. El recibo vigente se conserva hasta su aprobación.'
+          : status === 'draft'
+            ? 'Borrador guardado.'
+            : 'Recibo guardado y reparto actualizado.',
         'Cerrar',
         { duration: 4000 },
       );

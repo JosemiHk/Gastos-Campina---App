@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import { HouseholdLive } from '../data-access/household-live';
 import {
   ActivatedRoute,
   Router,
@@ -40,15 +41,33 @@ export class Shell {
   private readonly confirm = inject(Confirm);
   private readonly snack = inject(MatSnackBar);
   readonly monthLabel = monthLabel;
-  readonly links = [
-    { path: '/resumen', icon: 'grid', label: 'Resumen', desktop: 'Resumen mensual' },
-    { path: '/registrar', icon: 'plus', label: 'Registrar', desktop: 'Registrar recibo' },
-    { path: '/calculo', icon: 'calculator', label: 'Cálculo', desktop: 'Cálculo de distribución' },
-    { path: '/historial', icon: 'calendar', label: 'Historial', desktop: 'Historial mensual' },
-    { path: '/compartir', icon: 'share', label: 'Compartir', desktop: 'Resumen WhatsApp' },
-    { path: '/configuracion', icon: 'settings', label: 'Ajustes', desktop: 'Configuración' },
-  ];
+  readonly links = computed(() =>
+    [
+      { path: '/resumen', icon: 'grid', label: 'Resumen', desktop: 'Resumen mensual' },
+      { path: '/registrar', icon: 'plus', label: 'Registrar', desktop: 'Registrar recibo' },
+      {
+        path: '/calculo',
+        icon: 'calculator',
+        label: 'Cálculo',
+        desktop: 'Cálculo de distribución',
+      },
+      { path: '/historial', icon: 'calendar', label: 'Historial', desktop: 'Historial mensual' },
+      { path: '/compartir', icon: 'share', label: 'Compartir', desktop: 'Resumen WhatsApp' },
+      { path: '/configuracion', icon: 'settings', label: 'Ajustes', desktop: 'Configuración' },
+      ...(this.store.canReview()
+        ? [
+            {
+              path: '/revisiones',
+              icon: 'check',
+              label: 'Revisiones',
+              desktop: `Revisiones (${this.store.pendingCount()})`,
+            },
+          ]
+        : []),
+    ].filter((link) => link.path !== '/registrar' || this.store.canRegister()),
+  );
   constructor() {
+    inject(HouseholdLive);
     this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((params) => {
       const value = params.get('mes');
       const month = value ? `${value}-01` : monthNow();
@@ -58,6 +77,20 @@ export class Shell {
     effect(() => {
       if (this.auth.initialized() && !this.auth.user()) void this.router.navigateByUrl('/acceso');
     });
+  }
+  async refresh(): Promise<void> {
+    if (
+      this.store.hasUnsavedChanges() &&
+      !(await this.confirm.ask({
+        title: 'Actualizar datos',
+        message:
+          'Conservamos tu formulario. Si actualizas ahora, se descartarán los cambios sin guardar.',
+        action: 'Actualizar',
+      }))
+    )
+      return;
+    this.store.hasUnsavedChanges.set(false);
+    await this.store.load();
   }
   async changeMonth(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;

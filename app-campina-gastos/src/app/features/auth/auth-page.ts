@@ -71,7 +71,11 @@ export class AuthPage {
     await this.run(async () => {
       const token = this.route.snapshot.queryParamMap.get('token_hash');
       if (!token) throw new Error('El enlace no es válido o venció.');
-      await this.auth.verifyLink(token);
+      const type = this.route.snapshot.queryParamMap.get('type') ?? 'email';
+      if (type !== 'email' && type !== 'invite')
+        throw new Error('El enlace no es válido o venció.');
+      if (type === 'invite') await this.auth.verifyLink(token, 'invite');
+      else await this.auth.verifyLink(token);
       history.replaceState({}, '', '/acceso/confirmar');
       await this.router.navigateByUrl('/resumen');
     });

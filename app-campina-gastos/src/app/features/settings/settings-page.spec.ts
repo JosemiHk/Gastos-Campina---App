@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SettingsPage } from './settings-page';
 import { HouseholdStore } from '../../data-access/household-store';
@@ -11,6 +12,7 @@ describe('configuración del hogar', () => {
     TestBed.configureTestingModule({
       imports: [SettingsPage],
       providers: [
+        provideRouter([]),
         { provide: HouseholdStore, useValue: store },
         { provide: Confirm, useValue: { ask: vi.fn().mockResolvedValue(true) } },
       ],

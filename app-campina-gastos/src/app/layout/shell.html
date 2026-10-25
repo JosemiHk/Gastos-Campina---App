@@ -5,11 +5,11 @@
     <app-icon name="home" /><span>{{ store.data()?.household?.name || 'Tu hogar' }}</span>
   </div>
   <nav aria-label="Navegación principal">
-    @for (link of links; track link.path) {
+    @for (link of links(); track link.path) {
       <a
         [routerLink]="link.path"
         routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
+        [routerLinkActiveOptions]="{ exact: link.path !== '/configuracion' }"
         queryParamsHandling="preserve"
         ariaCurrentWhenActive="page"
         ><app-icon [name]="link.icon" />{{ link.desktop }}</a
@@ -18,9 +18,7 @@
   </nav>
   <div class="sidebar-bottom">
     <span class="badge"
-      ><app-icon [name]="store.isAdmin() ? 'shield' : 'eye'" />{{
-        store.isAdmin() ? 'Administrador' : 'Consulta'
-      }}</span
+      ><app-icon [name]="store.isAdmin() ? 'shield' : 'eye'" />{{ store.roleLabel() }}</span
     ><button mat-button (click)="logout()"><app-icon name="logout" />Cerrar sesión</button>
   </div>
 </aside>
@@ -41,6 +39,12 @@
       />
       @if (store.closed()) {
         <span class="badge closed">Cerrado</span>
+      }
+      @if (store.externalChanges()) {
+        <div class="closed-notice" role="status">
+          <app-icon name="info" />Hay cambios nuevos en el hogar. Conservamos lo que estás
+          escribiendo.<button mat-button (click)="refresh()">Revisar cambios</button>
+        </div>
       }
     </div>
     <button mat-icon-button class="mobile-logout" aria-label="Cerrar sesión" (click)="logout()">
@@ -89,7 +93,7 @@
   </footer>
 </div>
 <nav class="bottom-nav" aria-label="Navegación móvil">
-  @for (link of links; track link.path) {
+  @for (link of links(); track link.path) {
     @if (link.path !== '/compartir') {
       <a
         [routerLink]="link.path"

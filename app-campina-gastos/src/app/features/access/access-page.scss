@@ -1,0 +1,47 @@
+.access-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.85fr);
+  gap: 24px;
+  align-items: start;
+}
+.access-card {
+  display: grid;
+  gap: 16px;
+}
+form {
+  scroll-margin-top: 100px;
+}
+.access-card h3,
+.access-card p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.access-card .row {
+  flex-wrap: wrap;
+}
+.access-card .grow {
+  min-width: 0;
+}
+.permission {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  min-height: 44px;
+}
+.permission input {
+  margin-top: 5px;
+  accent-color: var(--primary);
+}
+fieldset {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+h2 {
+  margin: 0;
+}
+@media (max-width: 800px) {
+  .access-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

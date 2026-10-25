@@ -16,10 +16,14 @@ export function errorMessage(error: unknown): string {
     return 'Espera un minuto antes de volver a solicitar un correo.';
   if (/token|otp|expired|invalid.*code/i.test(message))
     return 'El código o enlace no es válido o ya venció. Solicita uno nuevo.';
+  if (/correction_pending_receipt_idx/i.test(message))
+    return 'Este recibo ya tiene una corrección pendiente de revisión.';
+  if (/invitation_pending_email_idx/i.test(message))
+    return 'Este correo ya tiene una invitación pendiente. Revisa su estado antes de reenviar.';
   if (/duplic|unique|ya existe/i.test(message))
     return 'Este servicio ya tiene un recibo este mes. Abre el existente para editarlo.';
   if (
-    /aporte|importe|archivo|recibo|periodo|habilitado|cuenta|datos|grupo|motivo|completo/i.test(
+    /aporte|importe|archivo|recibo|periodo|habilitado|cuenta|datos|grupo|motivo|completo|invitaci[oó]n|solicitud|administrador|acceso|SMTP/i.test(
       message,
     ) &&
     message.length < 220

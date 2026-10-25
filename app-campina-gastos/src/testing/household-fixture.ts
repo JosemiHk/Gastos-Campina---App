@@ -109,6 +109,24 @@ export function storeFixture(empty = false) {
     receipts: computed(() => period()?.receipts ?? []),
     totals: computed(() => groupTotals(calculation())),
     isAdmin: computed(() => data().role === 'admin'),
+    collaborationEnabled: computed(() => data().accessEnabled === true),
+    canRegister: computed(
+      () => data().role === 'admin' || (data().accessEnabled === true && data().role === 'member'),
+    ),
+    canReview: computed(
+      () => data().accessEnabled === true && (data().role === 'admin' || data().canReview === true),
+    ),
+    roleLabel: computed(() =>
+      data().role === 'admin'
+        ? 'Administrador'
+        : data().role === 'member'
+          ? 'Integrante'
+          : 'Consulta',
+    ),
+    currentUserId: computed(() => data().currentUserId ?? 'test-admin'),
+    currentUserEmail: () => 'admin@example.test',
+    corrections: computed(() => data().corrections ?? []),
+    externalChanges: signal(false),
     closed: computed(() => period()?.status === 'closed'),
     fixedContributionCents: computed(
       () => period()?.fixedContributionCents ?? data().household.fixedContributionCents,
@@ -121,6 +139,8 @@ export function storeFixture(empty = false) {
     paid: () => 0,
     balance: (code: keyof ReturnType<typeof groupTotals>) => groupTotals(calculation())[code],
     saveReceipt: vi.fn().mockResolvedValue(undefined),
+    requestCorrection: vi.fn().mockResolvedValue(undefined),
+    resolveCorrection: vi.fn().mockResolvedValue(undefined),
     saveSettings: vi.fn().mockResolvedValue(undefined),
     saveHouseholdSettings: vi.fn().mockResolvedValue(undefined),
     confirmPayment: vi.fn().mockResolvedValue(undefined),

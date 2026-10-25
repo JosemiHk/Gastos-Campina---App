@@ -1,7 +1,11 @@
 <div class="page-heading">
   <div>
     <span class="eyebrow">Servicios del hogar</span>
-    <h1>{{ editing() ? 'Editar recibo' : 'Registrar recibo' }}</h1>
+    <h1>
+      {{
+        requestMode() ? 'Solicitar corrección' : editing() ? 'Editar recibo' : 'Registrar recibo'
+      }}
+    </h1>
     <p>Ingresa el importe y revisa cómo se reparte entre los grupos.</p>
   </div>
   <span class="badge"><app-icon name="calendar" />{{ monthLabel(store.selectedMonth()) }}</span>
@@ -13,14 +17,27 @@
     <a mat-stroked-button routerLink="/resumen" queryParamsHandling="preserve">Volver al resumen</a>
   </section>
 } @else {
-  @if (!store.isAdmin()) {
+  @if (!store.canRegister()) {
     <div class="rule-note">
       <app-icon name="eye" />Tu perfil permite consultar recibos. El administrador puede
       registrarlos o editarlos.
     </div>
   }
+  @if (requestMode()) {
+    <div class="rule-note">
+      <app-icon name="info" />{{
+        pendingCorrection()
+          ? 'Este recibo ya tiene una corrección pendiente de revisión.'
+          : 'El recibo actual y su reparto se mantienen hasta que otro responsable apruebe tu solicitud.'
+      }}
+    </div>
+  }
   <form (ngSubmit)="save('confirmed')" class="receipt-layout" [formGroup]="form">
-    <fieldset [disabled]="busy() || store.closed() || !store.isAdmin()">
+    <fieldset
+      [disabled]="
+        busy() || store.closed() || !store.canRegister() || (requestMode() && !!pendingCorrection())
+      "
+    >
       <section class="card">
         <h2><span class="step-label">1</span> Tipo de servicio</h2>
         <div class="service-choices" role="group" aria-label="Tipo de servicio">
@@ -204,17 +221,30 @@
               mes: store.selectedMonth().slice(0, 7),
               recibo: duplicateReceipt.id,
             }"
-            >Abrir para editar</a
+            >{{ store.isAdmin() ? 'Abrir para editar' : 'Solicitar corrección' }}</a
           ></span
         >
       </div>
     }
+    @if (editing() && store.canRegister() && store.collaborationEnabled()) {
+      <section class="card field">
+        <label for="correction-reason">Motivo de la corrección</label
+        ><textarea
+          id="correction-reason"
+          formControlName="reason"
+          rows="3"
+          maxlength="300"
+          [readOnly]="busy() || store.closed() || (requestMode() && !!pendingCorrection())"
+        ></textarea
+        ><small>Explica qué debe cambiar. Se conservará en el historial del recibo.</small>
+      </section>
+    }
     @if (error()) {
       <div class="error-message" role="alert">{{ error() }}</div>
     }
-    @if (store.isAdmin() && !store.closed()) {
+    @if (store.canRegister() && !store.closed() && !(requestMode() && pendingCorrection())) {
       <div class="actions save-actions">
-        @if (editing()?.status !== 'confirmed') {
+        @if (!requestMode() && editing()?.status !== 'confirmed') {
           <button
             mat-stroked-button
             type="button"
@@ -230,7 +260,9 @@
               ? store.uploading()
                 ? 'Subiendo comprobante…'
                 : 'Guardando recibo…'
-              : 'Guardar y calcular reparto'
+              : requestMode()
+                ? 'Enviar corrección para revisión'
+                : 'Guardar y calcular reparto'
           }}
         </button>
       </div>

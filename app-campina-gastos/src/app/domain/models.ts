@@ -12,7 +12,41 @@ export interface EditablePaymentGroup {
   name: string;
   members: string[];
 }
-export type Role = 'admin' | 'viewer';
+export type Role = 'admin' | 'member' | 'viewer';
+export interface HouseholdAccess {
+  userId: string;
+  name: string;
+  email: string;
+  role: Role;
+  canReview: boolean;
+  active: boolean;
+  revision: number;
+}
+export interface HouseholdInvitation {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+  canReview: boolean;
+  createdAt: string;
+}
+export interface ReceiptCorrection {
+  kind?: 'request' | 'direct';
+  resolvedName?: string;
+  id: string;
+  month: string;
+  receiptId: string;
+  before: ReceiptInput;
+  proposed: ReceiptInput;
+  reason: string;
+  status: 'pending' | 'approved' | 'rejected' | 'stale';
+  requestedBy: string;
+  requestedName: string;
+  requestedAt: string;
+  resolvedBy: string | null;
+  resolvedAt: string | null;
+  resolutionReason: string | null;
+}
 export type ReceiptStatus = 'draft' | 'confirmed';
 export interface PaymentGroup {
   id: string;
@@ -23,6 +57,8 @@ export interface PaymentGroup {
   sortOrder: number;
 }
 export interface Receipt {
+  revision?: number;
+  createdBy?: string;
   id: string;
   service: ServiceCode;
   amountCents: number;
@@ -86,6 +122,11 @@ export interface BillingPeriod {
   closedAt: string | null;
 }
 export interface HouseholdData {
+  accessEnabled?: boolean;
+  canReview?: boolean;
+  currentUserId?: string;
+  myName?: string;
+  corrections?: ReceiptCorrection[];
   household: {
     id: string;
     name: string;
