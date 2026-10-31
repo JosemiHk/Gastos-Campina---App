@@ -13,6 +13,14 @@ app-campina-gastos/public/config.local.json
 app-campina-gastos/public/config.json
 *.log
 
+# Local design references and working material; never publish these folders.
+/Diseños - mvp 1 Campina Gastos/
+/tmp/
+/state/
+/exports/
+/artifacts/
+campina-gastos-*.png
+
 # Local credentials, private keys, database backups and authenticated browser state
 .envrc
 .npmrc

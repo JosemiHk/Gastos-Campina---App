@@ -2,7 +2,7 @@
 
 ## Fuentes
 
-PRODUCT_BRIEF.md, DESIGN.md y los 20 prototipos originales (mobile y desktop, incluidos login, OTP y recuperación). Los nombres de grupos del brief definen las reglas iniciales; montos, fechas, cuentas y correos de las maquetas son solo referenciales.
+El brief, la guía visual y los prototipos originales (mobile y desktop, incluidos login, OTP y recuperación) se conservan como referencias locales, excluidas de Git. Este documento registra las decisiones funcionales; los tokens visuales implementados están en `app-campina-gastos/src/styles.scss`. Los nombres de grupos del brief definen las reglas iniciales; montos, fechas, cuentas y correos de las maquetas son solo referenciales.
 
 ## Reparto
 

@@ -33,6 +33,14 @@ const detectors = [
 
 export function sensitivePath(path, history = false) {
   const name = path.replaceAll('\\', '/');
+  // These are working references, not secrets. Reject future additions without
+  // blocking legitimate old commits; historical contents are still scanned.
+  if (
+    !history &&
+    /^(?:Diseños - mvp 1 Campina Gastos|tmp|state|exports|artifacts)(?:\/|$)/.test(name)
+  )
+    return true;
+  if (!history && /(?:^|\/)campina-gastos-[^/]*\.png$/i.test(name)) return true;
   if (/(^|\/)\.env(?:$|\.)/.test(name) && !/(^|\/)\.env\.example$/.test(name)) return true;
   if (/(^|\/)(?:\.envrc|\.npmrc|\.netrc|\.pypirc|\.git-credentials)$/.test(name)) return true;
   if (/(^|\/)(?:id_rsa|id_ed25519|id_ecdsa)$|(^|\/)(?:\.ssh|\.aws)\//.test(name)) return true;
