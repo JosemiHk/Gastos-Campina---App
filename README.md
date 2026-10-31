@@ -7,7 +7,6 @@ Aplicación familiar para registrar agua, luz e internet, distribuir sus importe
 - `app-campina-gastos/`: aplicación Angular standalone, Material 3 y Signals.
 - `supabase/`: migraciones, políticas, funciones y pruebas de base de datos.
 - `docs/`: arquitectura y preparación del entorno.
-- `Diseños - mvp 1 Campina Gastos/`: brief y prototipos originales, fuente de verdad visual y funcional. Sus datos son referenciales.
 
 ## Desarrollo
 

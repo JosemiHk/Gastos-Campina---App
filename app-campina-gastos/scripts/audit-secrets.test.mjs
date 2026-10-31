@@ -41,6 +41,27 @@ test('no confunde el ejemplo público ni los hashes del lockfile con claves', ()
   assert.deepEqual(scanText('"integrity": "sha512-' + 'x'.repeat(90) + '"'), []);
 });
 
+test('impide publicar referencias y exportaciones locales sin bloquear su historial anterior', () => {
+  for (const path of [
+    'Diseños - mvp 1 Campina Gastos/PRODUCT_BRIEF.md',
+    'Diseños - mvp 1 Campina Gastos/prototipo/code.html',
+    'tmp/pdfs/personal.pdf',
+    'state/session.json',
+    'exports/resumen.png',
+    'artifacts/capture.png',
+    'campina-gastos-2026-10.png',
+  ]) {
+    assert.equal(sensitivePath(path), true, path);
+    assert.equal(sensitivePath(path, true), false, path);
+  }
+  for (const path of [
+    'app-campina-gastos/src/app/app.html',
+    'app-campina-gastos/public/favicon.svg',
+    'docs/DECISIONS.md',
+  ])
+    assert.equal(sensitivePath(path), false, path);
+});
+
 test('audita desde una subcarpeta y detecta un .env eliminado en commits anteriores', () => {
   const folder = mkdtempSync(join(tmpdir(), 'campina-security-'));
   const script = fileURLToPath(new URL('./audit-secrets.mjs', import.meta.url));
@@ -93,6 +114,16 @@ test('audita desde una subcarpeta y detecta un .env eliminado en commits anterio
     });
     assert.equal(staged.status, 1);
     assert.match(staged.stdout, /índice.*\.env.production/);
+    const references = 'Diseños - mvp 1 Campina Gastos';
+    mkdirSync(join(folder, references));
+    writeFileSync(join(folder, references, 'code.html'), '<p>Referencia local de prueba</p>');
+    runGit('add', '-f', join(references, 'code.html'));
+    const forced = spawnSync(process.execPath, [script, '--staged'], {
+      cwd: join(folder, 'app'),
+      encoding: 'utf8',
+    });
+    assert.equal(forced.status, 1);
+    assert.match(forced.stdout, /índice.*Diseños - mvp 1 Campina Gastos\/code.html/);
   } finally {
     const target = resolve(folder);
     assert.ok(

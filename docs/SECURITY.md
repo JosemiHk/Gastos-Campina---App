@@ -4,7 +4,7 @@ Se revisaron los archivos actuales y todos los objetos alcanzables del historial
 
 - `.env` y sus variantes están excluidos. `.env.example` solo contiene placeholders.
 - La configuración generada, cachés, dependencias, claves privadas, archivos de credenciales y respaldos están excluidos.
-- Los mockups conservan datos referenciales, tal como indicó el propietario del proyecto.
+- Los prototipos HTML, capturas y documentos originales de diseño se conservan únicamente en local, excluidos del índice de Git. También se excluyen temporales, estado local y exportaciones.
 - Git conserva el nombre y correo del autor de cada commit; estos metadatos se publican junto con el historial.
 
 ## Comprobación local
@@ -19,6 +19,10 @@ npm run test:security
 La auditoría informa solo tipo y ubicación de las coincidencias, sin mostrar los valores. También examina URLs remotas que pudieran llevar credenciales.
 
 Este repositorio tiene hooks de `pre-commit` y `pre-push`: revisan el índice antes de guardar un commit y el historial antes de subirlo. Funcionan con Git y GitHub Desktop mientras Node.js esté disponible y se mantenga la configuración local de hooks.
+
+La auditoría también rechaza los materiales locales si se fuerzan al índice con `git add -f`. No considera una credencial el hecho de que los prototipos estuvieran versionados anteriormente: sus contenidos de texto siguen entrando en la búsqueda de secretos del historial.
+
+Excluir una carpeta y retirarla del índice no elimina sus commits anteriores ni reduce el tamaño de los objetos históricos. Una eliminación de todo el historial requiere una operación aparte, coordinada entre las ramas y clones; no se realiza implícitamente al limpiar archivos actuales.
 
 En un clon nuevo, desde la raíz, activarlos con:
 
