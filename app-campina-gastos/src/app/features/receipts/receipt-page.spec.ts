@@ -94,4 +94,30 @@ describe('registro de recibos', () => {
     fixture.detectChanges();
     expect(page.totals()).toEqual({ twins: 7365, miguel: 3683, jm: 3682, rossana: 2000 });
   });
+  it('previsualiza los céntimos compensados con los otros recibos del mes', () => {
+    store = storeFixture();
+    TestBed.overrideProvider(HouseholdStore, { useValue: store });
+    store.data.update((data) => ({
+      ...data,
+      periods: data.periods.map((p) => ({
+        ...p,
+        ruleWeights: {
+          water: { twins: 2, miguel: 1, jm: 1 },
+          electricity: { twins: 2, miguel: 1, jm: 1 },
+          internet: { miguel: 1, jm: 1 },
+        },
+        receipts: p.receipts.map((r) => ({
+          ...r,
+          amountCents: r.service === 'water' ? 6850 : r.service === 'electricity' ? 16730 : 11900,
+        })),
+      })),
+    }));
+    const fixture = TestBed.createComponent(ReceiptPage);
+    fixture.detectChanges();
+    const page = fixture.componentInstance;
+    page.selectService('electricity');
+    page.form.controls.amount.setValue('167.30');
+    fixture.detectChanges();
+    expect(page.totals()).toEqual({ twins: 7365, miguel: 3682, jm: 3683, rossana: 2000 });
+  });
 });

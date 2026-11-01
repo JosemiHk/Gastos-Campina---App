@@ -66,6 +66,8 @@ export function summaryText(
       );
     }
   }
+  if (calculation.roundingPolicy === 'balanced_monthly_v1')
+    lines.push('Redondeo equilibrado entre servicios para grupos con la misma participación.');
   if (accounts.length) {
     lines.push('', '*DATOS PARA TRANSFERIR*');
     for (const account of accounts) {

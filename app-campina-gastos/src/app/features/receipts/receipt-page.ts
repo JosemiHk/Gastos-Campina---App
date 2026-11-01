@@ -85,13 +85,23 @@ export class ReceiptPage {
     const cents = parseMoney(this.form.controls.amount.value);
     if (cents === null) return { calculation: null, error: '' };
     try {
+      const service = this.form.controls.service.value;
+      const monthly = calculateDistribution(
+        [
+          ...this.store.receipts().filter((receipt) => receipt.service !== service),
+          { service, amountCents: cents, status: 'confirmed' },
+        ],
+        this.store.fixedContributionCents(),
+        this.store.participants(),
+        this.store.weights(),
+      );
       return {
-        calculation: calculateDistribution(
-          [{ service: this.form.controls.service.value, amountCents: cents, status: 'confirmed' }],
-          this.store.fixedContributionCents(),
-          this.store.participants(),
-          this.store.weights(),
-        ),
+        calculation: {
+          ...monthly,
+          totalCents: cents,
+          receiptCount: 1,
+          allocations: monthly.allocations.filter((allocation) => allocation.service === service),
+        },
         error: '',
       };
     } catch (error) {
