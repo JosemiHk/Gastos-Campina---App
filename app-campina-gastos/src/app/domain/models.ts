@@ -2,6 +2,8 @@ export type ServiceCode = 'water' | 'electricity' | 'internet';
 export type GroupCode = 'twins' | 'miguel' | 'jm' | 'rossana';
 export type RegularGroupCode = Exclude<GroupCode, 'rossana'>;
 export type RuleParticipants = Record<ServiceCode, readonly RegularGroupCode[]>;
+// Versioned per service, independent of login accounts and editable member labels.
+export type RuleWeights = Record<ServiceCode, Partial<Record<RegularGroupCode, number>>>;
 export const DEFAULT_PARTICIPANTS: RuleParticipants = {
   water: ['twins', 'miguel', 'jm'],
   electricity: ['twins', 'miguel', 'jm'],
@@ -42,6 +44,7 @@ export interface Allocation {
   remainderCents: number;
 }
 export interface Calculation {
+  ruleWeights?: RuleWeights;
   id?: string;
   totalCents: number;
   receiptCount: number;
@@ -73,6 +76,7 @@ export interface TransferAccount {
   cci: string;
 }
 export interface BillingPeriod {
+  ruleWeights?: RuleWeights;
   participants?: RuleParticipants;
   id: string;
   month: string;
@@ -87,6 +91,7 @@ export interface BillingPeriod {
 }
 export interface HouseholdData {
   household: {
+    ruleWeights?: RuleWeights;
     id: string;
     name: string;
     fixedContributionCents: number;

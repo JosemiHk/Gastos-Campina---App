@@ -1,5 +1,5 @@
 import { BillingPeriod, DEFAULT_PARTICIPANTS, PaymentGroup, TransferAccount } from './models';
-import { groupTotals } from './distribution';
+import { equalWeights, ruleDescription, groupTotals } from './distribution';
 import { formatMoney, monthLabel } from './money';
 export function summaryText(
   period: BillingPeriod,
@@ -44,11 +44,27 @@ export function summaryText(
       calculation.groupNames?.rossana ??
       groups.find((g) => g.code === 'rossana')?.name ??
       'aporte especial';
-    const count = (period.participants ?? DEFAULT_PARTICIPANTS).electricity.length;
+    const participants = period.participants ?? DEFAULT_PARTICIPANTS;
+    const weights = calculation.ruleWeights ?? period.ruleWeights ?? equalWeights(participants);
     lines.push(
       '',
-      `La luz incluye ${formatMoney(calculation.fixedContributionCents)} de ${specialName}; el saldo se divide entre ${count} ${count === 1 ? 'grupo' : 'grupos'}.`,
+      `La luz incluye ${formatMoney(calculation.fixedContributionCents)} de ${specialName}; el saldo se divide entre ${participants.electricity.length} ${participants.electricity.length === 1 ? 'grupo' : 'grupos'}.`,
+      ruleDescription(
+        'electricity',
+        participants,
+        weights,
+        (code) =>
+          calculation.groupNames?.[code] ?? groups.find((g) => g.code === code)?.name ?? code,
+      ),
     );
+  }
+  for (const service of ['water', 'internet'] as const) {
+    if (period.receipts.some((r) => r.service === service && r.status === 'confirmed')) {
+      const participants = period.participants ?? DEFAULT_PARTICIPANTS;
+      lines.push(
+        `${service === 'water' ? 'Agua' : 'Internet'}: ${ruleDescription(service, participants, calculation.ruleWeights ?? period.ruleWeights ?? equalWeights(participants), (code) => calculation.groupNames?.[code] ?? groups.find((g) => g.code === code)?.name ?? code)}.`,
+      );
+    }
   }
   if (accounts.length) {
     lines.push('', '*DATOS PARA TRANSFERIR*');

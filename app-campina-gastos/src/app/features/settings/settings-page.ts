@@ -24,10 +24,12 @@ import {
   PaymentGroup,
   RegularGroupCode,
   RuleParticipants,
+  RuleWeights,
   ServiceCode,
   SERVICES,
   TransferAccount,
 } from '../../domain/models';
+import { ruleDescription } from '../../domain/distribution';
 import { formatMoney, monthLabel, parseMoney } from '../../domain/money';
 import { errorMessage } from '../../core/errors';
 import { Icon } from '../../shared/ui/icon';
@@ -61,11 +63,27 @@ const memberControl = (name = '') =>
     nonNullable: true,
     validators: [trimmedRequired, Validators.maxLength(80)],
   });
-function groupForm(group: PaymentGroup, rules: RuleParticipants) {
-  return new FormGroup({
+function groupForm(group: PaymentGroup, rules: RuleParticipants, weights: RuleWeights) {
+  const form = new FormGroup({
     code: new FormControl(group.code, { nonNullable: true }),
     name: memberControl(group.name),
     members: new FormArray(group.members.map(memberControl)),
+    weights: new FormGroup(
+      Object.fromEntries(
+        SERVICES.map((service) => [
+          service.code,
+          new FormControl(weights[service.code][group.code as RegularGroupCode] ?? 1, {
+            nonNullable: true,
+            validators: [
+              Validators.required,
+              Validators.min(1),
+              Validators.max(10),
+              (c) => (Number.isInteger(c.value) ? null : { integer: true }),
+            ],
+          }),
+        ]),
+      ) as Record<ServiceCode, FormControl<number>>,
+    ),
     services: new FormGroup({
       water: new FormControl(
         rules.water.some((code) => code === group.code),
@@ -85,6 +103,15 @@ function groupForm(group: PaymentGroup, rules: RuleParticipants) {
       ),
     }),
   });
+  for (const service of SERVICES) {
+    const selected = form.controls.services.controls[service.code];
+    const weight = form.controls.weights.controls[service.code];
+    const update = (enabled: boolean) =>
+      enabled ? weight.enable({ emitEvent: false }) : weight.disable({ emitEvent: false });
+    update(selected.value);
+    selected.valueChanges.subscribe(update);
+  }
+  return form;
 }
 @Component({
   selector: 'app-settings-page',
@@ -143,10 +170,33 @@ export class SettingsPage {
       )
       .map((group) => group.controls.code.value as RegularGroupCode);
   }
+  selectedWeights(): RuleWeights {
+    this.values();
+    return Object.fromEntries(
+      this.services.map((service) => [
+        service.code,
+        Object.fromEntries(
+          this.groups.controls
+            .filter(
+              (g) =>
+                g.controls.code.value !== 'rossana' &&
+                g.controls.services.controls[service.code].value,
+            )
+            .map((g) => [g.controls.code.value, g.controls.weights.controls[service.code].value]),
+        ),
+      ]),
+    ) as RuleWeights;
+  }
   participantNames(service: ServiceCode): string {
-    return this.selectedParticipants(service)
-      .map((code) => this.groupLabel(code))
-      .join(', ');
+    const participants = Object.fromEntries(
+      this.services.map((s) => [s.code, this.selectedParticipants(s.code)]),
+    ) as RuleParticipants;
+    return ruleDescription(service, participants, this.selectedWeights(), (code) =>
+      this.groupLabel(code),
+    );
+  }
+  totalParts(service: ServiceCode): number {
+    return Object.values(this.selectedWeights()[service]).reduce((sum, n) => sum + n, 0);
   }
   addMember(index: number): void {
     const members = this.groups.at(index).controls.members;
@@ -184,6 +234,7 @@ export class SettingsPage {
                 }
               : group,
             this.store.participants(),
+            this.store.weights(),
           ),
         );
       this.form.markAsPristine();
@@ -234,17 +285,23 @@ export class SettingsPage {
       );
       return;
     }
+    const weights = this.selectedWeights();
+    const weightsChanged = this.services.some((service) =>
+      participants[service.code].some(
+        (code) => weights[service.code][code] !== (this.store.weights()[service.code][code] ?? 1),
+      ),
+    );
     const rulesChanged = this.services.some(
       (service) =>
         JSON.stringify(participants[service.code]) !==
         JSON.stringify(this.store.participants()[service.code]),
     );
     if (
-      (fixed !== this.store.fixedContributionCents() || rulesChanged) &&
+      (fixed !== this.store.fixedContributionCents() || rulesChanged || weightsChanged) &&
       (this.store.calculation()?.receiptCount ?? 0) > 0 &&
       !(await this.confirm.ask({
         title: 'Actualizar el reparto del mes',
-        message: `Se recalcularán las cuotas de ${monthLabel(this.store.selectedMonth())} con los grupos seleccionados y un aporte fijo de ${formatMoney(fixed)}. Los pagos recibidos se conservarán. Revisa las diferencias antes de compartir el resumen.`,
+        message: `Se recalcularán las cuotas de ${monthLabel(this.store.selectedMonth())} con las personas y grupos indicados y un aporte fijo de ${formatMoney(fixed)}. Los recibos, adjuntos y pagos recibidos se conservarán. Los demás meses existentes no cambian. Revisa las diferencias antes de compartir el resumen.`,
         action: 'Guardar y recalcular',
       }))
     )
@@ -258,6 +315,7 @@ export class SettingsPage {
           this.accounts.getRawValue(),
           groups,
           participants,
+          ...(this.store.editableWeights() ? [weights] : []),
         );
       else await this.store.saveSettings(fixed, this.accounts.getRawValue());
       this.form.markAsPristine();

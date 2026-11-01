@@ -74,4 +74,24 @@ describe('registro de recibos', () => {
     await fixture.componentInstance.save('confirmed');
     expect(store.saveReceipt).not.toHaveBeenCalled();
   });
+  it('la previsualización respeta las personas del mes', () => {
+    store.data.update((data) => ({
+      ...data,
+      household: {
+        ...data.household,
+        ruleWeights: {
+          water: { twins: 2, miguel: 1, jm: 1 },
+          electricity: { twins: 2, miguel: 1, jm: 1 },
+          internet: { miguel: 1, jm: 1 },
+        },
+      },
+    }));
+    const fixture = TestBed.createComponent(ReceiptPage);
+    fixture.detectChanges();
+    const page = fixture.componentInstance;
+    page.selectService('electricity');
+    page.form.controls.amount.setValue('167.30');
+    fixture.detectChanges();
+    expect(page.totals()).toEqual({ twins: 7365, miguel: 3683, jm: 3682, rossana: 2000 });
+  });
 });

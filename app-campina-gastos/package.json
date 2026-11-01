@@ -14,7 +14,8 @@
     "security:check": "node scripts/audit-secrets.mjs --history",
     "test:security": "node --test scripts/audit-secrets.test.mjs",
     "prepare:supabase": "node scripts/prepare-supabase.mjs",
-    "test:setup": "npm run prepare:supabase && node scripts/test-db.mjs --setup"
+    "test:setup": "npm run prepare:supabase && node scripts/test-db.mjs --setup",
+    "test:weighted-upgrade": "node scripts/test-db.mjs --weighted-upgrade"
   },
   "private": true,
   "packageManager": "npm@11.12.1",

@@ -2,7 +2,7 @@ import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { Auth } from '../core/auth';
 import { errorMessage } from '../core/errors';
 import { Supabase } from '../core/supabase';
-import { groupTotals } from '../domain/distribution';
+import { equalWeights, ruleDescription, groupTotals } from '../domain/distribution';
 import {
   DEFAULT_PARTICIPANTS,
   EditablePaymentGroup,
@@ -10,6 +10,7 @@ import {
   HouseholdData,
   ReceiptInput,
   RuleParticipants,
+  RuleWeights,
   ServiceCode,
   TransferAccount,
 } from '../domain/models';
@@ -31,6 +32,14 @@ export class HouseholdStore {
     () =>
       this.period()?.participants ?? this.data()?.household.participants ?? DEFAULT_PARTICIPANTS,
   );
+  readonly weights = computed(() =>
+    this.period()
+      ? (this.period()?.ruleWeights ??
+        this.calculation()?.ruleWeights ??
+        equalWeights(this.participants()))
+      : (this.data()?.household.ruleWeights ?? equalWeights(this.participants())),
+  );
+  readonly editableWeights = computed(() => this.data()?.household.ruleWeights !== undefined);
   readonly editableGroups = computed(
     () => this.data()?.household.configurationRevision !== undefined,
   );
@@ -114,11 +123,19 @@ export class HouseholdStore {
       [service].map((code) => this.groupName(code))
       .join(', ');
   }
+  ruleDescription(service: ServiceCode): string {
+    return ruleDescription(service, this.participants(), this.weights(), (code) =>
+      this.groupName(code),
+    );
+  }
   serviceRule(service: ServiceCode): string {
-    const count = this.participants()[service].length;
-    return service === 'electricity'
-      ? `Aporte fijo + reparto entre ${count}`
-      : `Entre ${count} ${count === 1 ? 'grupo' : 'grupos'}`;
+    const weights = this.weights()[service];
+    const codes = this.participants()[service];
+    const unequal = codes.some((code) => (weights[code] ?? 1) !== 1);
+    const text = unequal
+      ? `Por personas · ${codes.reduce((sum, code) => sum + (weights[code] ?? 1), 0)} partes`
+      : `Entre ${codes.length} ${codes.length === 1 ? 'grupo' : 'grupos'}`;
+    return service === 'electricity' ? `Aporte fijo + ${text.toLowerCase()}` : text;
   }
   private args() {
     const household = this.data()?.household.id;
@@ -167,19 +184,24 @@ export class HouseholdStore {
     accounts: TransferAccount[],
     groups: EditablePaymentGroup[],
     participants: RuleParticipants,
+    weights?: RuleWeights,
   ): Promise<void> {
     const args = this.args();
     const revision = this.data()?.household.configurationRevision;
     if (revision === undefined) throw new Error('La edición de grupos aún no está habilitada.');
     await this.mutate(() =>
-      this.backend.client.rpc('save_household_settings', {
-        ...args,
-        p_configuration_revision: revision,
-        p_fixed: fixed,
-        p_accounts: accounts as unknown as Json,
-        p_groups: groups as unknown as Json,
-        p_participants: participants as unknown as Json,
-      }),
+      this.backend.client.rpc(
+        weights ? 'save_weighted_household_settings' : 'save_household_settings',
+        {
+          ...args,
+          ...(weights ? { p_weights: weights as unknown as Json } : {}),
+          p_configuration_revision: revision,
+          p_fixed: fixed,
+          p_accounts: accounts as unknown as Json,
+          p_groups: groups as unknown as Json,
+          p_participants: participants as unknown as Json,
+        },
+      ),
     );
   }
   private async mutate(action: () => PromiseLike<{ error: unknown }>): Promise<void> {

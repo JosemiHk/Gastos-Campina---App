@@ -35,7 +35,11 @@ try {
   } else {
     for (const file of readdirSync(migrations)
       .filter((f) => f.endsWith('.sql'))
-      .filter((f) => !process.argv.includes('--upgrade') || f !== upgradeFile)
+      .filter(
+        (f) =>
+          (!process.argv.includes('--upgrade') || f < upgradeFile) &&
+          (!process.argv.includes('--weighted-upgrade') || f <= upgradeFile),
+      )
       .sort())
       await db.exec(readFileSync(new URL(file, migrations), 'utf8'));
   }
@@ -233,14 +237,16 @@ try {
   })();
   await check('Storage impide subir a otro hogar o a un mes cerrado', async () => {
     await assert.rejects(
-      db.query(`insert into storage.objects(bucket_id,name) values('receipts',$1)`, [
-        `${otherHousehold}/2026-11/${crypto.randomUUID()}.jpg`,
-      ]),
+      db.query(
+        `insert into storage.objects(bucket_id,name,metadata) values('receipts',$1,'{"size":100,"mimetype":"application/pdf"}')`,
+        [`${otherHousehold}/2026-11/${crypto.randomUUID()}.jpg`],
+      ),
     );
     await assert.rejects(
-      db.query(`insert into storage.objects(bucket_id,name) values('receipts',$1)`, [
-        `${household}/2026-10/${crypto.randomUUID()}.jpg`,
-      ]),
+      db.query(
+        `insert into storage.objects(bucket_id,name,metadata) values('receipts',$1,'{"size":100,"mimetype":"application/pdf"}')`,
+        [`${household}/2026-10/${crypto.randomUUID()}.jpg`],
+      ),
     );
   })();
   await check(
@@ -273,10 +279,61 @@ try {
     },
   )();
   await asUser(admin);
+  if (process.argv.includes('--weighted-upgrade')) {
+    await check(
+      'Las dos migraciones ponderadas conservan todos los registros financieros existentes',
+      async () => {
+        await db.exec('reset role');
+        const snapshot = async () => {
+          const result = {};
+          for (const table of [
+            'receipts',
+            'billing_periods',
+            'calculation_runs',
+            'allocations',
+            'payment_confirmations',
+            'transfer_accounts',
+            'activity_events',
+          ])
+            result[table] = (
+              await db.query(
+                `select to_jsonb(t) as row from public.${table} t order by to_jsonb(t)::text`,
+              )
+            ).rows;
+          result.storage = (
+            await db.query(
+              'select to_jsonb(t) as row from storage.objects t order by to_jsonb(t)::text',
+            )
+          ).rows;
+          return result;
+        };
+        const before = await snapshot();
+        for (const file of readdirSync(migrations)
+          .filter((f) => f.endsWith('.sql') && f > upgradeFile)
+          .sort())
+          await db.exec(readFileSync(new URL(file, migrations), 'utf8'));
+        assert.deepEqual(await snapshot(), before);
+        await asUser(admin);
+      },
+    )();
+  }
   if (process.argv.includes('--upgrade')) {
     const before = (await bundle()).periods.find((p) => p.month === '2026-10-01').calculation;
     await db.exec('reset role');
     await db.exec(readFileSync(new URL(upgradeFile, migrations), 'utf8'));
+    const prior = JSON.stringify(
+      (await db.query('select result from public.calculation_runs order by id')).rows,
+    );
+    for (const file of readdirSync(migrations)
+      .filter((f) => f.endsWith('.sql') && f > upgradeFile)
+      .sort())
+      await db.exec(readFileSync(new URL(file, migrations), 'utf8'));
+    assert.equal(
+      JSON.stringify(
+        (await db.query('select result from public.calculation_runs order by id')).rows,
+      ),
+      prior,
+    );
     await asUser(admin);
     await check(
       'La migración actualiza un hogar existente sin modificar importes ni nombres cerrados',
@@ -448,10 +505,281 @@ try {
       closedBeforeSettings,
     );
   })();
+  {
+    await check('Pesos SQL: proporciones, céntimos, límites y funciones privadas', async () => {
+      const before = JSON.stringify(await bundle());
+      await db.exec('reset role');
+      await db.exec('begin');
+      const rule = (
+        await db.query(`select default_rule_id as id from public.households where id=$1`, [
+          household,
+        ])
+      ).rows[0].id;
+      await db.query(
+        `update public.rule_participants rp set weight=case when g.code='twins' then 2 else 1 end from public.payment_groups g where g.id=rp.group_id and rp.rule_version_id=$1`,
+        [rule],
+      );
+      for (const weight of [0, -1, 11]) {
+        await db.exec('savepoint invalid_weight');
+        await assert.rejects(
+          db.query('update public.rule_participants set weight=$2 where rule_version_id=$1', [
+            rule,
+            weight,
+          ]),
+        );
+        await db.exec('rollback to savepoint invalid_weight');
+      }
+      for (let cents = 0; cents < 1000; cents++) {
+        const parts = (
+          await db.query(
+            `select a.*,g.code from public.services s cross join lateral private.weighted_allocations($1,s.id,$2) a join public.payment_groups g on g.id=a.group_id where s.household_id=$3 and s.code='water'`,
+            [rule, cents, household],
+          )
+        ).rows;
+        assert.equal(
+          parts.reduce((sum, p) => sum + p.amount_cents, 0),
+          cents,
+        );
+        const totalWeight = parts.reduce((sum, p) => sum + (p.code === 'twins' ? 2 : 1), 0);
+        parts.forEach((p) =>
+          assert.ok(
+            Math.abs(p.amount_cents - (cents * (p.code === 'twins' ? 2 : 1)) / totalWeight) < 1,
+          ),
+        );
+      }
+      assert.equal(
+        (
+          await db.query(
+            `select has_function_privilege('authenticated','private.weighted_allocations(uuid,uuid,integer)','EXECUTE') as allowed`,
+          )
+        ).rows[0].allowed,
+        false,
+      );
+      await asUser(admin);
+      await save('water', 6850, 0, '2027-03-01');
+      await save('electricity', 16730, 1, '2027-03-01');
+      await save('internet', 11900, 2, '2027-03-01');
+      // Earlier fixture settings can exclude groups. Use explicit test-only participants.
+      await db.exec('reset role');
+      await db.query(`delete from public.rule_participants where rule_version_id=$1`, [rule]);
+      await db.query(
+        `insert into public.rule_participants(household_id,rule_version_id,service_id,group_id,weight)
+        select $1,$2,s.id,g.id,case when s.code<>'internet' and g.code='twins' then 2 else 1 end
+        from public.services s cross join public.payment_groups g where s.household_id=$1 and g.household_id=$1 and g.kind='regular' and (s.code<>'internet' or g.code<>'twins')`,
+        [household, rule],
+      );
+      await db.query(
+        `select private.recalculate(id) from public.billing_periods where household_id=$1 and month='2027-03-01'`,
+        [household],
+      );
+      await asUser(admin);
+      const result = (await bundle()).periods.find((p) => p.month === '2027-03-01').calculation;
+      assert.equal(result.totalCents, 35480);
+      assert.equal(result.ruleWeights.water.twins, 2);
+      const totals = Object.fromEntries(
+        ['twins', 'miguel', 'jm', 'rossana'].map((code) => [
+          code,
+          result.allocations
+            .filter((a) => a.groupCode === code)
+            .reduce((sum, a) => sum + a.amountCents, 0),
+        ]),
+      );
+      assert.deepEqual(totals, { twins: 10790, miguel: 11346, jm: 11344, rossana: 2000 });
+      await db.exec('rollback');
+      await asUser(admin);
+      assert.equal(JSON.stringify(await bundle()), before);
+    })();
+  }
+
+  await check(
+    'Cambio por personas conserva recibos, adjuntos y pagos; clientes antiguos mantienen pesos',
+    async () => {
+      await db.exec('reset role; begin');
+      await asUser(admin);
+      const original = await bundle();
+      const month = '2030-01-01';
+      const fileId = crypto.randomUUID();
+      const filePath = `${household}/2030-01/${fileId}.pdf`;
+      await db.query(
+        `insert into storage.objects(bucket_id,name,metadata) values('receipts',$1,'{"size":100,"mimetype":"application/pdf"}')`,
+        [filePath],
+      );
+      const receiptId = crypto.randomUUID();
+      await db.query('select public.save_receipt($1,$2,0,$3::jsonb)', [
+        household,
+        month,
+        JSON.stringify({
+          id: receiptId,
+          service: 'water',
+          amountCents: 6850,
+          status: 'confirmed',
+          filePath,
+          fileName: 'recibo.pdf',
+          fileSize: 100,
+          fileType: 'application/pdf',
+        }),
+      ]);
+      await save('electricity', 16730, 1, month);
+      await save('internet', 11900, 2, month);
+      await db.query(`select public.confirm_payment($1,$2,3,'jm','Transferencia')`, [
+        household,
+        month,
+      ]);
+      const data = await bundle();
+      const groups = data.groups.map(({ code, name, members }) => ({ code, name, members }));
+      const rules = {
+        water: ['twins', 'miguel', 'jm'],
+        electricity: ['twins', 'miguel', 'jm'],
+        internet: ['miguel', 'jm'],
+      };
+      const weights = {
+        water: { twins: 2, miguel: 1, jm: 1 },
+        electricity: { twins: 2, miguel: 1, jm: 1 },
+        internet: { miguel: 1, jm: 1 },
+      };
+      const readPeriod = async () => (await bundle()).periods.find((p) => p.month === month);
+      const financial = JSON.stringify({
+        receipts: (await readPeriod()).receipts,
+        payments: (await readPeriod()).payments,
+      });
+      const apply = async (w = weights, revision, configuration) => {
+        const current = await bundle();
+        return db.query(
+          'select public.save_weighted_household_settings($1,$2,$3,$4,2000,$5::jsonb,$6::jsonb,$7::jsonb,$8::jsonb)',
+          [
+            household,
+            month,
+            revision ?? (await readPeriod()).revision,
+            configuration ?? current.household.configurationRevision,
+            JSON.stringify(current.accounts),
+            JSON.stringify(groups),
+            JSON.stringify(rules),
+            JSON.stringify(w),
+          ],
+        );
+      };
+      await apply();
+      let current = await readPeriod();
+      assert.equal(
+        JSON.stringify({ receipts: current.receipts, payments: current.payments }),
+        financial,
+      );
+      assert.deepEqual(current.ruleWeights, weights);
+      assert.equal(current.calculation.totalCents, 35480);
+      assert.deepEqual(
+        original.periods,
+        (await bundle()).periods.filter((p) => p.month !== month),
+      );
+      const revision = current.revision;
+      const configuration = (await bundle()).household.configurationRevision;
+      for (const invalid of [0, -1, 11, 1.5, '2', null]) {
+        await db.exec('savepoint invalid');
+        await assert.rejects(apply({ ...weights, water: { ...weights.water, twins: invalid } }));
+        await db.exec('rollback to savepoint invalid');
+      }
+      for (const invalid of [
+        { ...weights, water: { twins: 2 } },
+        { ...weights, water: { ...weights.water, rossana: 1 } },
+        { ...weights, extra: {} },
+      ]) {
+        await db.exec('savepoint invalid');
+        await assert.rejects(apply(invalid));
+        await db.exec('rollback to savepoint invalid');
+      }
+      assert.equal((await readPeriod()).revision, revision);
+      await db.query('select public.save_settings($1,$2,$3,2000,$4::jsonb)', [
+        household,
+        month,
+        revision,
+        JSON.stringify((await bundle()).accounts),
+      ]);
+      assert.deepEqual((await readPeriod()).ruleWeights, weights);
+      await db.exec('savepoint stale');
+      await assert.rejects(apply(weights, revision, configuration));
+      await db.exec('rollback to savepoint stale');
+      await db.exec('savepoint stale_config');
+      await assert.rejects(
+        apply(weights, (await readPeriod()).revision, configuration),
+        (error) => error.code === '40001',
+      );
+      await db.exec('rollback to savepoint stale_config');
+      current = await readPeriod();
+      await db.query(
+        'select public.save_household_settings($1,$2,$3,$4,2000,$5::jsonb,$6::jsonb,$7::jsonb)',
+        [
+          household,
+          month,
+          current.revision,
+          (await bundle()).household.configurationRevision,
+          JSON.stringify((await bundle()).accounts),
+          JSON.stringify(groups),
+          JSON.stringify(rules),
+        ],
+      );
+      assert.deepEqual((await readPeriod()).ruleWeights, weights);
+      assert.equal(
+        JSON.stringify({
+          receipts: (await readPeriod()).receipts,
+          payments: (await readPeriod()).payments,
+        }),
+        financial,
+      );
+      const deniedArgs = [
+        household,
+        month,
+        (await readPeriod()).revision,
+        (await bundle()).household.configurationRevision,
+        JSON.stringify((await bundle()).accounts),
+        JSON.stringify(groups),
+        JSON.stringify(rules),
+        JSON.stringify(weights),
+      ];
+      for (const user of [viewer, outsider]) {
+        await asUser(user);
+        await db.exec('savepoint denied');
+        await assert.rejects(
+          db.query(
+            'select public.save_weighted_household_settings($1,$2,$3,$4,2000,$5::jsonb,$6::jsonb,$7::jsonb,$8::jsonb)',
+            deniedArgs,
+          ),
+          (error) => error.code === '42501',
+        );
+        await db.exec('rollback to savepoint denied');
+      }
+      await asUser(admin);
+      await save('water', 10000, 0, '2030-02-01');
+      assert.deepEqual(
+        (await bundle()).periods.find((p) => p.month === '2030-02-01').ruleWeights,
+        weights,
+      );
+      current = await readPeriod();
+      await db.query('select public.close_period($1,$2,$3)', [household, month, current.revision]);
+      await db.exec('savepoint closed');
+      await assert.rejects(apply());
+      await db.exec('rollback to savepoint closed');
+      await db.exec('reset role');
+      assert.equal(
+        (
+          await db.query('select count(*)::integer as n from storage.objects where name=$1', [
+            filePath,
+          ])
+        ).rows[0].n,
+        1,
+      );
+      await db.exec('rollback');
+      await asUser(admin);
+      assert.deepEqual(await bundle(), original);
+    },
+  )();
   await db.exec('reset role; set role anon');
   await check('El acceso anónimo no puede leer ni invocar operaciones privadas', async () => {
     await assert.rejects(db.query('select public.get_household()'));
     await assert.rejects(db.query('select * from public.receipts'));
+    await assert.rejects(
+      db.query(
+        `select public.save_weighted_household_settings(null,null,0,0,0,'[]','[]','{}','{}')`,
+      ),
+    );
     await assert.rejects(
       db.query(`select public.save_household_settings(null,null,0,0,0,'[]','[]','{}')`),
     );

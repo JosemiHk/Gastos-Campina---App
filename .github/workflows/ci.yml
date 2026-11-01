@@ -27,4 +27,5 @@ jobs:
       - run: npm test
       - run: npm run test:db
       - run: npm run test:upgrade
+      - run: npm run test:weighted-upgrade
       - run: npm run build
