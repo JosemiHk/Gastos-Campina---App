@@ -20,7 +20,7 @@ Ejemplo (agua 68.50, luz 167.30, internet 119.00, aporte 20.00): con pesos de ag
 - La previsualización de recibos, tarjetas y explicación del cálculo usan los pesos del periodo, no los actuales del hogar. Resúmenes de texto y PNG muestran la proporción usada. Los resultados históricos sin pesos se interpretan como reparto igual entre sus participantes originales.
 - RPC nueva `save_weighted_household_settings`: autorización de administrador, bloqueo del periodo, revisión del mes y configuración del hogar, validación del JSON y pesos. Nunca reemplaza recibos ni archivos para cambiar reglas.
 - Las RPC anteriores `save_household_settings` y `save_settings` conservan los pesos al crear versiones. Los grupos recién seleccionados por clientes antiguos reciben una parte.
-- Migración `20261101191741_weighted_distribution_settings.sql`: integra las lecturas y escrituras sin modificar filas financieras existentes. La migración de fase 1 añade la columna con peso 1; ninguna activa 2:1:1 automáticamente.
+- Migración `20261101200926_weighted_distribution_settings.sql`: integra las lecturas y escrituras sin modificar filas financieras existentes. La migración de fase 1 añade la columna con peso 1; ninguna activa 2:1:1 automáticamente.
 
 ## Validación
 
@@ -42,4 +42,15 @@ Resultados: 50 pruebas Angular; 27 comprobaciones SQL de instalación; 28 de act
 6. Verificar IDs, importes y adjuntos de los recibos, pagos y resumen del mes; comprobar un mes anterior. Los saldos pueden cambiar por las nuevas cuotas, pero las confirmaciones de pago permanecen.
 7. Si hubiera un problema de interfaz, volver al frontend anterior conserva las reglas guardadas gracias a las RPC compatibles. Los clientes anteriores pueden seguir mostrando previsualizaciones iguales: evitar nuevas ediciones hasta restaurar el frontend actualizado. No eliminar la columna de pesos ni borrar versiones para deshacer un despliegue. Revertir un acuerdo de reparto requiere guardar otra versión explícita en el mes abierto.
 
-Estado: desarrollo local completado, sin push, merge, migración remota ni despliegue de producción por parte del agente durante esta fase. El mes de activación todavía debe elegirse; no se toma automáticamente de la fecha actual.
+## Registro de publicación — 2026-11-01
+
+Publicación autorizada por el propietario. Pull request: https://github.com/JosemiHk/Gastos-Campina---App/pull/2.
+
+- Se verificó que el proyecto de producción tenía las cinco migraciones previas esperadas.
+- Migraciones aplicadas: `20261101193746_person_based_distribution.sql` y `20261101200926_weighted_distribution_settings.sql`. Los nombres locales coinciden con el historial remoto; el conector asignó la versión de la primera.
+- La segunda se aplicó desde el panel SQL en una única transacción junto con su registro en `supabase_migrations.schema_migrations`, tras caducar la confirmación del conector y comprobar que la CLI no tenía sesión. El SQL pegado se comparó íntegramente con el archivo revisado antes de ejecutarlo.
+- Quince agregaciones de conteos y huellas normalizadas coincidieron antes y después, incluyendo todas las tablas del dominio y los objetos de Storage. No se exportaron registros personales ni archivos.
+- Se verificaron la nueva RPC, el bloqueo de ejecución anónima y la inaccesibilidad de la función interna desde clientes. Los pesos existentes siguen en 1.
+- No se activó un nuevo reparto ni se eligió un mes de aplicación. Esa operación sigue siendo explícita desde Configuración.
+
+Para el frontend, comprobar los checks del commit final del PR y el despliegue Production de Vercel asociado a su merge. Una vista previa Ready por sí sola no confirma la publicación en producción.
