@@ -15,7 +15,7 @@ create function private.weighted_allocations(p_rule uuid,p_service uuid,p_cents 
 returns table(group_id uuid,amount_cents integer,remainder_cents integer)
 language plpgsql stable set search_path = '' as $$
 begin
-  if p_cents is null or p_cents not between 0 and 99999999 then raise exception 'Importe inv·lido.'; end if;
+  if p_cents is null or p_cents not between 0 and 99999999 then raise exception 'Importe inv√°lido.'; end if;
   return query
   with shares as (
     select g.id,g.sort_order,p_cents::bigint*rp.weight as numerator,sum(rp.weight) over () as denominator
