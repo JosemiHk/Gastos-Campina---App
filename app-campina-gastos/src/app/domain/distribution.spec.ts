@@ -141,7 +141,7 @@ describe('reparto ponderado', () => {
         internet: { miguel: 1, jm: 1 },
       },
     );
-    expect(groupTotals(result)).toEqual({ twins: 10790, miguel: 11346, jm: 11344, rossana: 2000 });
+    expect(groupTotals(result)).toEqual({ twins: 10790, miguel: 11345, jm: 11345, rossana: 2000 });
     expect(result.totalCents).toBe(35480);
   });
   it('rechaza pesos y participantes inválidos', () => {
@@ -160,5 +160,61 @@ describe('reparto ponderado', () => {
     expect(splitWeighted(99999999, participants).reduce((sum, p) => sum + p.amountCents, 0)).toBe(
       99999999,
     );
+  });
+});
+
+describe('equilibrio mensual de los empates', () => {
+  const weights = {
+    water: { twins: 2, miguel: 1, jm: 1 },
+    electricity: { twins: 2, miguel: 1, jm: 1 },
+    internet: { miguel: 1, jm: 1 },
+  };
+  it('conserva cada servicio, cuota proporcional y el mínimo desequilibrio', () => {
+    for (let water = 1; water < 30; water++)
+      for (let light = 0; light < 30; light++) {
+        const receipts = [
+          { service: 'water' as const, amountCents: water, status: 'confirmed' as const },
+          {
+            service: 'electricity' as const,
+            amountCents: light + 2000,
+            status: 'confirmed' as const,
+          },
+          { service: 'internet' as const, amountCents: 100, status: 'confirmed' as const },
+        ];
+        const calculation = calculateDistribution(receipts, 2000, DEFAULT_PARTICIPANTS, weights);
+        const totals = groupTotals(calculation);
+        expect(Math.abs(totals.miguel - totals.jm)).toBeLessThanOrEqual(1);
+        for (const receipt of receipts)
+          expect(
+            calculation.allocations
+              .filter((a) => a.service === receipt.service)
+              .reduce((sum, a) => sum + a.amountCents, 0),
+          ).toBe(receipt.amountCents);
+        expect(
+          groupTotals(
+            calculateDistribution([...receipts].reverse(), 2000, DEFAULT_PARTICIPANTS, weights),
+          ),
+        ).toEqual(totals);
+        expect(calculation.allocations.find((a) => a.groupCode === 'rossana')?.amountCents).toBe(
+          2000,
+        );
+      }
+  });
+  it('no promete igualdad si hay un céntimo indivisible ni cambia grupos con distinta participación', () => {
+    const receipts = [{ service: 'water' as const, amountCents: 1, status: 'confirmed' as const }];
+    const result = calculateDistribution(
+      receipts,
+      0,
+      { ...DEFAULT_PARTICIPANTS, water: ['miguel', 'jm'] },
+      weights,
+    );
+    expect(groupTotals(result)).toEqual({ twins: 0, miguel: 1, jm: 0, rossana: 0 });
+    const uneven = calculateDistribution(
+      [{ service: 'water', amountCents: 10000, status: 'confirmed' }],
+      0,
+      DEFAULT_PARTICIPANTS,
+      weights,
+    );
+    expect(groupTotals(uneven)).toEqual({ twins: 5000, miguel: 2500, jm: 2500, rossana: 0 });
   });
 });

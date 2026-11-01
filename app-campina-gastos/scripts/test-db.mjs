@@ -28,6 +28,9 @@ try {
   const upgradeFile = readdirSync(migrations).find((name) =>
     name.endsWith('_editable_household_settings.sql'),
   );
+  const roundingFile = readdirSync(migrations).find((name) =>
+    name.endsWith('_balanced_monthly_rounding.sql'),
+  );
   if (process.argv.includes('--setup')) {
     await db.exec(
       readFileSync(new URL('../../supabase/.temp/setup-campina.sql', import.meta.url), 'utf8'),
@@ -38,7 +41,8 @@ try {
       .filter(
         (f) =>
           (!process.argv.includes('--upgrade') || f < upgradeFile) &&
-          (!process.argv.includes('--weighted-upgrade') || f <= upgradeFile),
+          (!process.argv.includes('--weighted-upgrade') || f <= upgradeFile) &&
+          (!process.argv.includes('--rounding-upgrade') || f < roundingFile),
       )
       .sort())
       await db.exec(readFileSync(new URL(file, migrations), 'utf8'));
@@ -279,6 +283,42 @@ try {
     },
   )();
   await asUser(admin);
+  if (process.argv.includes('--rounding-upgrade')) {
+    await check(
+      'Migrar redondeo conserva recibos, pagos, adjuntos y todos los cálculos previos',
+      async () => {
+        await db.exec('reset role');
+        const snapshot = async () => {
+          const result = {};
+          for (const table of [
+            'receipts',
+            'billing_periods',
+            'calculation_runs',
+            'allocations',
+            'payment_confirmations',
+            'activity_events',
+            'rule_versions',
+            'rule_participants',
+          ])
+            result[table] = (
+              await db.query(
+                `select to_jsonb(t) as row from public.${table} t order by to_jsonb(t)::text`,
+              )
+            ).rows;
+          result.storage = (
+            await db.query(
+              'select to_jsonb(t) as row from storage.objects t order by to_jsonb(t)::text',
+            )
+          ).rows;
+          return result;
+        };
+        const before = await snapshot();
+        await db.exec(readFileSync(new URL(roundingFile, migrations), 'utf8'));
+        assert.deepEqual(await snapshot(), before);
+        await asUser(admin);
+      },
+    )();
+  }
   if (process.argv.includes('--weighted-upgrade')) {
     await check(
       'Las dos migraciones ponderadas conservan todos los registros financieros existentes',
@@ -584,7 +624,7 @@ try {
             .reduce((sum, a) => sum + a.amountCents, 0),
         ]),
       );
-      assert.deepEqual(totals, { twins: 10790, miguel: 11346, jm: 11344, rossana: 2000 });
+      assert.deepEqual(totals, { twins: 10790, miguel: 11345, jm: 11345, rossana: 2000 });
       await db.exec('rollback');
       await asUser(admin);
       assert.equal(JSON.stringify(await bundle()), before);
@@ -666,6 +706,16 @@ try {
       );
       assert.deepEqual(current.ruleWeights, weights);
       assert.equal(current.calculation.totalCents, 35480);
+      assert.equal(current.calculation.roundingPolicy, 'balanced_monthly_v1');
+      const balancedTotals = Object.fromEntries(
+        ['twins', 'miguel', 'jm', 'rossana'].map((code) => [
+          code,
+          current.calculation.allocations
+            .filter((a) => a.groupCode === code)
+            .reduce((sum, a) => sum + a.amountCents, 0),
+        ]),
+      );
+      assert.deepEqual(balancedTotals, { twins: 10790, miguel: 11345, jm: 11345, rossana: 2000 });
       assert.deepEqual(
         original.periods,
         (await bundle()).periods.filter((p) => p.month !== month),
@@ -724,6 +774,30 @@ try {
         }),
         financial,
       );
+      await db.exec('reset role; savepoint rounding_matrix');
+      for (let n = 1; n <= 24; n++) {
+        await db.query(
+          `update public.receipts r set amount_cents=case s.code when 'water' then $2 when 'electricity' then 2000+$3 else 100 end from public.services s where s.id=r.service_id and r.period_id=$1`,
+          [(await readPeriod()).id, n, n % 9],
+        );
+        await db.query('select private.recalculate($1)', [(await readPeriod()).id]);
+        const matrix = (await readPeriod()).calculation;
+        const sum = (code) =>
+          matrix.allocations
+            .filter((a) => a.groupCode === code)
+            .reduce((sum, a) => sum + a.amountCents, 0);
+        assert.ok(Math.abs(sum('miguel') - sum('jm')) <= 1);
+        for (const receipt of (await readPeriod()).receipts)
+          assert.equal(
+            matrix.allocations
+              .filter((a) => a.service === receipt.service)
+              .reduce((sum, a) => sum + a.amountCents, 0),
+            receipt.amountCents,
+          );
+        assert.equal(sum('rossana'), 2000);
+      }
+      await db.exec('rollback to savepoint rounding_matrix');
+      await asUser(admin);
       const deniedArgs = [
         household,
         month,

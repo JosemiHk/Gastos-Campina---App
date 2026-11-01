@@ -44,6 +44,7 @@ export interface Allocation {
   remainderCents: number;
 }
 export interface Calculation {
+  roundingPolicy?: 'balanced_monthly_v1';
   ruleWeights?: RuleWeights;
   id?: string;
   totalCents: number;

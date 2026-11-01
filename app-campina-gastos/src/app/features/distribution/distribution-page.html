@@ -87,10 +87,15 @@
       }
       <div class="rule-note">
         <app-icon name="info" /><span
-          >Calculamos en céntimos. Cuando la división no es exacta, los céntimos restantes se
-          asignan a las cuotas con mayor resto; en caso de empate se usa el orden estable de grupo.
-          Es un ajuste de redondeo, no un cambio de proporción.</span
-        >
+          >Calculamos en céntimos y conservamos el total de cada recibo.
+          @if (store.calculation()?.roundingPolicy === 'balanced_monthly_v1') {
+            Compensamos los empates entre servicios para equilibrar las cuotas mensuales de grupos
+            con la misma participación. Si no es posible igualarlas exactamente, puede quedar un
+            céntimo de diferencia.
+          } @else {
+            Los céntimos restantes se asignaron por mayor resto y orden estable de grupo.
+          }
+        </span>
       </div>
       <div class="verified-total">
         <span>Total distribuido, incluido el aporte de {{ store.groupName('rossana') }}</span

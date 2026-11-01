@@ -133,10 +133,78 @@ export function calculateDistribution(
       })),
     );
   }
+  balanceMonthlyAllocations(allocations, participantsByService, weightsByService);
   if (allocations.reduce((sum, allocation) => sum + allocation.amountCents, 0) !== totalCents)
     throw new Error('La distribución no coincide con los recibos.');
-  return { totalCents, receiptCount: confirmed.length, fixedContributionCents, allocations };
+  return {
+    totalCents,
+    receiptCount: confirmed.length,
+    fixedContributionCents,
+    allocations,
+    roundingPolicy: 'balanced_monthly_v1',
+  };
 }
+/** Only move a tied rounding cent between groups with identical monthly participation.
+ * Each swap reduces their total difference without changing a receipt or its largest-remainder shares.
+ */
+function balanceMonthlyAllocations(
+  allocations: Allocation[],
+  participants: RuleParticipants,
+  weights?: RuleWeights,
+): void {
+  const codes = GROUP_ORDER.filter((code) => code !== 'rossana');
+  const services = [...new Set(allocations.map((a) => a.service))].sort();
+  const weight = (service: ServiceCode, code: (typeof codes)[number]) =>
+    participants[service].includes(code) ? (weights?.[service][code] ?? 1) : 0;
+  while (true) {
+    const totals = Object.fromEntries(
+      codes.map((code) => [
+        code,
+        allocations.filter((a) => a.groupCode === code).reduce((sum, a) => sum + a.amountCents, 0),
+      ]),
+    );
+    const options: {
+      donor: Allocation;
+      recipient: Allocation;
+      gap: number;
+      donorOrder: number;
+      recipientOrder: number;
+    }[] = [];
+    for (const [donorOrder, donor] of codes.entries())
+      for (const [recipientOrder, recipient] of codes.entries()) {
+        const gap = totals[donor] - totals[recipient];
+        if (
+          gap < 2 ||
+          !services.every((service) => weight(service, donor) === weight(service, recipient))
+        )
+          continue;
+        for (const service of services) {
+          const from = allocations.find(
+            (a) => a.service === service && a.groupCode === donor && a.remainderCents === 1,
+          );
+          const to = allocations.find(
+            (a) => a.service === service && a.groupCode === recipient && a.remainderCents === 0,
+          );
+          if (from && to)
+            options.push({ donor: from, recipient: to, gap, donorOrder, recipientOrder });
+        }
+      }
+    options.sort(
+      (a, b) =>
+        b.gap - a.gap ||
+        a.donorOrder - b.donorOrder ||
+        a.recipientOrder - b.recipientOrder ||
+        a.donor.service.localeCompare(b.donor.service),
+    );
+    const chosen = options[0];
+    if (!chosen) return;
+    chosen.donor.amountCents--;
+    chosen.donor.remainderCents = 0;
+    chosen.recipient.amountCents++;
+    chosen.recipient.remainderCents = 1;
+  }
+}
+
 export function groupTotals(calculation: Calculation | null): Record<GroupCode, number> {
   return Object.fromEntries(
     GROUP_ORDER.map((code) => [
