@@ -77,22 +77,9 @@
             <span class="icon-tile"><app-icon [name]="service.icon" /></span>
             <div>
               <h3>{{ service.name }}</h3>
-              @if (service.code === 'water') {
-                <p>
-                  {{ money(bill.amountCents) }} ÷ {{ store.participants().water.length }}:
-                  {{ store.participantNames('water') }}, a partes iguales.
-                </p>
-              } @else if (service.code === 'electricity') {
-                <p>
-                  ({{ money(bill.amountCents) }} − {{ money(store.fixedContributionCents()) }} de
-                  {{ store.groupName('rossana') }}) ÷ {{ store.participants().electricity.length }}:
-                  {{ store.participantNames('electricity') }}.
-                </p>
-              } @else {
-                <p>
-                  {{ money(bill.amountCents) }} ÷ {{ store.participants().internet.length }}:
-                  {{ store.participantNames('internet') }}.
-                </p>
+              <p>{{ store.ruleDescription(service.code) }}.</p>
+              @if (service.code === 'electricity') {
+                <p>Primero se descuenta el aporte fijo de {{ store.groupName('rossana') }}.</p>
               }
             </div>
           </div>
@@ -101,8 +88,8 @@
       <div class="rule-note">
         <app-icon name="info" /><span
           >Calculamos en céntimos. Cuando la división no es exacta, los céntimos restantes se
-          asignan entre los participantes en su orden estable de grupo. Es un ajuste de redondeo, no
-          un cambio de proporción.</span
+          asignan a las cuotas con mayor resto; en caso de empate se usa el orden estable de grupo.
+          Es un ajuste de redondeo, no un cambio de proporción.</span
         >
       </div>
       <div class="verified-total">

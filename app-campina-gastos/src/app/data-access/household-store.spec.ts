@@ -77,4 +77,33 @@ describe('estado y persistencia del hogar', () => {
     expect(store.groupMembers('twins')).toEqual(['Integrante histórico']);
     expect(store.participants().internet).toEqual(['miguel', 'jm']);
   });
+  it('usa los pesos históricos del periodo y envía la RPC ponderada con ambas revisiones', async () => {
+    const data = householdFixture();
+    const oldWeights = {
+      water: { twins: 2, miguel: 1, jm: 1 },
+      electricity: { twins: 2, miguel: 1, jm: 1 },
+      internet: { miguel: 1, jm: 1 },
+    };
+    data.periods[0].ruleWeights = oldWeights;
+    data.household.ruleWeights = { ...oldWeights, water: { twins: 3, miguel: 1, jm: 1 } };
+    data.household.configurationRevision = 8;
+    rpc.mockResolvedValue({ data, error: null });
+    const store = TestBed.inject(HouseholdStore);
+    store.selectedMonth.set('2026-10-01');
+    await store.load();
+    expect(store.weights()).toEqual(oldWeights);
+    expect(store.ruleDescription('water')).toContain('2 de 4 partes');
+    await store.saveHouseholdSettings(2000, [], data.groups, DEFAULT_PARTICIPANTS, oldWeights);
+    expect(rpc).toHaveBeenCalledWith(
+      'save_weighted_household_settings',
+      expect.objectContaining({
+        p_revision: 3,
+        p_configuration_revision: 8,
+        p_weights: oldWeights,
+      }),
+    );
+    data.periods[0].ruleWeights = undefined;
+    store.data.set(structuredClone(data));
+    expect(store.weights().water.twins).toBe(1);
+  });
 });

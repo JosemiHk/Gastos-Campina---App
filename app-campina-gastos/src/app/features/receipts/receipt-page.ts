@@ -90,6 +90,7 @@ export class ReceiptPage {
           [{ service: this.form.controls.service.value, amountCents: cents, status: 'confirmed' }],
           this.store.fixedContributionCents(),
           this.store.participants(),
+          this.store.weights(),
         ),
         error: '',
       };

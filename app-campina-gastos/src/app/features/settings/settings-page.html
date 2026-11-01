@@ -6,6 +6,13 @@
   </div>
   <span class="badge"><app-icon name="people" />3 grupos + aporte especial</span>
 </div>
+<div class="rule-note activation-note">
+  <app-icon name="info" /><span
+    >Guardar aplica estas reglas a <strong>{{ monthLabel(store.selectedMonth()) }}</strong> y las
+    usa como base para nuevos meses. Los demás meses ya registrados conservan sus reglas. Selecciona
+    arriba el mes que quieres actualizar.</span
+  >
+</div>
 <form [formGroup]="form" (ngSubmit)="save()">
   <fieldset [disabled]="busy() || store.closed() || !store.isAdmin()">
     <div class="settings-layout">
@@ -113,6 +120,38 @@
                     >
                   }
                 </fieldset>
+                @if (store.editableWeights()) {
+                  <div class="weight-fields" formGroupName="weights">
+                    @for (service of services; track service.code) {
+                      @if (group.controls.services.controls[service.code].value) {
+                        <div class="field">
+                          <label [for]="'weight-' + index + '-' + service.code"
+                            >{{ service.name }} · personas / partes</label
+                          >
+                          <input
+                            type="number"
+                            min="1"
+                            max="10"
+                            step="1"
+                            inputmode="numeric"
+                            [id]="'weight-' + index + '-' + service.code"
+                            [formControlName]="service.code"
+                            [attr.aria-invalid]="
+                              group.controls.weights.controls[service.code].touched &&
+                              group.controls.weights.controls[service.code].invalid
+                            "
+                          />
+                          @if (
+                            group.controls.weights.controls[service.code].touched &&
+                            group.controls.weights.controls[service.code].invalid
+                          ) {
+                            <p class="field-error">Indica un entero entre 1 y 10.</p>
+                          }
+                        </div>
+                      }
+                    }
+                  </div>
+                }
               } @else {
                 <div class="group-services">
                   <span class="badge"
@@ -125,8 +164,9 @@
         </div>
         <div class="rule-note groups-note">
           <app-icon name="info" /><span
-            >Cada grupo comparte una sola cuota, aunque tenga varios integrantes. Editar estos
-            nombres no crea ni modifica cuentas de acceso.</span
+            >Cada grupo recibe una sola cuota. Para repartir por persona, indica cuántas representa
+            en cada servicio: por ejemplo, 2, 1 y 1 para agua y luz. Internet conserva sus propias
+            partes. Los nombres y las cuentas de acceso no cambian estas cantidades.</span
           >
         </div>
       </section>
@@ -138,10 +178,10 @@
               <span class="icon-tile"><app-icon name="water" /></span>
               <div>
                 <h3>Agua potable</h3>
-                <p>Distribución en partes iguales</p>
+                <p>Distribución según participación</p>
               </div>
             </div>
-            <div class="formula">Total del recibo ÷ {{ selectedParticipants('water').length }}</div>
+            <div class="formula">Total del recibo ÷ {{ totalParts('water') }} partes</div>
             <p>{{ participantNames('water') || 'Selecciona al menos un grupo para agua.' }}</p>
           </article>
           <article class="card rule-card">
@@ -179,7 +219,7 @@
             }
             <div class="formula">
               (Total de luz − aporte fijo) ÷
-              {{ selectedParticipants('electricity').length }}
+              {{ totalParts('electricity') }} partes
             </div>
             <p>
               El aporte se separa antes de dividir entre
@@ -191,12 +231,10 @@
               <span class="icon-tile"><app-icon name="wifi" /></span>
               <div>
                 <h3>Internet WIN</h3>
-                <p>Distribución en partes iguales</p>
+                <p>Distribución según participación</p>
               </div>
             </div>
-            <div class="formula">
-              Total del recibo ÷ {{ selectedParticipants('internet').length }}
-            </div>
+            <div class="formula">Total del recibo ÷ {{ totalParts('internet') }} partes</div>
             <p>
               {{ participantNames('internet') || 'Selecciona al menos un grupo para internet.' }}
             </p>

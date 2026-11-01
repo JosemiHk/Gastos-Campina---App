@@ -44,6 +44,7 @@ export interface Allocation {
   remainderCents: number;
 }
 export interface Calculation {
+  ruleWeights?: RuleWeights;
   id?: string;
   totalCents: number;
   receiptCount: number;
@@ -75,6 +76,7 @@ export interface TransferAccount {
   cci: string;
 }
 export interface BillingPeriod {
+  ruleWeights?: RuleWeights;
   participants?: RuleParticipants;
   id: string;
   month: string;
@@ -89,6 +91,7 @@ export interface BillingPeriod {
 }
 export interface HouseholdData {
   household: {
+    ruleWeights?: RuleWeights;
     id: string;
     name: string;
     fixedContributionCents: number;

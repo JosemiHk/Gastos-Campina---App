@@ -125,4 +125,63 @@ describe('configuración del hogar', () => {
     expect(store.saveHouseholdSettings).not.toHaveBeenCalled();
     expect(fixture.nativeElement.querySelector('#group-name-0')).toBeNull();
   });
+  it('edita personas, confirma el mes y rechaza decimales antes de guardar', async () => {
+    enableEditor();
+    store.data.update((data) => ({
+      ...data,
+      household: {
+        ...data.household,
+        ruleWeights: {
+          water: { twins: 1, miguel: 1, jm: 1 },
+          electricity: { twins: 1, miguel: 1, jm: 1 },
+          internet: { miguel: 1, jm: 1 },
+        },
+      },
+    }));
+    const fixture = TestBed.createComponent(SettingsPage);
+    fixture.detectChanges();
+    const page = fixture.componentInstance;
+    const input = fixture.nativeElement.querySelector('#weight-0-water') as HTMLInputElement;
+    input.value = '1.5';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    await page.save();
+    expect(store.saveHouseholdSettings).not.toHaveBeenCalled();
+    input.value = '2';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    page.groups.at(0).controls.weights.controls.electricity.setValue(2);
+    await page.save();
+    expect(TestBed.inject(Confirm).ask).toHaveBeenCalledWith(
+      expect.objectContaining({ message: expect.stringContaining('octubre de 2026') }),
+    );
+    expect(store.saveHouseholdSettings).toHaveBeenCalledWith(
+      2000,
+      [],
+      expect.any(Array),
+      expect.any(Object),
+      {
+        water: { twins: 2, miguel: 1, jm: 1 },
+        electricity: { twins: 2, miguel: 1, jm: 1 },
+        internet: { miguel: 1, jm: 1 },
+      },
+    );
+  });
+  it('cancelar un cambio de personas no envía ajustes', async () => {
+    enableEditor();
+    const fixture = TestBed.createComponent(SettingsPage);
+    fixture.detectChanges();
+    fixture.componentInstance.groups.at(0).controls.weights.controls.water.setValue(2);
+    vi.mocked(TestBed.inject(Confirm).ask).mockResolvedValue(false);
+    await fixture.componentInstance.save();
+    expect(store.saveHouseholdSettings).not.toHaveBeenCalled();
+  });
+  it('un peso inválido deja de bloquear el formulario al excluir ese servicio', () => {
+    enableEditor();
+    const fixture = TestBed.createComponent(SettingsPage);
+    fixture.detectChanges();
+    const group = fixture.componentInstance.groups.at(0);
+    group.controls.weights.controls.water.setValue(1.5);
+    expect(fixture.componentInstance.form.invalid).toBe(true);
+    group.controls.services.controls.water.setValue(false);
+    expect(fixture.componentInstance.form.invalid).toBe(false);
+  });
 });

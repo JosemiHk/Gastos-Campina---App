@@ -7,7 +7,12 @@ import {
   Receipt,
   ServiceCode,
 } from '../app/domain/models';
-import { calculateDistribution, groupTotals } from '../app/domain/distribution';
+import {
+  calculateDistribution,
+  groupTotals,
+  equalWeights,
+  ruleDescription,
+} from '../app/domain/distribution';
 export function householdFixture() {
   const data: HouseholdData = {
     household: {
@@ -95,6 +100,22 @@ export function storeFixture(empty = false) {
     period,
     calculation,
     participants,
+    weights: computed(
+      () =>
+        period()?.ruleWeights ??
+        period()?.calculation?.ruleWeights ??
+        (period()
+          ? equalWeights(participants())
+          : (data().household.ruleWeights ?? equalWeights(participants()))),
+    ),
+    editableWeights: computed(() => data().household.ruleWeights !== undefined),
+    ruleDescription: (service: ServiceCode) =>
+      ruleDescription(
+        service,
+        participants(),
+        period()?.ruleWeights ?? equalWeights(participants()),
+        groupName,
+      ),
     editableGroups: computed(() => data().household.configurationRevision !== undefined),
     groupName,
     groupMembers: (code: GroupCode) =>

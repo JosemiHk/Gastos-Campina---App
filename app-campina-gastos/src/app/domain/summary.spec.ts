@@ -56,4 +56,17 @@ describe('resumen compartible', () => {
     expect(text).not.toContain('Familia actual');
     expect(text).toContain('de Aporte anterior; el saldo se divide entre 2 grupos.');
   });
+  it('explica las proporciones guardadas aunque la composición actual cambie', () => {
+    const data = householdFixture();
+    const period = data.periods[0];
+    period.ruleWeights = {
+      water: { twins: 2, miguel: 1, jm: 1 },
+      electricity: { twins: 2, miguel: 1, jm: 1 },
+      internet: { miguel: 1, jm: 1 },
+    };
+    period.calculation!.groupNames = { twins: 'Grupo histórico' };
+    const text = summaryText(period, data.groups, []);
+    expect(text).toContain('Grupo histórico: 2 de 4 partes');
+    expect(text).toContain('Internet:');
+  });
 });

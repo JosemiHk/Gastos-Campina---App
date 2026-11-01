@@ -313,3 +313,17 @@ fieldset:disabled select {
     font-size: 12px;
   }
 }
+
+.weight-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.weight-fields input {
+  width: 100%;
+  box-sizing: border-box;
+}
+.activation-note {
+  margin-bottom: 24px;
+}

@@ -5,6 +5,7 @@ import {
   GroupCode,
   GROUP_ORDER,
   Receipt,
+  ServiceCode,
   RuleParticipants,
   RuleWeights,
 } from './models';
@@ -39,7 +40,7 @@ export function splitWeighted(
         p.weight > 10,
     )
   )
-    throw new Error('Reparto inv�lido.');
+    throw new Error('Reparto inválido.');
   const ordered = [...participants].sort(
     (a, b) => GROUP_ORDER.indexOf(a.groupCode) - GROUP_ORDER.indexOf(b.groupCode),
   );
@@ -145,4 +146,30 @@ export function groupTotals(calculation: Calculation | null): Record<GroupCode, 
         .reduce((sum, a) => sum + a.amountCents, 0) ?? 0,
     ]),
   ) as Record<GroupCode, number>;
+}
+
+export function equalWeights(participants: RuleParticipants): RuleWeights {
+  return Object.fromEntries(
+    Object.entries(participants).map(([service, codes]) => [
+      service,
+      Object.fromEntries(codes.map((code) => [code, 1])),
+    ]),
+  ) as RuleWeights;
+}
+export function ruleDescription(
+  service: ServiceCode,
+  participants: RuleParticipants,
+  weights: RuleWeights,
+  name: (code: GroupCode) => string,
+): string {
+  const codes = participants[service];
+  const unequal = codes.some((code) => (weights[service][code] ?? 1) !== 1);
+  return unequal
+    ? codes
+        .map(
+          (code) =>
+            `${name(code)}: ${weights[service][code] ?? 1} de ${codes.reduce((sum, c) => sum + (weights[service][c] ?? 1), 0)} partes`,
+        )
+        .join(' · ')
+    : `${codes.map(name).join(', ')}: ${codes.length === 1 ? 'cuota completa' : 'a partes iguales'}`;
 }

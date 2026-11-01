@@ -116,7 +116,7 @@ describe('reparto ponderado', () => {
     { groupCode: 'miguel' as const, weight: 1 },
     { groupCode: 'jm' as const, weight: 1 },
   ];
-  it('conserva c�ntimos, proporciones y desempates independientemente del orden', () => {
+  it('conserva céntimos, proporciones y desempates independientemente del orden', () => {
     for (let cents = 0; cents < 1000; cents++) {
       const parts = splitWeighted(cents, participants);
       expect(parts.reduce((sum, p) => sum + p.amountCents, 0)).toBe(cents);
@@ -144,7 +144,7 @@ describe('reparto ponderado', () => {
     expect(groupTotals(result)).toEqual({ twins: 10790, miguel: 11346, jm: 11344, rossana: 2000 });
     expect(result.totalCents).toBe(35480);
   });
-  it('rechaza pesos y participantes inv�lidos', () => {
+  it('rechaza pesos y participantes inválidos', () => {
     for (const weight of [0, -1, 1.5, 11, NaN, Infinity])
       expect(() => splitWeighted(100, [{ groupCode: 'twins', weight }])).toThrow();
     expect(() => splitWeighted(100, [participants[0], participants[0]])).toThrow();
