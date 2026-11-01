@@ -28,6 +28,9 @@ try {
   const upgradeFile = readdirSync(migrations).find((name) =>
     name.endsWith('_editable_household_settings.sql'),
   );
+  const weightedFile = readdirSync(migrations).find((name) =>
+    name.endsWith('_person_based_distribution.sql'),
+  );
   if (process.argv.includes('--setup')) {
     await db.exec(
       readFileSync(new URL('../../supabase/.temp/setup-campina.sql', import.meta.url), 'utf8'),
@@ -35,7 +38,9 @@ try {
   } else {
     for (const file of readdirSync(migrations)
       .filter((f) => f.endsWith('.sql'))
-      .filter((f) => !process.argv.includes('--upgrade') || f !== upgradeFile)
+      .filter(
+        (f) => !process.argv.includes('--upgrade') || (f !== upgradeFile && f !== weightedFile),
+      )
       .sort())
       await db.exec(readFileSync(new URL(file, migrations), 'utf8'));
   }
@@ -277,6 +282,16 @@ try {
     const before = (await bundle()).periods.find((p) => p.month === '2026-10-01').calculation;
     await db.exec('reset role');
     await db.exec(readFileSync(new URL(upgradeFile, migrations), 'utf8'));
+    const prior = JSON.stringify(
+      (await db.query('select result from public.calculation_runs order by id')).rows,
+    );
+    await db.exec(readFileSync(new URL(weightedFile, migrations), 'utf8'));
+    assert.equal(
+      JSON.stringify(
+        (await db.query('select result from public.calculation_runs order by id')).rows,
+      ),
+      prior,
+    );
     await asUser(admin);
     await check(
       'La migración actualiza un hogar existente sin modificar importes ni nombres cerrados',
@@ -448,6 +463,91 @@ try {
       closedBeforeSettings,
     );
   })();
+  {
+    await check('Pesos SQL: proporciones, c�ntimos, l�mites y funciones privadas', async () => {
+      const before = JSON.stringify(await bundle());
+      await db.exec('reset role');
+      await db.exec('begin');
+      const rule = (
+        await db.query(`select default_rule_id as id from public.households where id=$1`, [
+          household,
+        ])
+      ).rows[0].id;
+      await db.query(
+        `update public.rule_participants rp set weight=case when g.code='twins' then 2 else 1 end from public.payment_groups g where g.id=rp.group_id and rp.rule_version_id=$1`,
+        [rule],
+      );
+      for (const weight of [0, -1, 11]) {
+        await db.exec('savepoint invalid_weight');
+        await assert.rejects(
+          db.query('update public.rule_participants set weight=$2 where rule_version_id=$1', [
+            rule,
+            weight,
+          ]),
+        );
+        await db.exec('rollback to savepoint invalid_weight');
+      }
+      for (let cents = 0; cents < 1000; cents++) {
+        const parts = (
+          await db.query(
+            `select a.*,g.code from public.services s cross join lateral private.weighted_allocations($1,s.id,$2) a join public.payment_groups g on g.id=a.group_id where s.household_id=$3 and s.code='water'`,
+            [rule, cents, household],
+          )
+        ).rows;
+        assert.equal(
+          parts.reduce((sum, p) => sum + p.amount_cents, 0),
+          cents,
+        );
+        const totalWeight = parts.reduce((sum, p) => sum + (p.code === 'twins' ? 2 : 1), 0);
+        parts.forEach((p) =>
+          assert.ok(
+            Math.abs(p.amount_cents - (cents * (p.code === 'twins' ? 2 : 1)) / totalWeight) < 1,
+          ),
+        );
+      }
+      assert.equal(
+        (
+          await db.query(
+            `select has_function_privilege('authenticated','private.weighted_allocations(uuid,uuid,integer)','EXECUTE') as allowed`,
+          )
+        ).rows[0].allowed,
+        false,
+      );
+      await asUser(admin);
+      await save('water', 6850, 0, '2027-03-01');
+      await save('electricity', 16730, 1, '2027-03-01');
+      await save('internet', 11900, 2, '2027-03-01');
+      // Earlier fixture settings can exclude groups. Use explicit test-only participants.
+      await db.exec('reset role');
+      await db.query(`delete from public.rule_participants where rule_version_id=$1`, [rule]);
+      await db.query(
+        `insert into public.rule_participants(household_id,rule_version_id,service_id,group_id,weight)
+        select $1,$2,s.id,g.id,case when s.code<>'internet' and g.code='twins' then 2 else 1 end
+        from public.services s cross join public.payment_groups g where s.household_id=$1 and g.household_id=$1 and g.kind='regular' and (s.code<>'internet' or g.code<>'twins')`,
+        [household, rule],
+      );
+      await db.query(
+        `select private.recalculate(id) from public.billing_periods where household_id=$1 and month='2027-03-01'`,
+        [household],
+      );
+      await asUser(admin);
+      const result = (await bundle()).periods.find((p) => p.month === '2027-03-01').calculation;
+      assert.equal(result.totalCents, 35480);
+      assert.equal(result.ruleWeights.water.twins, 2);
+      const totals = Object.fromEntries(
+        ['twins', 'miguel', 'jm', 'rossana'].map((code) => [
+          code,
+          result.allocations
+            .filter((a) => a.groupCode === code)
+            .reduce((sum, a) => sum + a.amountCents, 0),
+        ]),
+      );
+      assert.deepEqual(totals, { twins: 10790, miguel: 11346, jm: 11344, rossana: 2000 });
+      await db.exec('rollback');
+      await asUser(admin);
+      assert.equal(JSON.stringify(await bundle()), before);
+    })();
+  }
   await db.exec('reset role; set role anon');
   await check('El acceso anónimo no puede leer ni invocar operaciones privadas', async () => {
     await assert.rejects(db.query('select public.get_household()'));

@@ -6,6 +6,7 @@ import {
   GROUP_ORDER,
   Receipt,
   RuleParticipants,
+  RuleWeights,
 } from './models';
 import { MAX_RECEIPT_CENTS } from './money';
 
@@ -13,19 +14,54 @@ export function splitEqual(
   cents: number,
   participants: readonly GroupCode[],
 ): { groupCode: GroupCode; amountCents: number; remainderCents: number }[] {
+  return splitWeighted(
+    cents,
+    participants.map((groupCode) => ({ groupCode, weight: 1 })),
+  );
+}
+
+/** Largest remainder, with stable group order to break ties. All arithmetic is in cents. */
+export function splitWeighted(
+  cents: number,
+  participants: readonly { groupCode: GroupCode; weight: number }[],
+): { groupCode: GroupCode; amountCents: number; remainderCents: number }[] {
   if (
     !Number.isSafeInteger(cents) ||
     cents < 0 ||
-    participants.length === 0 ||
-    new Set(participants).size !== participants.length
+    cents > MAX_RECEIPT_CENTS ||
+    !participants.length ||
+    new Set(participants.map((p) => p.groupCode)).size !== participants.length ||
+    participants.some(
+      (p) =>
+        !GROUP_ORDER.includes(p.groupCode) ||
+        !Number.isInteger(p.weight) ||
+        p.weight < 1 ||
+        p.weight > 10,
+    )
   )
-    throw new Error('Reparto inválido.');
-  const base = Math.floor(cents / participants.length);
-  const remainder = cents % participants.length;
-  return participants.map((groupCode, index) => ({
+    throw new Error('Reparto inv�lido.');
+  const ordered = [...participants].sort(
+    (a, b) => GROUP_ORDER.indexOf(a.groupCode) - GROUP_ORDER.indexOf(b.groupCode),
+  );
+  const totalWeight = ordered.reduce((sum, p) => sum + p.weight, 0);
+  const parts = ordered.map((p) => ({
+    groupCode: p.groupCode,
+    amountCents: Math.floor((cents * p.weight) / totalWeight),
+    remainderCents: 0,
+    fraction: (cents * p.weight) % totalWeight,
+  }));
+  const remaining = cents - parts.reduce((sum, p) => sum + p.amountCents, 0);
+  [...parts]
+    .sort((a, b) => b.fraction - a.fraction)
+    .slice(0, remaining)
+    .forEach((p) => {
+      p.amountCents++;
+      p.remainderCents = 1;
+    });
+  return parts.map(({ groupCode, amountCents, remainderCents }) => ({
     groupCode,
-    amountCents: base + (index < remainder ? 1 : 0),
-    remainderCents: index < remainder ? 1 : 0,
+    amountCents,
+    remainderCents,
   }));
 }
 
@@ -33,6 +69,7 @@ export function calculateDistribution(
   receipts: Pick<Receipt, 'service' | 'amountCents' | 'status'>[],
   fixedContributionCents: number,
   participantsByService: RuleParticipants = DEFAULT_PARTICIPANTS,
+  weightsByService?: RuleWeights,
 ): Calculation {
   if (
     !Number.isSafeInteger(fixedContributionCents) ||
@@ -80,7 +117,16 @@ export function calculateDistribution(
       configured.some((participant) => participant === code),
     );
     allocations.push(
-      ...splitEqual(distributable, participants).map((part) => ({
+      ...splitWeighted(
+        distributable,
+        participants.map((groupCode) => ({
+          groupCode,
+          weight: weightsByService
+            ? (weightsByService[receipt.service]?.[groupCode as Exclude<GroupCode, 'rossana'>] ??
+              NaN)
+            : 1,
+        })),
+      ).map((part) => ({
         ...part,
         service: receipt.service,
       })),

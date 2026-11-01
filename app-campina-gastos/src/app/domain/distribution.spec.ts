@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calculateDistribution, groupTotals, splitEqual } from './distribution';
+import { calculateDistribution, groupTotals, splitEqual, splitWeighted } from './distribution';
 import { parseMoney } from './money';
 import { DEFAULT_PARTICIPANTS, RuleParticipants } from './models';
 
@@ -108,4 +108,57 @@ describe('participantes configurables', () => {
       ).toThrow();
     },
   );
+});
+
+describe('reparto ponderado', () => {
+  const participants = [
+    { groupCode: 'twins' as const, weight: 2 },
+    { groupCode: 'miguel' as const, weight: 1 },
+    { groupCode: 'jm' as const, weight: 1 },
+  ];
+  it('conserva c�ntimos, proporciones y desempates independientemente del orden', () => {
+    for (let cents = 0; cents < 1000; cents++) {
+      const parts = splitWeighted(cents, participants);
+      expect(parts.reduce((sum, p) => sum + p.amountCents, 0)).toBe(cents);
+      expect(parts).toEqual(splitWeighted(cents, [...participants].reverse()));
+      parts.forEach((p, i) =>
+        expect(Math.abs(p.amountCents - (cents * participants[i].weight) / 4)).toBeLessThan(1),
+      );
+    }
+  });
+  it('aplica el ejemplo familiar sin alterar internet ni el aporte', () => {
+    const result = calculateDistribution(
+      [
+        { service: 'water', amountCents: 6850, status: 'confirmed' },
+        { service: 'electricity', amountCents: 16730, status: 'confirmed' },
+        { service: 'internet', amountCents: 11900, status: 'confirmed' },
+      ],
+      2000,
+      DEFAULT_PARTICIPANTS,
+      {
+        water: { twins: 2, miguel: 1, jm: 1 },
+        electricity: { twins: 2, miguel: 1, jm: 1 },
+        internet: { miguel: 1, jm: 1 },
+      },
+    );
+    expect(groupTotals(result)).toEqual({ twins: 10790, miguel: 11346, jm: 11344, rossana: 2000 });
+    expect(result.totalCents).toBe(35480);
+  });
+  it('rechaza pesos y participantes inv�lidos', () => {
+    for (const weight of [0, -1, 1.5, 11, NaN, Infinity])
+      expect(() => splitWeighted(100, [{ groupCode: 'twins', weight }])).toThrow();
+    expect(() => splitWeighted(100, [participants[0], participants[0]])).toThrow();
+    expect(() => splitWeighted(100, [])).toThrow();
+    expect(() =>
+      calculateDistribution(
+        [{ service: 'water', amountCents: 100, status: 'confirmed' }],
+        0,
+        DEFAULT_PARTICIPANTS,
+        { water: { twins: 2 }, electricity: {}, internet: {} },
+      ),
+    ).toThrow();
+    expect(splitWeighted(99999999, participants).reduce((sum, p) => sum + p.amountCents, 0)).toBe(
+      99999999,
+    );
+  });
 });
